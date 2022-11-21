@@ -8,6 +8,7 @@ const colors = {
   maincolor: '#4EAC9F',
   secondarycolor: '#64578A',
   triarycolor: '#1D1334',
+  quatrarycolor: '#f56e5f',
   textcolor: '#333333',
   backgroundcolor: '#FCF9F2',
 };

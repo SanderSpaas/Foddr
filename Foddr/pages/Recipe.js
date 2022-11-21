@@ -13,17 +13,29 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import Button from '../../components/Button/Button.js';
-import Card from '../../components/Card';
+import Card from '../components/Card/Card.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
-import colors from '../../theme/colors.js';
+import colors from '../theme/colors.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const Favorites = ({route, navigation}) => {
+const Recipe = ({route, navigation}) => {
+  async function getRecipe(id) {
+    const data = (
+      await firestore()
+        .collection('recipes')
+        // Filter results
+        .where('id', '==', id)
+        .limit(1)
+        .get()
+    ).docs;
+    setRecipeData(data);
+    console.log(data);
+    return data;
+  }
   //TODO fetch all the recipes for the selected country
 
   //Fetching all the liked recipes from the user
@@ -36,20 +48,14 @@ const Favorites = ({route, navigation}) => {
   //   .get();
   // const user = await firestore().collection('Users').doc('ABC').get();/
   useEffect(() => {
-    async function Likes() {
-      try {
-        const {data} = await firebase.functions().httpsCallable('getLikes');
-        setRecipeData(data);
-        console.log(data);
-      } catch (error) {
-        console.log(
-          'There has been a problem with your fetch operation: ' +
-            error.message,
-        );
-      }
-    }
-    Likes();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      // The screen is focused
+      // Call any action and update
+      getRecipe(route.params.id);
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   const [recipeData, setRecipeData] = useState();
   const from = route?.params?.from;
@@ -57,11 +63,11 @@ const Favorites = ({route, navigation}) => {
     <ScrollView contentContainerStyle={styles.root}>
       <Image
         style={styles.blob}
-        source={require('../../assets/images/wave.png')}
+        source={require('../assets/images/wave.png')}
       />
       <View style={[styles.titleBar, styles.locationBar]}>
         <View>
-          <Text style={styles.barText}>Your favorites ❤️</Text>
+          <Text style={styles.barText}>Recipe ❤️ {route.params.id}</Text>
         </View>
       </View>
 
@@ -159,4 +165,4 @@ const styles = StyleSheet.create({
     marginBottom: -15,
   },
 });
-export default Favorites;
+export default Recipe;

@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -277,6 +278,9 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    //for gif support tf react native ':(
+    implementation 'com.facebook.fresco:animated-gif:2.5.0'
 }
 
 if (isNewArchitectureEnabled()) {

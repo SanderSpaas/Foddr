@@ -10,27 +10,24 @@ import {
   Dimensions,
   PermissionsAndroid,
 } from 'react-native';
-// import {createStackNavigator} from '@react-navigation/stack';
-// import {createDrawerNavigator, HeaderTitle} from '@react-navigation/drawer';
 import {NavigationContainer} from '@react-navigation/native';
 // var ImagePicker = require('react-native-image-picker');
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-// import {
-//   Colors,
-//   DebugInstructions,
-//   Header,
-//   LearnMoreLinks,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
-// import Articles from './pages/Articles';
-// import Users from './pages/Users';
-// import AddUser from './pages/AddUser';
-// import AddArticle from './pages/AddArticle';
 import Home from './pages/Home/Home';
 import Browse from './pages/Browse/Browse';
-import Icon from 'react-native-easy-icon';
+import Favorites from './pages/Favorites/Favorites';
+import Recipe from './pages/Recipe';
+import LoginChooser from './pages/login/LoginChooser';
+import Login from './pages/login/Login';
+import Signup from './pages/login/Signup';
 import colors from './theme/colors';
+import {firebase} from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
+const auth = firebase.auth();
+const db = firebase.firestore();
+// const perf = firebase.performance();
 //function to request permission for android
 //TODO add IOS suppport for permission requests
 const permission = () => {
@@ -41,13 +38,108 @@ const permission = () => {
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
   );
 };
+GoogleSignin.configure({
+  webClientId:
+    '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
+  ClientId:
+    '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
+  offlineAccess: true,
+});
+
 const Tab = createBottomTabNavigator();
-// const Drawer = createDrawerNavigator();
+
 const App: () => Node = () => {
   useEffect(() => {
     permission();
+    const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
   }, []);
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
 
+  // Handle user state changes
+  function onAuthStateChanged(user) {
+    // console.log('user is currently logged in: ' + user);
+
+    setUser(user);
+    if (initializing) {
+      setInitializing(false);
+    }
+  }
+  if (initializing) return null; //make it return the splashscreen with our cute logo
+
+  if (!user) {
+    console.log('state = definitely not signed in');
+    //the user is not logged in
+    return (
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName="LoginChooser"
+          screenOptions={{
+            headerShown: false,
+            tabBarStyle: {display: 'none'},
+          }}>
+          {/* //hidden tabs so we can navigate to them */}
+          <Tab.Screen
+            name="LoginChooser"
+            component={LoginChooser}
+            options={{
+              tabBarItemStyle: {display: 'none'},
+              tabBarLabel: 'LoginChooser',
+              tabBarIcon: ({color, size}) => (
+                <FontIcon name="edit" color={colors.gray} size={30} solid />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{
+              tabBarItemStyle: {display: 'none'},
+              tabBarLabel: 'Login',
+              tabBarIcon: ({color, size}) => (
+                <FontIcon name="edit" color={colors.gray} size={30} solid />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Signup"
+            component={Signup}
+            options={{
+              tabBarItemStyle: {display: 'none'},
+              tabBarLabel: 'Signup',
+              tabBarIcon: ({color, size}) => (
+                <FontIcon name="edit" color={colors.gray} size={30} solid />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
+  console.log('state = definitely signed in');
+  //Once the user creation has happened successfully, we can add the currentUser into firestore
+  //with the appropriate details.
+  //TODO change currentuser to use user??
+  const ref = db.collection('users').doc(uid);
+  const currentUser = firebase.auth().currentUser;
+  console.log('You are: ' + JSON.stringify(currentUser));
+  const uid = currentUser.uid;
+  const userData = {
+    lastLoginTime: new Date(),
+    favorites: ['Lasagna bolognaise'],
+  };
+  firebase
+    .firestore()
+    .doc('users/' + uid)
+    .set(userData, {merge: true});
+  // console.log(
+  //   'All current user data ' +
+  //     db.collection('users').doc(auth.currentUser.uid).get(),
+  // );
+
+  // const usersCollection = db.collection('Users');
+  // console.log(usersCollection);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -55,15 +147,6 @@ const App: () => Node = () => {
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: colors.maincolor,
-          // headerBackground: () => (
-          //   <Image
-          //     style={{
-          //       width: Dimensions.get('window').width,
-          //       height: 150,
-          //     }}
-          //     source={require('./assets/images/wave.png')}
-          //   />
-          // ),
         }}>
         <Tab.Screen
           name="Discover"
@@ -93,7 +176,7 @@ const App: () => Node = () => {
         />
         <Tab.Screen
           name="Favourites"
-          component={Home}
+          component={Favorites}
           options={{
             tabBarLabel: 'Favourites',
             tabBarIcon: ({color, size}) => (
@@ -111,104 +194,43 @@ const App: () => Node = () => {
             ),
           }}
         />
+        {/* //hidden tabs so we can navigate to them */}
+        <Tab.Screen
+          name="Recipe"
+          component={Recipe}
+          options={({navigation, route}) => ({
+            tabBarLabel: 'Recipe',
+            // tabBarItemStyle: {display: 'none'},
+            tabBarIcon: ({color, size}) => (
+              <FontIcon name="edit" color={colors.gray} size={30} solid />
+            ),
+          })}
+        />
+        <Tab.Screen
+          name="LoginChooser"
+          component={LoginChooser}
+          options={{
+            tabBarLabel: 'LoginChooser',
+            // tabBarItemStyle: {display: 'none'},
+            tabBarIcon: ({color, size}) => (
+              <FontIcon name="edit" color={colors.gray} size={30} solid />
+            ),
+          }}
+        />
+        {/* <Tab.Screen
+          name="Login"
+          component={Login}
+          options={{
+            tabBarLabel: 'Login',
+            drawerItemStyle: {display: 'none'},
+            tabBarIcon: ({color, size}) => (
+              <FontIcon name="edit" color={colors.gray} size={30} solid />
+            ),
+          }}
+        /> */}
       </Tab.Navigator>
     </NavigationContainer>
   );
-
-  // return (
-  //   // <SafeAreaView>
-  //   <NavigationContainer>
-  //     <Drawer.Navigator
-  //       initialRouteName="Articles"
-  //       screenOptions={({navigation}) => ({
-  //         // drawerActiveBackgroundColor: '#337bf6',
-  //         drawerInactiveBackgroundColor: '#ebebeb',
-  //         drawerInactiveTintColor: '#000',
-  //         drawerItemStyle: {width: 180},
-  //         // headerTitle: 'Customers',
-  //         drawerStyle: {
-  //           // backgroundColor: '#c6cbef',
-  //           width: 220,
-  //           justifyContent: 'center',
-  //           alignItems: 'center',
-  //         },
-  //         headerLeft: props => (
-  //           <TouchableOpacity
-  //             style={styles.iconContainer}
-  //             onPress={navigation.toggleDrawer}>
-  //             <Image
-  //               style={styles.icon}
-  //               source={require('./assets/img/icon.png')}
-  //             />
-  //           </TouchableOpacity>
-  //         ),
-  //       })}>
-  //       <Drawer.Screen
-  //         name="Users"
-  //         component={Users}
-  //         options={({navigation, route}) => ({
-  //           headerRight: () => (
-  //             <TouchableOpacity
-  //               style={styles.button}
-  //               onPress={() => {
-  //                 navigation.navigate('Add user');
-  //               }}>
-  //               <Text style={styles.buttonText}>Add user</Text>
-  //             </TouchableOpacity>
-  //           ),
-  //         })}
-  //       />
-  //       <Drawer.Screen
-  //         name="Articles"
-  //         component={Articles}
-  //         options={({navigation, route}) => ({
-  //           headerRight: () => (
-  //             <TouchableOpacity
-  //               style={styles.button}
-  //               onPress={() => {
-  //                 navigation.navigate('Add article');
-  //               }}>
-  //               <Text style={styles.buttonText}>Add article</Text>
-  //             </TouchableOpacity>
-  //           ),
-  //         })}
-  //       />
-  //       <Drawer.Screen
-  //         name="Add user"
-  //         component={AddUser}
-  //         options={({navigation, route}) => ({
-  //           drawerItemStyle: {display: 'none'},
-  //           headerRight: () => (
-  //             <TouchableOpacity
-  //               style={styles.button}
-  //               onPress={() => {
-  //                 navigation.navigate('Users');
-  //               }}>
-  //               <Text style={styles.buttonText}>Go back</Text>
-  //             </TouchableOpacity>
-  //           ),
-  //         })}
-  //       />
-  //       <Drawer.Screen
-  //         name="Add article"
-  //         component={AddArticle}
-  //         options={({navigation, route}) => ({
-  //           drawerItemStyle: {display: 'none'},
-  //           headerRight: () => (
-  //             <TouchableOpacity
-  //               style={styles.button}
-  //               onPress={() => {
-  //                 navigation.navigate('Articles');
-  //               }}>
-  //               <Text style={styles.buttonText}>Go back</Text>
-  //             </TouchableOpacity>
-  //           ),
-  //         })}
-  //       />
-  //     </Drawer.Navigator>
-  //   </NavigationContainer>
-  //   // </SafeAreaView>
-  // );
 };
 
 const styles = StyleSheet.create({

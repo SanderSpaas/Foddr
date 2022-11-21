@@ -10,9 +10,14 @@ import {
   TouchableHighlight,
   Image,
 } from 'react-native';
-import {colors} from '../../theme/colors';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-// import {images} from '../../theme/images';
+import {firebase} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import colors from '../../theme/colors';
+import {useNavigation} from '@react-navigation/native';
+
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 const styles = {
   //css voor foodcard
@@ -43,7 +48,7 @@ const styles = {
   },
   rating: {
     flexDirection: 'row',
-    borderColor: '#64578A',
+    borderColor: colors.secondarycolor,
     borderRadius: 5,
     borderWidth: 2,
     backgroundColor: '#fff',
@@ -52,13 +57,17 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'center',
     width: 65,
-    color: '#64578A',
+    color: colors.secondarycolor,
     position: 'absolute',
     left: 0,
     bottom: 40,
   },
+  ratingText: {
+    color: colors.textcolor,
+  },
   titel: {
-    width: 100,
+    width: 180,
+    color: colors.textcolor,
   },
   image: {
     width: 250,
@@ -86,39 +95,90 @@ const styles = {
     zIndex: 3,
     color: '#fff',
   },
+  textcolor: {
+    color: colors.textcolor,
+  },
 };
+function addToLiked(id, image) {
+  // console.log('handeling liked with id: ' + id);
+  const {uid} = auth.currentUser;
 
-const Card = ({recipeName, imgUrl, onPress, rating, time, liked}) => {
+  const ref = db.collection('users').doc(uid);
+  //nieuw item in userLikes gaan aanmaken met als titel een random id
+  // firestore()
+  //   .collection('userLikes')
+  //   .add({
+  //     //TODO ALS DE DATA VAN HET RECEPT VERANDEREN DEZE OOK UPDATEN
+  //     recipeName: 'Ada Lovelace',
+  //     uid: uid,
+  //     image: image,
+
+  //   })
+  //   .then(() => {
+  //     console.log('User added!');
+  //   });
+  ref.update({
+    likes: firebase.firestore.FieldValue.arrayUnion(id),
+  });
+}
+
+const Card = ({name, imgUrl, onPress, rating, time, liked, recipeId, id}) => {
+  const navigation = useNavigation();
+  // console.log(likes);
   return (
     //  {/* //food card */}
     <TouchableHighlight
       onPress={() => {
-        onPress;
+        {
+          navigation.navigate('Recipe', {
+            id: id,
+          });
+        }
       }}
       style={styles.foodcard}>
       <View>
-        <Image style={styles.image} source={imgUrl} />
-
-        <TouchableHighlight onPress={() => {}} style={styles.likeBackdrop}>
+        {/* <Text>{imgUrl}</Text> */}
+        <Image style={styles.image} source={{uri: imgUrl}} />
+        {/* {liked !== false ? (
+          <TouchableHighlight
+            onPress={() => {
+              addToLiked(recipeId);
+            }}
+            style={styles.likeBackdrop}>
+            <FontIcon
+              style={styles.like}
+              name="heart"
+              size={20}
+              solid
+              color={'#333333'}
+            />
+          </TouchableHighlight>
+        ) : ( */}
+        <TouchableHighlight
+          onPress={() => {
+            removeFromLiked(recipeId);
+          }}
+          style={styles.likeBackdrop}>
           <FontIcon
             style={styles.like}
             name="heart"
             size={20}
             solid
-            color={'#333333'}
+            color={'#e06c75'}
           />
         </TouchableHighlight>
+        {/* )} */}
 
         <View style={styles.rating}>
           <FontIcon name="star" size={15} solid color={'#64578A'} />
-          <Text>{rating}</Text>
+          <Text style={styles.ratingText}>{rating}</Text>
         </View>
         <View style={styles.bottemItems}>
           <Text numberOfLines={1} style={styles.titel}>
-            {recipeName}
+            {name}
           </Text>
           <View style={styles.row}>
-            <Text>{time}min </Text>
+            <Text style={styles.textcolor}>{time}min </Text>
             <FontIcon name="clock" size={20} solid color={'#333333'} />
           </View>
         </View>
@@ -138,11 +198,12 @@ const Card = ({recipeName, imgUrl, onPress, rating, time, liked}) => {
 
 Card.defaultProps = {
   recipeName: 'DEFAULT - Fried chicken',
-  imgUrl: '../../assets/images/grill.png',
+  // imgUrl: require('../../assets/images/grill.png'),
   onPress: () => {},
   rating: '4.0',
   time: 20,
   liked: false,
+  recipeId: 1,
 };
 
 export default Card;

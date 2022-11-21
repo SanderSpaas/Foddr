@@ -1,3 +1,3 @@
-import Browse from './Browse'
+import Browse from './Browse';
 
-export default Browse
+export default Browse;

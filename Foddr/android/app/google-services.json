@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "553114964900",
+    "project_id": "foddr-74f2d",
+    "storage_bucket": "foddr-74f2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:553114964900:android:b373fdfa666717c0dae731",
+        "android_client_info": {
+          "package_name": "com.foddr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "553114964900-lgve8k1sipjhkhi6ekqecqlkq9ijocv8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.foddr",
+            "certificate_hash": "cfd3a5bccfbf6369855ac751ad46c5a8e68c994c"
+          }
+        },
+        {
+          "client_id": "553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAno6QGgfyZy_foaShn4iYRpTw0_Y3SyvI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "553114964900-8kgt3b7daf4fga3qmesf90vkrktdu8qh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Foddr"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
