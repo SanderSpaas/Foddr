@@ -160,7 +160,7 @@ const App: () => Node = () => {
         />
         <Tab.Screen
           name="Browse"
-          component={Browse}
+          component={Favorites}
           options={{
             tabBarLabel: 'Browse',
             tabBarIcon: ({color, size}) => (

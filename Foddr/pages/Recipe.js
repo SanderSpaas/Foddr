@@ -23,7 +23,11 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 const Recipe = ({route, navigation}) => {
+  const [recipeData, setRecipeData] = useState();
+  const [loading, setLoading] = useState(false);
+
   async function getRecipe(id) {
+    setLoading(true);
     const data = (
       await firestore()
         .collection('recipes')
@@ -32,21 +36,11 @@ const Recipe = ({route, navigation}) => {
         .limit(1)
         .get()
     ).docs;
-    setRecipeData(data);
-    console.log(data);
-    return data;
+    // console.log(data[0]._data);
+    setRecipeData(data[0]._data);
+    console.log('dit is de recipeData ' + recipeData.name);
+    setLoading(false);
   }
-  //TODO fetch all the recipes for the selected country
-
-  //Fetching all the liked recipes from the user
-  // getting all currently liked recipes
-  // const {uid} = auth.currentUser;
-  // const likes = db
-  //   .collection('users')
-  //   .doc(uid)
-  //   .where('likes', 'in_array', 2)
-  //   .get();
-  // const user = await firestore().collection('Users').doc('ABC').get();/
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       // The screen is focused
@@ -57,8 +51,6 @@ const Recipe = ({route, navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  const [recipeData, setRecipeData] = useState();
-  const from = route?.params?.from;
   return (
     <ScrollView contentContainerStyle={styles.root}>
       <Image
@@ -71,24 +63,13 @@ const Recipe = ({route, navigation}) => {
         </View>
       </View>
 
-      {recipeData !== null ? (
-        <FlatList
-          horizontal={true}
-          data={recipeData}
-          style={{height: 250}}
-          renderItem={({item}) => (
-            <Card
-              name={item._data.name}
-              rating={(
-                item._data.rating.rating / item._data.rating.amountOfRatings
-              ).toFixed(1)}
-              time={item._data.time}
-              imgUrl={item._data.image}
-            />
-
-            // <Text>{item.instructions}</Text>
-          )}
-        />
+      {/* {loading === false ? (
+       
+      ) : (
+        <Text>Pick a country</Text>
+      )} */}
+      {recipeData !== null && loading === false ? (
+        <Text>{recipeData}</Text>
       ) : (
         <Text>Pick a country</Text>
       )}

@@ -1,4 +1,3 @@
-// import PropTypes from 'prop-types';
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -26,7 +25,7 @@ import {faker} from '@faker-js/faker';
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-
+const recipesArray = [];
 const Browse = ({route, navigation}) => {
   function addTestItem() {
     firestore()
@@ -73,34 +72,45 @@ const Browse = ({route, navigation}) => {
           amountOfRatings: 3,
           rating: 10,
         },
+        likes: [],
         time: faker.random.numeric(2),
       })
       .then(() => {
         console.log('recipe added!');
       });
   }
+
   //TODO fetch all the recipes for the selected country
 
   //Fetching all the liked recipes from the user
-  // getting all currently liked recipes
-  // const {uid} = auth.currentUser;
-  // const likes = db
-  //   .collection('users')
-  //   .doc(uid)
-  //   .where('likes', 'in_array', 2)
-  //   .get();
-  // const user = await firestore().collection('Users').doc('ABC').get();/
+  async function getRecipes() {
+    const recipes = await (
+      await firestore().collection('recipes').get()
+    ).forEach(queryDocumentSnapshot => {
+      recipesArray.push({
+        id: queryDocumentSnapshot.id,
+        recipe: queryDocumentSnapshot.data(),
+      });
+    });
+  }
   useEffect(() => {
-    async function getRecipes() {
-      const recipes = await (
-        await firestore().collection('recipes').get()
-      ).docs;
-      setRecipeData(recipes);
-      console.log(recipes);
-    }
-    getRecipes();
-    // const user = await firestore().collection('Users').doc('ABC').get();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      // The screen is focused
+      // Call any action and update
+      getRecipes();
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+  // useEffect(() => {
+
+  //     // setRecipeData(recipes);
+  //     // console.log(recipes);
+  //     console.log(recipesArray[0]);
+  //   }
+
+  //   // const user = await firestore().collection('Users').doc('ABC').get();
+  // }, []);
   const [recipeData, setRecipeData] = useState();
   const [region, setRegion] = useState({
     latitude: 16.186533128908827,
@@ -114,6 +124,7 @@ const Browse = ({route, navigation}) => {
     // latitudeDelta: 50,
     // longitudeDelta: 4,
   });
+
   const from = route?.params?.from;
   return (
     <ScrollView contentContainerStyle={styles.root}>
@@ -209,23 +220,25 @@ const Browse = ({route, navigation}) => {
           </View>
         </TouchableHighlight>
       </View>
-      {recipeData !== null ? (
+
+      {recipesArray !== null ? (
         <FlatList
           horizontal={true}
-          data={recipeData}
+          data={recipesArray}
+          keyExtractor={item => item.id}
           style={{height: 250}}
           renderItem={({item}) => (
+            // <Text>{item.recipe.name}</Text>
             <Card
-              name={item._data.name}
+              name={item.recipe.name}
+              imgUrl={item.recipe.image}
               rating={(
-                item._data.rating.rating / item._data.rating.amountOfRatings
+                item.recipe.rating.rating / item.recipe.rating.amountOfRatings
               ).toFixed(1)}
-              time={item._data.time}
-              imgUrl={item._data.image}
-              id={item._data.id}
+              time={item.recipe.time}
+              likes={item.recipe.likes}
+              recipeId={item.id}
             />
-
-            // <Text>{item.instructions}</Text>
           )}
         />
       ) : (

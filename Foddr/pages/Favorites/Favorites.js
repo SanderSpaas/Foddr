@@ -22,6 +22,8 @@ import functions from '@react-native-firebase/functions';
 import colors from '../../theme/colors.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
+const {uid} = auth.currentUser;
+const recipesArray = [];
 
 const Favorites = ({route, navigation}) => {
   //TODO fetch all the recipes for the selected country
@@ -36,19 +38,22 @@ const Favorites = ({route, navigation}) => {
   //   .get();
   // const user = await firestore().collection('Users').doc('ABC').get();/
   useEffect(() => {
-    async function Likes() {
-      try {
-        const {data} = await firebase.functions().httpsCallable('getLikes');
-        setRecipeData(data);
-        console.log(data);
-      } catch (error) {
-        console.log(
-          'There has been a problem with your fetch operation: ' +
-            error.message,
-        );
-      }
+    async function getLikes() {
+      const recipes = await (
+        await firestore().collection('recipes').get()
+      ).forEach(queryDocumentSnapshot => {
+        console.log(queryDocumentSnapshot.data().likes);
+        if (queryDocumentSnapshot.data().likes.includes(uid)) {
+          console.log(queryDocumentSnapshot.data().likes + ' : ' + uid);
+          recipesArray.push({
+            id: queryDocumentSnapshot.id,
+            recipe: queryDocumentSnapshot.data(),
+          });
+        }
+      });
     }
-    Likes();
+    getLikes();
+    console.log(recipesArray[0]);
   }, []);
 
   const [recipeData, setRecipeData] = useState();
@@ -64,8 +69,30 @@ const Favorites = ({route, navigation}) => {
           <Text style={styles.barText}>Your favorites ❤️</Text>
         </View>
       </View>
-
-      {recipeData !== null ? (
+      {recipesArray !== null ? (
+        <FlatList
+          horizontal={true}
+          data={recipesArray}
+          keyExtractor={item => item.id}
+          style={{height: 250}}
+          renderItem={({item}) => (
+            // <Text>{item.recipe.name}</Text>
+            <Card
+              name={item.recipe.name}
+              imgUrl={item.recipe.image}
+              rating={(
+                item.recipe.rating.rating / item.recipe.rating.amountOfRatings
+              ).toFixed(1)}
+              time={item.recipe.time}
+              likes={item.recipe.likes}
+              recipeId={item.id}
+            />
+          )}
+        />
+      ) : (
+        <Text>Pick a country</Text>
+      )}
+      {/* {recipeData !== null ? (
         <FlatList
           horizontal={true}
           data={recipeData}
@@ -85,7 +112,7 @@ const Favorites = ({route, navigation}) => {
         />
       ) : (
         <Text>Pick a country</Text>
-      )}
+      )} */}
     </ScrollView>
   );
 };
