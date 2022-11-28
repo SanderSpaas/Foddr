@@ -11,6 +11,10 @@ const colors = {
   quatrarycolor: '#f56e5f',
   textcolor: '#333333',
   backgroundcolor: '#FCF9F2',
+  firstColor: '#f9c23c',
+  secondColor: '#008bea',
+  thirthColor: '#ff6dc6',
+  fourthColor: '#ed4d1d',
 };
 
 export default colors;

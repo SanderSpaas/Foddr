@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import {StyleSheet, Text, View, StatusBar} from 'react-native';
 import Button from '../../components/Button/Button.js';
 // import {colors} from '../../theme/colors';
+// import {createAlarm, getAlarms} from 'react-native-simple-alarm';
+// import moment from 'moment';
 
 const styles = StyleSheet.create({
   root: {
@@ -18,7 +20,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-
+// async function alarm() {
+//   try {
+//     await createAlarm({
+//       active: true,
+//       date: new Date(new Date().getTime() + 1 * 60000),
+//       message: 'your timer has finished',
+//       // snooze: 1,
+//     });
+//   } catch (e) {}
+//   const alarms = await getAlarms();
+//   console.log(alarms);
+// }
 const Home = ({navigation}) => (
   <View style={styles.root}>
     <StatusBar barStyle="light-content" />
@@ -28,7 +41,7 @@ const Home = ({navigation}) => (
       color="white"
       backgroundColor={'#9388db'}
       onPress={() => {
-        navigation.navigate('Details', {from: 'Home'});
+        // alarm();
       }}
     />
   </View>

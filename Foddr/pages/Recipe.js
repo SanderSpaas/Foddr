@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types';
 import React, {useState, useEffect} from 'react';
-import {images} from 'theme';
+// import {images} from 'theme';
 import {
   StyleSheet,
   Text,
@@ -13,12 +13,17 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
+import {SvgUri} from 'react-native-svg';
 import Card from '../components/Card/Card.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
 import colors from '../theme/colors.js';
+import SVGImg from '../assets/images/gradient.svg';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Like from '../components/Like.js';
+// import NumericInput from 'react-native-numeric-input';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -28,17 +33,9 @@ const Recipe = ({route, navigation}) => {
 
   async function getRecipe(id) {
     setLoading(true);
-    const data = (
-      await firestore()
-        .collection('recipes')
-        // Filter results
-        .where('id', '==', id)
-        .limit(1)
-        .get()
-    ).docs;
-    // console.log(data[0]._data);
-    setRecipeData(data[0]._data);
-    console.log('dit is de recipeData ' + recipeData.name);
+    const recipe = await firestore().collection('recipes').doc(id).get();
+    console.log(recipe._data);
+    setRecipeData(recipe._data);
     setLoading(false);
   }
   useEffect(() => {
@@ -52,28 +49,84 @@ const Recipe = ({route, navigation}) => {
   }, [navigation]);
 
   return (
-    <ScrollView contentContainerStyle={styles.root}>
+    <SafeAreaView contentContainerStyle={styles.root}>
       <Image
         style={styles.blob}
         source={require('../assets/images/wave.png')}
       />
-      <View style={[styles.titleBar, styles.locationBar]}>
-        <View>
-          <Text style={styles.barText}>Recipe ❤️ {route.params.id}</Text>
-        </View>
-      </View>
+      {recipeData !== null && recipeData !== undefined ? (
+        <>
+          <Text>We have our data</Text>
+          <TouchableHighlight
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={styles.backButton}>
+            <>
+              <FontIcon
+                style={styles.arrow}
+                name="arrow-left"
+                size={20}
+                solid
+              />
+              <View style={styles.arrowBackdrop}></View>
+            </>
+          </TouchableHighlight>
+          <View style={styles.likeContainer}>
+            <Like likes={recipeData.likes} recipeId={route.params.id} />
+          </View>
 
-      {/* {loading === false ? (
-       
+          <View style={styles.imagecontainer}>
+            <Text style={styles.titleText}>{recipeData.name}</Text>
+            <Text style={styles.timeText}>{recipeData.time}min</Text>
+            <Image style={styles.image} source={{uri: recipeData.image}} />
+            <SVGImg
+              style={styles.overlay}
+              width={Dimensions.get('window').width}
+              height={200}
+            />
+          </View>
+          <View style={styles.titleBar}>
+            <View>
+              <Text style={styles.barText}>
+                {recipeData.forPeople}Recipe ❤️ {route.params.id}
+              </Text>
+              {/* <NumericInput
+                minValue={1}
+                type="up-down"
+                onChange={value => console.log(value)}
+              /> */}
+            </View>
+          </View>
+          <Text>blablable</Text>
+          <View style={styles.recipe}>
+            <FlatList
+              data={recipeData.ingredients}
+              // keyExtractor={item => item.name}
+              style={{height: 250}}
+              renderItem={({item}) => (
+                // <Text>{item.recipe.name}</Text>
+                <View style={styles.ingredient}>
+                  <FontIcon
+                    // style={styles.arrow}
+                    name="asterisk"
+                    size={15}
+                    color={colors.textcolor}
+                  />
+                  <Text style={styles.text}>
+                    {item.Name} {item.Amount}gr
+                  </Text>
+                </View>
+              )}
+            />
+            <Text style={styles.text}>{recipeData.instructions}</Text>
+          </View>
+        </>
       ) : (
-        <Text>Pick a country</Text>
-      )} */}
-      {recipeData !== null && loading === false ? (
-        <Text>{recipeData}</Text>
-      ) : (
+        // <Text>{recipeData.name}</Text>
         <Text>Pick a country</Text>
       )}
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -83,39 +136,88 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FCF9F2',
+    backgroundColor: colors.backgroundcolor,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
+  ingredient: {
+    fontSize: 20,
+    // zIndex: 20,
+    padding: 20,
+    backgroundColor: colors.backgroundcolor,
+    flexDirection: 'row',
   },
-  container: {
-    // flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+  text: {
+    color: colors.textcolor,
     justifyContent: 'center',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 20,
+    alignItems: 'center',
+    // textAlign: 'center',
+  },
+  recipe: {
+    flex: 1,
+    position: 'absolute',
+
+    marginTop: 300,
+    zIndex: 19,
+    color: colors.textcolor,
+    // backgroundColor: colors.pink,
+    height: 500,
+    width: 250,
+  },
+  imagecontainer: {
+    position: 'absolute',
+    height: 200,
+    zIndex: 2,
+  },
+  overlay: {
+    zIndex: 3,
+  },
+  image: {
+    width: Dimensions.get('window').width,
+    height: 200,
+    position: 'absolute',
+  },
+  titleText: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    zIndex: 4,
+    fontWeight: 'bold',
+    fontSize: 20,
+    padding: 20,
+  },
+  timeText: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    zIndex: 4,
+    fontWeight: 'bold',
+    fontSize: 20,
+    padding: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    zIndex: 4,
+    margin: 20,
+  },
+  arrowBackdrop: {
+    position: 'absolute',
+    padding: 20,
+    backgroundColor: '#000',
+    opacity: 0.4,
+    borderRadius: 50,
+  },
+  arrow: {
+    position: 'absolute',
+    left: 10,
+    top: 10,
+    zIndex: 4,
+    color: '#fff',
+  },
+  likeContainer: {
+    position: 'absolute',
+    right: 0,
+    margin: 10,
   },
 
-  Button: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-around',
-    // width: Dimensions.get('window').width * 0.5,
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: Dimensions.get('window').width * 0.85,
-    // overflow:'hidden',
-    marginBottom: 20,
-  },
-  Icon: {
-    marginRight: 10,
-  },
   titleBar: {
     width: Dimensions.get('window').width * 0.85,
     backgroundColor: '#fff',
@@ -133,8 +235,11 @@ const styles = StyleSheet.create({
     shadowRadius: 5.46,
     elevation: 9,
     borderRadius: 3,
-    position: 'absolute',
+    // position: 'absolute',
     height: 50,
+    // zIndex: 10,
+    position: 'absolute',
+    top: 200,
   },
   barText: {
     color: colors.textcolor,
@@ -144,6 +249,9 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: 110,
     marginBottom: -15,
+    // zIndex: 10,
+    position: 'absolute',
+    top: 200,
   },
 });
 export default Recipe;

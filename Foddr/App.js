@@ -21,6 +21,7 @@ import Recipe from './pages/Recipe';
 import LoginChooser from './pages/login/LoginChooser';
 import Login from './pages/login/Login';
 import Signup from './pages/login/Signup';
+import AddRecipe from './pages/AddRecipe';
 import colors from './theme/colors';
 import {firebase} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -123,11 +124,11 @@ const App: () => Node = () => {
   //TODO change currentuser to use user??
   const ref = db.collection('users').doc(uid);
   const currentUser = firebase.auth().currentUser;
-  console.log('You are: ' + JSON.stringify(currentUser));
+  // console.log('You are: ' + JSON.stringify(currentUser));
   const uid = currentUser.uid;
   const userData = {
     lastLoginTime: new Date(),
-    favorites: ['Lasagna bolognaise'],
+    // favorites: ['Lasagna bolognaise'],
   };
   firebase
     .firestore()
@@ -146,27 +147,34 @@ const App: () => Node = () => {
         initialRouteName="Feed"
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: colors.maincolor,
+          tabBarHideOnKeyboard: true,
         }}>
         <Tab.Screen
           name="Discover"
-          component={Browse}
+          component={Home}
           options={{
             tabBarLabel: 'Discover',
-            tabBarIcon: ({color, size}) => (
-              <FontIcon name="compass" color={colors.gray} size={30} solid />
+            tabBarActiveTintColor: colors.firstColor,
+            tabBarIcon: ({focused, color, size}) => (
+              <FontIcon
+                name="compass"
+                color={focused ? colors.firstColor : colors.gray}
+                size={30}
+                solid
+              />
             ),
           }}
         />
         <Tab.Screen
           name="Browse"
-          component={Favorites}
+          component={Browse}
           options={{
             tabBarLabel: 'Browse',
-            tabBarIcon: ({color, size}) => (
+            tabBarActiveTintColor: colors.secondColor,
+            tabBarIcon: ({focused, color, size}) => (
               <FontIcon
                 name="globe-europe"
-                color={colors.gray}
+                color={focused ? colors.secondColor : colors.gray}
                 size={30}
                 solid
               />
@@ -179,18 +187,30 @@ const App: () => Node = () => {
           component={Favorites}
           options={{
             tabBarLabel: 'Favourites',
-            tabBarIcon: ({color, size}) => (
-              <FontIcon name="heart" color={colors.gray} size={30} solid />
+            tabBarActiveTintColor: colors.thirthColor,
+            tabBarIcon: ({focused, color, size}) => (
+              <FontIcon
+                name="heart"
+                color={focused ? colors.thirthColor : colors.gray}
+                size={30}
+                solid
+              />
             ),
           }}
         />
         <Tab.Screen
           name="Add recipe"
-          component={Home}
+          component={AddRecipe}
           options={{
             tabBarLabel: 'Add recipe',
-            tabBarIcon: ({color, size}) => (
-              <FontIcon name="edit" color={colors.gray} size={30} solid />
+            tabBarActiveTintColor: colors.fourthColor,
+            tabBarIcon: ({focused, color, size}) => (
+              <FontIcon
+                name="edit"
+                color={focused ? colors.fourthColor : colors.gray}
+                size={30}
+                solid
+              />
             ),
           }}
         />
@@ -200,9 +220,15 @@ const App: () => Node = () => {
           component={Recipe}
           options={({navigation, route}) => ({
             tabBarLabel: 'Recipe',
-            // tabBarItemStyle: {display: 'none'},
-            tabBarIcon: ({color, size}) => (
-              <FontIcon name="edit" color={colors.gray} size={30} solid />
+            tabBarItemStyle: {display: 'none'},
+            tabBarIcon: ({focused, color, size}) => (
+              <FontIcon
+                name="edit"
+                color={focused ? colors.pink : colors.gray}
+                // color={colors.gray}
+                size={30}
+                solid
+              />
             ),
           })}
         />
@@ -211,7 +237,7 @@ const App: () => Node = () => {
           component={LoginChooser}
           options={{
             tabBarLabel: 'LoginChooser',
-            // tabBarItemStyle: {display: 'none'},
+            tabBarItemStyle: {display: 'none'},
             tabBarIcon: ({color, size}) => (
               <FontIcon name="edit" color={colors.gray} size={30} solid />
             ),

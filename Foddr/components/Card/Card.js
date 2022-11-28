@@ -14,65 +14,29 @@ import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../../theme/colors';
 import {useNavigation} from '@react-navigation/native';
+import Like from '../Like';
 
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
-let likesArray;
+// let likesArray;
 let counter = 0;
 // const db = firebase.firestore();
 
-const Card = ({name, imgUrl, onPress, rating, time, likes, recipeId, id}) => {
+const Card = ({
+  name,
+  imgUrl,
+  onPress,
+  rating,
+  time,
+  likes,
+  recipeId,
+  vertical,
+}) => {
   if (likes !== undefined) {
     likesArray = likes;
   }
-  const [liked, setLiked] = useState(handleCheck());
   const navigation = useNavigation();
 
-  function handleCheck() {
-    if (likesArray == undefined) {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // // console.log(likesArray.includes(uid));
-      // console.log('undefined');
-      // return handleCheck();
-      return false;
-    } else if (likesArray.lenght == 0) {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // console.log(likesArray.includes(uid));
-      return false;
-    } else {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // console.log(likesArray.includes(uid));
-      return likesArray.includes(uid);
-    }
-  }
-  function addToLiked(recipeID) {
-    //user id toevoegen aan recept dat geliked is
-    firebase
-      .firestore()
-      .collection('recipes')
-      .doc(recipeID)
-      .update({
-        likes: firebase.firestore.FieldValue.arrayUnion(uid),
-      });
-    console.log('Updated likes');
-    setLiked(handleCheck(likesArray.push(uid)));
-  }
-  function removeFromLiked(recipeID) {
-    //removing user id from liked array in recipe
-    firebase
-      .firestore()
-      .collection('recipes')
-      .doc(recipeID)
-      .update({likes: firebase.firestore.FieldValue.arrayRemove(uid)});
-    console.log('removed like');
-
-    setLiked(handleCheck(likesArray.pop()));
-  }
-
-  // console.log(likes);
   return (
     <TouchableHighlight
       onPress={() => {
@@ -82,45 +46,12 @@ const Card = ({name, imgUrl, onPress, rating, time, likes, recipeId, id}) => {
           });
         }
       }}
-      style={styles.foodcard}>
+      style={styles.foodcard}
+      style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
       <View>
         {/* <Text>{imgUrl}</Text> */}
         <Image style={styles.image} source={{uri: imgUrl}} />
-        {liked ? (
-          <TouchableHighlight
-            onPress={() => {
-              removeFromLiked(recipeId);
-            }}
-            style={styles.touch}>
-            <>
-              <FontIcon
-                style={[styles.like, styles.liked]}
-                name="heart"
-                size={20}
-                solid
-                // color={'#e06c75'}
-              />
-              <View style={styles.likeBackdrop}></View>
-            </>
-          </TouchableHighlight>
-        ) : (
-          <TouchableHighlight
-            onPress={() => {
-              addToLiked(recipeId);
-            }}
-            style={styles.touch}>
-            <>
-              <FontIcon
-                style={styles.like}
-                name="heart"
-                size={20}
-                solid
-                // color={'#333333'}
-              />
-              <View style={styles.likeBackdrop}></View>
-            </>
-          </TouchableHighlight>
-        )}
+        <Like likes={likes} recipeId={recipeId} />
         <View style={styles.rating}>
           <FontIcon name="star" size={15} solid color={'#64578A'} />
           <Text style={styles.ratingText}>{rating}</Text>
@@ -171,6 +102,10 @@ const styles = {
     justifyContent: 'space-between',
     padding: 5,
   },
+  vertical: {
+    marginTop: 20,
+    width: Dimensions.get('window').width * 0.85,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -199,7 +134,7 @@ const styles = {
     color: colors.textcolor,
   },
   image: {
-    width: 250,
+    // width: 250,
     height: 110,
     borderRadius: 10,
     backgroundColor: '#fff',

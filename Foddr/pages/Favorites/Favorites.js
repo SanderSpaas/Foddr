@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types';
 import React, {useState, useEffect} from 'react';
-import {images} from 'theme';
+// import {images} from 'theme';
 import {
   StyleSheet,
   Text,
@@ -12,6 +12,7 @@ import {
   Image,
   ScrollView,
   FlatList,
+  SafeAreaView,
 } from 'react-native';
 import Button from '../../components/Button/Button.js';
 import Card from '../../components/Card';
@@ -23,43 +24,49 @@ import colors from '../../theme/colors.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const {uid} = auth.currentUser;
-const recipesArray = [];
+let recipesArray = [];
 
 const Favorites = ({route, navigation}) => {
   //TODO fetch all the recipes for the selected country
+  async function getLikes() {
+    recipesArray.length = 0;
+    const recipes = await (
+      await firestore().collection('recipes').get()
+    ).forEach(queryDocumentSnapshot => {
+      if (queryDocumentSnapshot.data().likes.includes(uid)) {
+        // console.log(
+        //   queryDocumentSnapshot.data().likes +
+        //     ' : ' +
+        //     uid +
+        //     ' ' +
+        //     queryDocumentSnapshot.data().likes.includes(uid),
+        // );
+        recipesArray.push({
+          id: queryDocumentSnapshot.id,
+          recipe: queryDocumentSnapshot.data(),
+        });
+        //hier
+      }
+    });
+    // console.log(recipesArray);
+    setRecipeData(recipesArray);
 
-  //Fetching all the liked recipes from the user
-  // getting all currently liked recipes
-  // const {uid} = auth.currentUser;
-  // const likes = db
-  //   .collection('users')
-  //   .doc(uid)
-  //   .where('likes', 'in_array', 2)
-  //   .get();
-  // const user = await firestore().collection('Users').doc('ABC').get();/
+    // return recipesList;
+  }
   useEffect(() => {
-    async function getLikes() {
-      const recipes = await (
-        await firestore().collection('recipes').get()
-      ).forEach(queryDocumentSnapshot => {
-        console.log(queryDocumentSnapshot.data().likes);
-        if (queryDocumentSnapshot.data().likes.includes(uid)) {
-          console.log(queryDocumentSnapshot.data().likes + ' : ' + uid);
-          recipesArray.push({
-            id: queryDocumentSnapshot.id,
-            recipe: queryDocumentSnapshot.data(),
-          });
-        }
-      });
-    }
-    getLikes();
-    console.log(recipesArray[0]);
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      // The screen is focused
+      // Call any action recipesArray
+      getLikes();
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   const [recipeData, setRecipeData] = useState();
   const from = route?.params?.from;
   return (
-    <ScrollView contentContainerStyle={styles.root}>
+    <SafeAreaView contentContainerStyle={styles.root}>
       <Image
         style={styles.blob}
         source={require('../../assets/images/wave.png')}
@@ -69,12 +76,14 @@ const Favorites = ({route, navigation}) => {
           <Text style={styles.barText}>Your favorites ❤️</Text>
         </View>
       </View>
-      {recipesArray !== null ? (
+      {/* <Text>{recipeData}</Text> */}
+      {recipeData !== null ? (
         <FlatList
-          horizontal={true}
+          // horizontal={true}
           data={recipesArray}
           keyExtractor={item => item.id}
-          style={{height: 250}}
+          // style={{ justifyContent: 'center' }}
+          contentContainerStyle={styles.likedItems}
           renderItem={({item}) => (
             // <Text>{item.recipe.name}</Text>
             <Card
@@ -86,11 +95,12 @@ const Favorites = ({route, navigation}) => {
               time={item.recipe.time}
               likes={item.recipe.likes}
               recipeId={item.id}
+              vertical={true}
             />
           )}
         />
       ) : (
-        <Text>Pick a country</Text>
+        <Text>Go like some recipes 🥺🤧🤪</Text>
       )}
       {/* {recipeData !== null ? (
         <FlatList
@@ -113,7 +123,7 @@ const Favorites = ({route, navigation}) => {
       ) : (
         <Text>Pick a country</Text>
       )} */}
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -145,6 +155,11 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'space-around',
     // width: Dimensions.get('window').width * 0.5,
+  },
+  likedItems: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
   buttons: {
     flexDirection: 'row',

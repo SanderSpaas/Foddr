@@ -14,12 +14,12 @@ import colors from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {
-  defaultMessages,
-  defaultRules,
-  FieldsToValidate,
-  useValidation,
-} from 'react-simple-form-validator';
+// import {
+//   defaultMessages,
+//   defaultRules,
+//   FieldsToValidate,
+//   useValidation,
+// } from 'react-simple-form-validator';
 interface FunctionFormProps {
   validation: FieldsToValidate;
 }

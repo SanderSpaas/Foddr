@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.8,
   },
   image: {
-    width: Dimensions.get('window').width * 0.8,
+    width: Dimensions.get('window').width,
     height: 330,
   },
   button: {

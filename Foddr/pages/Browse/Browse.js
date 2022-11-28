@@ -84,6 +84,7 @@ const Browse = ({route, navigation}) => {
 
   //Fetching all the liked recipes from the user
   async function getRecipes() {
+    recipesArray.length = 0;
     const recipes = await (
       await firestore().collection('recipes').get()
     ).forEach(queryDocumentSnapshot => {
