@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   addView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: Dimensions.get('window').width * 0.9,
+    width: Dimensions.get('window').width * 0.8,
   },
   colordBorder: {
     borderRadius: 5,

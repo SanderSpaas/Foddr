@@ -12,7 +12,7 @@ import {
   FlatList,
 } from 'react-native';
 import Button from '../../components/Button/Button.js';
-import Card from '../../components/Card';
+import Card from '../../components/Card.js';
 // import {colors} from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
@@ -233,9 +233,10 @@ const Browse = ({route, navigation}) => {
             <Card
               name={item.recipe.name}
               imgUrl={item.recipe.image}
-              rating={(
-                item.recipe.rating.rating / item.recipe.rating.amountOfRatings
-              ).toFixed(1)}
+              rating={[
+                item.recipe.rating.rating,
+                item.recipe.rating.amountOfRatings,
+              ]}
               time={item.recipe.time}
               likes={item.recipe.likes}
               recipeId={item.id}

@@ -154,11 +154,11 @@ const App: () => Node = () => {
           component={Home}
           options={{
             tabBarLabel: 'Discover',
-            tabBarActiveTintColor: colors.firstColor,
+            tabBarActiveTintColor: colors.maincolor,
             tabBarIcon: ({focused, color, size}) => (
               <FontIcon
                 name="compass"
-                color={focused ? colors.firstColor : colors.gray}
+                color={focused ? colors.maincolor : colors.gray}
                 size={30}
                 solid
               />
@@ -170,11 +170,11 @@ const App: () => Node = () => {
           component={Browse}
           options={{
             tabBarLabel: 'Browse',
-            tabBarActiveTintColor: colors.secondColor,
+            tabBarActiveTintColor: colors.secondarycolor,
             tabBarIcon: ({focused, color, size}) => (
               <FontIcon
                 name="globe-europe"
-                color={focused ? colors.secondColor : colors.gray}
+                color={focused ? colors.secondarycolor : colors.gray}
                 size={30}
                 solid
               />
@@ -187,11 +187,11 @@ const App: () => Node = () => {
           component={Favorites}
           options={{
             tabBarLabel: 'Favourites',
-            tabBarActiveTintColor: colors.thirthColor,
+            tabBarActiveTintColor: colors.quatrarycolor,
             tabBarIcon: ({focused, color, size}) => (
               <FontIcon
                 name="heart"
-                color={focused ? colors.thirthColor : colors.gray}
+                color={focused ? colors.quatrarycolor : colors.gray}
                 size={30}
                 solid
               />
@@ -203,11 +203,11 @@ const App: () => Node = () => {
           component={AddRecipe}
           options={{
             tabBarLabel: 'Add recipe',
-            tabBarActiveTintColor: colors.fourthColor,
+            tabBarActiveTintColor: colors.triarycolor,
             tabBarIcon: ({focused, color, size}) => (
               <FontIcon
                 name="edit"
-                color={focused ? colors.fourthColor : colors.gray}
+                color={focused ? colors.triarycolor : colors.gray}
                 size={30}
                 solid
               />

@@ -19,7 +19,7 @@ import Card from '../../components/Card';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import functions from '@react-native-firebase/functions';
+// import functions from '@react-native-firebase/functions';
 import colors from '../../theme/colors.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -89,9 +89,10 @@ const Favorites = ({route, navigation}) => {
             <Card
               name={item.recipe.name}
               imgUrl={item.recipe.image}
-              rating={(
-                item.recipe.rating.rating / item.recipe.rating.amountOfRatings
-              ).toFixed(1)}
+              rating={[
+                item.recipe.rating.rating,
+                item.recipe.rating.amountOfRatings,
+              ]}
               time={item.recipe.time}
               likes={item.recipe.likes}
               recipeId={item.id}

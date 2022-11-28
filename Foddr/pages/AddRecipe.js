@@ -17,11 +17,11 @@ import {
 import {SvgUri} from 'react-native-svg';
 
 import {Keyboard} from 'react-native';
-import Card from '../components/Card/Card.js';
+import Card from '../components/Card.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import functions from '@react-native-firebase/functions';
+// import functions from '@react-native-firebase/functions';
 import colors from '../theme/colors.js';
 import SVGImg from '../assets/images/gradient.svg';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -29,6 +29,7 @@ import Like from '../components/Like.js';
 import ToggableButton from '../components/ToggableButton.js';
 import Instruction from '../components/Instruction.component.js';
 import AddInStruction from '../components/AddInstruction.component.js';
+import Camera from '../components/Camera.js';
 // import NumericInput from 'react-native-numeric-input';
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -37,12 +38,17 @@ const AddRecipe = ({route, navigation}) => {
   // const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
   const [instruction, setInstruction] = useState([]);
+  const [fileUri, setFileUri] = useState('');
+  // const [isLoading, setLoading] = useState(false);
   function talkToParent(data) {
     console.log(data); // LOGS DATA FROM CHILD
   }
   handleCallback = value => {
     setInstruction(current => [...current, value]);
     Keyboard.dismiss();
+  };
+  const handleUri = fileUri => {
+    setFileUri(fileUri);
   };
   deleteCallback = index => {
     console.log('removing item at index: ' + index);
@@ -51,6 +57,9 @@ const AddRecipe = ({route, navigation}) => {
     console.log(instructionArray);
     setInstruction(instructionArray);
     console.log(instruction);
+  };
+  postUser = async () => {
+    console.log('yey');
   };
   // async function getRecipe(id) {
   //   setLoading(true);
@@ -70,70 +79,88 @@ const AddRecipe = ({route, navigation}) => {
   // }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.layout}>
-      {/* <Image
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={styles.layout}>
+        <Image
         style={styles.blob}
         source={require('../assets/images/wave.png')}
-      /> */}
-      <Text style={styles.title}>What is the recipe called?</Text>
-      <View>
-        <TextInput
-          placeholderTextColor={colors.textcolor}
-          placeholder="Fill in the recipe name"
-          style={[styles.colordBorder, styles.textInput]}
-        />
-      </View>
-      <Text style={styles.title}>
-        In which seasons does this recipe belong?
-      </Text>
-      <View style={styles.seasonsBox}>
-        <ToggableButton
-          talkToParent={talkToParent}
-          text={'🍁 Fall 🍂'}
-          color={'#ed4d1d'}
-        />
-        <ToggableButton
-          talkToParent={talkToParent}
-          text={'⛄ Winter ❄️'}
-          color={'#008bea'}
-        />
-        <ToggableButton
-          talkToParent={talkToParent}
-          text={'🌼 Spring 🌷'}
-          color={'#ff6dc6'}
-        />
-        <ToggableButton
-          talkToParent={talkToParent}
-          text={' 🏵️️ Summer ⛅'}
-          color={'#f9c23c'}
-        />
-      </View>
-      <Text style={styles.title}>What are the ingredients?</Text>
-      <Text style={styles.title}>What are the instructions?</Text>
-      {/* <View>
+      />
+        <Text style={styles.title}>What is the recipe called?</Text>
+        <View>
+          <TextInput
+            placeholderTextColor={colors.textcolor}
+            placeholder="Fill in the recipe name"
+            style={[styles.colordBorder, styles.textInput]}
+          />
+        </View>
+        <Text style={styles.title}>How long does it take to cook?</Text>
+        <View>
+          <TextInput
+            placeholderTextColor={colors.textcolor}
+            placeholder="Minutes"
+            keyboardType='numeric'
+            maxLength={5}
+            style={[styles.colordBorder, styles.textInput]}
+          />
+        </View>
+        <Text style={styles.title}>Add a picture</Text>
+        <Camera handleUri={handleUri} uri={fileUri} />
+        <Text style={styles.title}>
+          In which seasons does this recipe belong?
+        </Text>
+        <View style={styles.seasonsBox}>
+          <ToggableButton
+            talkToParent={talkToParent}
+            text={'🍁 Fall 🍂'}
+            color={colors.quatrarycolor}
+          />
+          <ToggableButton
+            talkToParent={talkToParent}
+            text={'⛄ Winter ❄️'}
+            color={colors.maincolor}
+          />
+          <ToggableButton
+            talkToParent={talkToParent}
+            text={'🌼 Spring 🌷'}
+            color={colors.secondarycolor}
+          />
+          <ToggableButton
+            talkToParent={talkToParent}
+            text={' 🏵️️ Summer ⛅'}
+            color={colors.triarycolor}
+          />
+        </View>
+        <Text style={styles.title}>What are the ingredients?</Text>
+        <Text style={styles.title}>What are the instructions?</Text>
+        {/* <View>
         <TextInput
           multiline={true}
           style={[styles.colordBorder, styles.textInput, styles.textInputLong]}
         />
       </View> */}
-    
-      <FlatList
-        data={instruction}
-        // keyExtractor={item => item}
-        style={[styles.colordBorder, styles.instructions]}
-        renderItem={({item, index}) => (
-          // <Text>{item.recipe.name}</Text>
-          <Instruction
-            instruction={item}
-            index={index}
-            key={index}
-            deleteCallback={deleteCallback}
-          />
-        )}
-      />
-      <AddInStruction parentCallback={handleCallback} />
-      {/* <Text>We have our data</Text> */}
-      {/* <TouchableHighlight
+
+        <FlatList
+          data={instruction}
+          // scrollEnabled={false}
+          // keyExtractor={item => item}
+          style={[styles.colordBorder, styles.instructions]}
+          renderItem={({item, index}) => (
+            // <Text>{item.recipe.name}</Text>
+            <Instruction
+              instruction={item}
+              index={index}
+              key={index}
+              deleteCallback={deleteCallback}
+            />
+          )}
+        />
+        <AddInStruction parentCallback={handleCallback} />
+
+        <TouchableHighlight onPress={postUser} style={styles.btnSection}>
+          <Text style={styles.btnSend}>Add User</Text>
+        </TouchableHighlight>
+        {/* <Text>We have our data</Text> */}
+        {/* <TouchableHighlight
         onPress={() => {
           navigation.goBack();
         }}
@@ -143,11 +170,11 @@ const AddRecipe = ({route, navigation}) => {
           <View style={styles.arrowBackdrop}></View>
         </>
       </TouchableHighlight> */}
-      {/* <View style={styles.likeContainer}>
+        {/* <View style={styles.likeContainer}>
         <Like likes={recipeData.likes} recipeId={route.params.id} />
       </View> */}
 
-      {/* <View style={styles.imagecontainer}>
+        {/* <View style={styles.imagecontainer}>
         <Text style={styles.titleText}>naam recept</Text>
         <Text style={styles.timeText}>25 min</Text>
         <Image
@@ -165,11 +192,12 @@ const AddRecipe = ({route, navigation}) => {
           <Text style={styles.barText}>3people Recipe ❤️ titel recept</Text>
         </View>
       </View> */}
-      {/* <Text>blablable</Text>
+        {/* <Text>blablable</Text>
       <View style={styles.recipe}>
         <Text style={styles.text}>groene paprika 55gr</Text>
         <Text style={styles.text}>instructies</Text> */}
-      {/* </View> */}
+        {/* </View> */}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -200,7 +228,7 @@ const styles = StyleSheet.create({
     // borderLeftColor: colors.fourthColor,
   },
   textInput: {
-    width: Dimensions.get('window').width * 0.9,
+    width: Dimensions.get('window').width * 0.8,
     height: 50,
     paddingLeft: 15,
     color: colors.textcolor,
@@ -211,7 +239,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   instructions: {
-    width: Dimensions.get('window').width * 0.9,
+    width: Dimensions.get('window').width * 0.8,
     // height: Dimensions.get('window').height * 0.5,
   },
   // root: {
@@ -308,7 +336,7 @@ const styles = StyleSheet.create({
   },
 
   titleBar: {
-    width: Dimensions.get('window').width * 0.85,
+    width: Dimensions.get('window').width * 0.80,
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
@@ -337,10 +365,10 @@ const styles = StyleSheet.create({
   blob: {
     width: Dimensions.get('window').width,
     height: 110,
-    marginBottom: -15,
+    // marginBottom: -15,
     // zIndex: 10,
-    position: 'absolute',
-    top: 200,
+    // position: 'absolute',
+    // top: 200,
   },
 });
 export default AddRecipe;

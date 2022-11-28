@@ -6,15 +6,21 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import colors from '../../theme/colors';
-import {useNavigation} from '@react-navigation/native';
-import Like from '../Like';
+import colors from '../theme/colors';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  useNavigation,
+  CommonActions,
+  TabActions,
+} from '@react-navigation/native';
+import Like from './Like';
+import Rating from './Rating';
 
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
@@ -36,14 +42,40 @@ const Card = ({
     likesArray = likes;
   }
   const navigation = useNavigation();
-
+  // console.log('I am: ' + {name}.name + ' with id: ' + {recipeId}.recipeId);
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       onPress={() => {
         {
-          navigation.navigate('Recipe', {
-            id: recipeId,
-          });
+          console.log(recipeId);
+          // console.log(navigation)
+          // navigation.push('Recipe', {
+          //   params: {id: recipeId},
+          //   // merge: true,
+          // });
+          // navigation.dispatch({
+          //   ...CommonActions.setParams({id: recipeId}),
+          //   source: route.key,
+          // });
+
+          const jumpToAction = TabActions.jumpTo('Recipe', {id: recipeId});
+
+          navigation.dispatch(jumpToAction);
+          //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
+          // try {
+          //   AsyncStorage.setItem(id, recipeId);
+          // } catch (error) {
+          //   // Error saving data
+          //   console.log(error);
+          // }
+          // navigation.dispatch(
+          //   CommonActions.navigate({
+          //     name: 'Recipe',
+          //     params: {
+          //       id: recipeId,
+          //     },
+          //   }),
+          // );
         }
       }}
       style={styles.foodcard}
@@ -52,10 +84,7 @@ const Card = ({
         {/* <Text>{imgUrl}</Text> */}
         <Image style={styles.image} source={{uri: imgUrl}} />
         <Like likes={likes} recipeId={recipeId} />
-        <View style={styles.rating}>
-          <FontIcon name="star" size={15} solid color={'#64578A'} />
-          <Text style={styles.ratingText}>{rating}</Text>
-        </View>
+        <Rating rating={rating} />
         <View style={styles.bottemItems}>
           <Text numberOfLines={1} style={styles.titel}>
             {name}
@@ -66,7 +95,7 @@ const Card = ({
           </View>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 };
 
@@ -103,32 +132,14 @@ const styles = {
     padding: 5,
   },
   vertical: {
-    marginTop: 20,
+    margin: 15,
     width: Dimensions.get('window').width * 0.85,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  rating: {
-    flexDirection: 'row',
-    borderColor: colors.secondarycolor,
-    borderRadius: 5,
-    borderWidth: 2,
-    backgroundColor: '#fff',
-    padding: 3,
-    marginLeft: 5,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: 65,
-    color: colors.secondarycolor,
-    position: 'absolute',
-    // left: 0,
-    bottom: 40,
-  },
-  ratingText: {
-    color: colors.textcolor,
-  },
+
   titel: {
     width: 180,
     color: colors.textcolor,

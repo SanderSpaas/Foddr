@@ -14,15 +14,18 @@ import {
   FlatList,
 } from 'react-native';
 import {SvgUri} from 'react-native-svg';
-import Card from '../components/Card/Card.js';
+// import Card from '../components/Card/Card.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import functions from '@react-native-firebase/functions';
+// import functions from '@react-native-firebase/functions';
 import colors from '../theme/colors.js';
-import SVGImg from '../assets/images/gradient.svg';
+import {useFocusEffect} from '@react-navigation/native';
+
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Like from '../components/Like.js';
+import Rating from '../components/Rating.js';
+import ImageHeader from '../components/ImageHeader.js';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 // import NumericInput from 'react-native-numeric-input';
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -33,20 +36,39 @@ const Recipe = ({route, navigation}) => {
 
   async function getRecipe(id) {
     setLoading(true);
+    // try {
+    //   const value = await AsyncStorage.getItem('id');
+    //   if (value !== null) {
+    //     // We have data!!
+    //     id = value;
+    //     console.log(value);
+    //   }
+    // } catch (error) {
+    //   // Error retrieving data
+    //   console.log(error);
+    // }
     const recipe = await firestore().collection('recipes').doc(id).get();
-    console.log(recipe._data);
+    // console.log(recipe._data);
     setRecipeData(recipe._data);
     setLoading(false);
   }
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // The screen is focused
-      // Call any action and update
-      getRecipe(route.params.id);
-    });
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      //this doenst work because of the stupid bug
+      let {id} = route.params;
+      // console.log(route);
+      // console.log(navigation.params);
+      // console.log(id);
+      getRecipe(id);
+
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        // route.params = null;
+      };
+    }, []),
+  );
 
   return (
     <SafeAreaView contentContainerStyle={styles.root}>
@@ -56,40 +78,25 @@ const Recipe = ({route, navigation}) => {
       />
       {recipeData !== null && recipeData !== undefined ? (
         <>
-          <Text>We have our data</Text>
-          <TouchableHighlight
-            onPress={() => {
-              navigation.goBack();
-            }}
-            style={styles.backButton}>
-            <>
-              <FontIcon
-                style={styles.arrow}
-                name="arrow-left"
-                size={20}
-                solid
-              />
-              <View style={styles.arrowBackdrop}></View>
-            </>
-          </TouchableHighlight>
-          <View style={styles.likeContainer}>
-            <Like likes={recipeData.likes} recipeId={route.params.id} />
-          </View>
-
-          <View style={styles.imagecontainer}>
-            <Text style={styles.titleText}>{recipeData.name}</Text>
-            <Text style={styles.timeText}>{recipeData.time}min</Text>
-            <Image style={styles.image} source={{uri: recipeData.image}} />
-            <SVGImg
-              style={styles.overlay}
-              width={Dimensions.get('window').width}
-              height={200}
-            />
-          </View>
+          <ImageHeader recipeData={recipeData} route={route} />
           <View style={styles.titleBar}>
             <View>
               <Text style={styles.barText}>
-                {recipeData.forPeople}Recipe ❤️ {route.params.id}
+                {recipeData.forPeople}
+                <FontIcon
+                  // style={styles.arrow}
+                  name="portrait"
+                  size={25}
+                  color={colors.secondarycolor}
+                />
+
+                {/* Recipe ❤️ {route.params.id} */}
+                <Rating
+                  rating={[
+                    recipeData.rating.rating,
+                    recipeData.rating.amountOfRatings,
+                  ]}
+                />
               </Text>
               {/* <NumericInput
                 minValue={1}
