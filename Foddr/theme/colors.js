@@ -10,6 +10,7 @@ const colors = {
   triarycolor: '#1D1334',
   quatrarycolor: '#f56e5f',
   textcolor: '#333333',
+  // textcolorLight:'',
   backgroundcolor: '#FCF9F2',
   firstColor: '#f9c23c',
   secondColor: '#008bea',

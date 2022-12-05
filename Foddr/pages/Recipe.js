@@ -25,7 +25,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Rating from '../components/Rating.js';
 import ImageHeader from '../components/ImageHeader.js';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import NumericInput from 'react-native-numeric-input';
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -35,19 +35,21 @@ const Recipe = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
 
   async function getRecipe(id) {
+    let interID = id;
     setLoading(true);
-    // try {
-    //   const value = await AsyncStorage.getItem('id');
-    //   if (value !== null) {
-    //     // We have data!!
-    //     id = value;
-    //     console.log(value);
-    //   }
-    // } catch (error) {
-    //   // Error retrieving data
-    //   console.log(error);
-    // }
-    const recipe = await firestore().collection('recipes').doc(id).get();
+    try {
+      const value = await AsyncStorage.getItem('id');
+      if (value !== null) {
+        // We have data!!
+        interID = value;
+        console.log(value);
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log('er gaat iets fout');
+      console.log(error);
+    }
+    const recipe = await firestore().collection('recipes').doc(interID).get();
     // console.log(recipe._data);
     setRecipeData(recipe._data);
     setLoading(false);

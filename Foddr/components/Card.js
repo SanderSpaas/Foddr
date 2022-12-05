@@ -13,7 +13,7 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../theme/colors';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   useNavigation,
   CommonActions,
@@ -57,17 +57,17 @@ const Card = ({
           //   ...CommonActions.setParams({id: recipeId}),
           //   source: route.key,
           // });
-
+          try {
+            AsyncStorage.setItem('id', recipeId);
+          } catch (error) {
+            // Error saving data
+            console.log(error);
+          }
           const jumpToAction = TabActions.jumpTo('Recipe', {id: recipeId});
 
           navigation.dispatch(jumpToAction);
           //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
-          // try {
-          //   AsyncStorage.setItem(id, recipeId);
-          // } catch (error) {
-          //   // Error saving data
-          //   console.log(error);
-          // }
+
           // navigation.dispatch(
           //   CommonActions.navigate({
           //     name: 'Recipe',

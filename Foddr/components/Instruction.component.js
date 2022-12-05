@@ -1,19 +1,41 @@
-import {StyleSheet, Text, TouchableOpacity, SafeAreaView} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  TextInput,
+  Dimensions,
+} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
-// import Icon from 'react-native-vector-icons/FontAwesome';
 const Instruction = props => {
+  const [text, setText] = useState('');
+  useEffect(() => {
+    setText(props.instruction);
+  }, []);
+  const updateText = value => {
+    props.editCallback(props.index, value);
+    setText(value);
+  };
   return (
     <SafeAreaView style={styles.card}>
       <Text style={styles.number}>{props.index + 1}</Text>
-      <SafeAreaView style={styles.todoItem}>
-        <Text style={styles.text}>{props.instruction}</Text>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => props.deleteCallback(props.index)}>
-          <FontIcon name="trash" size={25} solid color={colors.textcolor} />
-        </TouchableOpacity>
-      </SafeAreaView>
+
+      <TextInput
+        style={[styles.text]}
+        placeholder="Fill in the instruction."
+        placeholderTextColor={colors.textcolor}
+        keyboardType="default"
+        value={text}
+        multiline={true}
+        onChangeText={value => updateText(value)}
+      />
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => props.deleteCallback(props.index)}>
+        <FontIcon name="trash" size={25} solid color={colors.textcolor} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -22,21 +44,20 @@ const styles = StyleSheet.create({
     marginTop: 6,
     marginBottom: 6,
     flexDirection: 'row',
-    // borderRadius: 5,
-    // borderBottomWidth: 5,
-    // borderBottomColor: colors.thirthColor,
-  },
-  colordBorder: {
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: colors.maincolor,
-    // borderTopColor: colors.firstColor,
-    // borderRightColor: colors.secondColor,
-    // borderBottomColor: colors.thirthColor,
-    // borderLeftColor: colors.fourthColor,
+    color: colors.textcolor,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    borderRadius: 10,
   },
   text: {
     color: colors.textcolor,
+    width: Dimensions.get('window').width * 0.5,
   },
   number: {
     color: colors.textcolor,
@@ -45,18 +66,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     textAlign: 'center',
     textAlignVertical: 'center',
-  },
-  todoItem: {
-    marginLeft: 15,
-    flex: 3,
-    color: colors.textcolor,
-    // backgroundColor: colors.pink,
-    height: 50,
-    borderRadius: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    paddingLeft: 10,
   },
   deleteButton: {
     borderRadius: 10,

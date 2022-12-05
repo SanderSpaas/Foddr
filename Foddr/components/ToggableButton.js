@@ -26,7 +26,7 @@ const ToggableButton = ({text, color, talkToParent}) => {
   function handleClick() {
     setIsEnabled(!isEnabled);
     // console.log('am i on?: ' + isEnabled);
-    talkToParent(isEnabled);
+    talkToParent([text, isEnabled]);
   }
   return (
     <TouchableOpacity
