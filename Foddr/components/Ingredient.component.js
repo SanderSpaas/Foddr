@@ -20,7 +20,7 @@ const Ingredient = props => {
   }, []);
   const updateName = value => {
     setName(value);
-    props.editCallback(props.index, {
+    props.editCallbackIng(props.index, {
       name: name,
       amount: amount,
       unitOfMeasure: unitOfMeasure,
@@ -28,7 +28,7 @@ const Ingredient = props => {
   };
   const updateAmount = value => {
     setAmount(value);
-    props.editCallback(props.index, {
+    props.editCallbackIng(props.index, {
       name: name,
       amount: amount,
       unitOfMeasure: unitOfMeasure,
@@ -36,7 +36,7 @@ const Ingredient = props => {
   };
   const updateUnitOfMeasure = value => {
     setUnitOfMeasure(value);
-    props.editCallback(props.index, {
+    props.editCallbackIng(props.index, {
       name: name,
       amount: amount,
       unitOfMeasure: unitOfMeasure,
@@ -72,7 +72,7 @@ const Ingredient = props => {
       />
       <TouchableOpacity
         style={[styles.deleteButton, styles.text]}
-        onPress={() => props.deleteCallback(props.index)}>
+        onPress={() => props.deleteCallbackIng(props.index)}>
         <FontIcon name="trash" size={25} solid color={colors.textcolor} />
       </TouchableOpacity>
     </SafeAreaView>
@@ -115,14 +115,6 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: colors.pink,
   },
-  // number: {
-  //   color: colors.textcolor,
-  //   width: 50,
-  //   height: 50,
-  //   borderRadius: 20,
-  //   textAlign: 'center',
-  //   textAlignVertical: 'center',
-  // },
   deleteButton: {
     borderRadius: 10,
     padding: 10,

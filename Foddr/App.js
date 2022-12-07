@@ -26,11 +26,14 @@ import colors from './theme/colors';
 import {firebase} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import firestore from '@react-native-firebase/firestore';
+import Geocoder from 'react-native-geocoding';
 const auth = firebase.auth();
 const db = firebase.firestore();
 // const perf = firebase.performance();
 //function to request permission for android
 //TODO add IOS suppport for permission requests
+Geocoder.init("AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo"); // use a valid API key
+
 const permission = () => {
   PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.CAMERA,

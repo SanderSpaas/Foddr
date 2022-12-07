@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,32 +15,23 @@ import firestore from '@react-native-firebase/firestore';
 import colors from '../theme/colors';
 import {useNavigation} from '@react-navigation/native';
 
-const auth = firebase.auth();
-const {uid} = auth.currentUser;
-// let likesArray;
-let counter = 0;
-// const db = firebase.firestore();
-
-const ToggableButton = ({text, color, talkToParent}) => {
-  const [isEnabled, setIsEnabled] = useState(true);
+const ToggableButton = ({text, color, talkToParent, enabled}) => {
   function handleClick() {
-    setIsEnabled(!isEnabled);
-    // console.log('am i on?: ' + isEnabled);
-    talkToParent([text, isEnabled]);
+    talkToParent([text, !enabled]);
   }
   return (
     <TouchableOpacity
       style={
-        isEnabled
-          ? [styles.card, {borderColor: color}]
-          : [styles.card, {backgroundColor: color, borderColor: color}]
+        enabled
+          ?[styles.card, {backgroundColor: color, borderColor: color}]
+          :  [styles.card, {borderColor: color}]
       }
       onPress={() => {
         handleClick();
       }}>
       <>
         <Text
-          style={isEnabled ? styles.text : [styles.text, styles.textSelected]}>
+          style={enabled ? [styles.text, styles.textSelected]: styles.text }>
           {text}
         </Text>
       </>

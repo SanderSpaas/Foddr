@@ -15,14 +15,23 @@ import Button from '../../components/Button/Button.js';
 import Card from '../../components/Card.js';
 // import {colors} from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
-import Marker from 'react-native-maps';
+// import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
+import MapView from 'react-native-map-clustering';
+// import MapMarker from 'react-native-maps';
 // var MapView = require('react-native-maps');
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../../theme/colors.js';
 import {faker} from '@faker-js/faker';
-
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Geocoder from 'react-native-geocoding';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  useNavigation,
+  CommonActions,
+  TabActions,
+} from '@react-navigation/native';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const recipesArray = [];
@@ -31,8 +40,10 @@ const Browse = ({route, navigation}) => {
     firestore()
       .collection('recipes')
       .add({
-        id: faker.random.alphaNumeric(15),
+        // id: faker.random.alphaNumeric(15),
         image: 'https://loremflickr.com/640/480/food',
+        longitude: faker.random.numeric(2),
+        latitude: faker.random.numeric(2),
         // tags: []
         ingredients: [
           {
@@ -84,6 +95,7 @@ const Browse = ({route, navigation}) => {
 
   //Fetching all the liked recipes from the user
   async function getRecipes() {
+    setLoading(true);
     recipesArray.length = 0;
     const recipes = await (
       await firestore().collection('recipes').get()
@@ -93,6 +105,9 @@ const Browse = ({route, navigation}) => {
         recipe: queryDocumentSnapshot.data(),
       });
     });
+    // setRecipeData(recipesArray);
+    setLoading(false);
+    // console.log(recipeData);
   }
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -103,16 +118,9 @@ const Browse = ({route, navigation}) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
-  // useEffect(() => {
 
-  //     // setRecipeData(recipes);
-  //     // console.log(recipes);
-  //     console.log(recipesArray[0]);
-  //   }
-
-  //   // const user = await firestore().collection('Users').doc('ABC').get();
-  // }, []);
-  const [recipeData, setRecipeData] = useState();
+  // const [recipeData, setRecipeData] = useState();
+  const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState({
     latitude: 16.186533128908827,
     longitude: 1.52344711124897,
@@ -125,27 +133,41 @@ const Browse = ({route, navigation}) => {
     // latitudeDelta: 50,
     // longitudeDelta: 4,
   });
+  const [location, setLocation] = useState('No location selected');
+  function handleSelect(coordinate) {
+    console.log(coordinate);
+    setMarker(coordinate);
+    Geocoder.from(coordinate.latitude, coordinate.longitude)
+      .then(json => {
+        // console.log(json);
+        setLocation(json.results[7].formatted_address);
 
+        var addressComponent = json.results[0].address_components[0];
+        console.log(addressComponent);
+      })
+      .catch(error => console.warn(error));
+  }
   const from = route?.params?.from;
   return (
-    <ScrollView contentContainerStyle={styles.root}>
-      <Image
+    <SafeAreaView style={styles.root}>
+      {/* <Image
         style={styles.blob}
         source={require('../../assets/images/wave.png')}
-      />
-      <View style={[styles.searchBar, styles.locationBar]}>
+      /> */}
+      {/* <View style={[styles.searchBar, styles.locationBar]}>
         <FontIcon
           style={styles.searchBarIcon}
           name="location-arrow"
           size={20}
           color={colors.textcolor}
         />
+        
         <View>
-          <Text style={styles.locationBarText}>Brugse Poort, Ghent</Text>
-          <Text style={styles.locationBarCountry}>Belgium</Text>
+          <Text style={styles.locationBarText}>{location}</Text>
+         
         </View>
-      </View>
-      <View style={styles.searchBar}>
+      </View> */}
+      {/* <View style={styles.searchBar}>
         <FontIcon
           style={styles.searchBarIcon}
           name="search"
@@ -157,35 +179,66 @@ const Browse = ({route, navigation}) => {
           style={styles.searchBarInput}
           placeholder="Enter recipe name"
         />
-      </View>
+      </View> */}
 
       {/* <Text style={styles.title}>{`Browse (from ${from})`}</Text> */}
       <View style={styles.container}>
         <MapView
+          clusterColor={'#4EAC9F'}
           style={styles.map}
-          provider={PROVIDER_GOOGLE}
           region={region}
+          clustering={true}
           onPress={
-            e => setMarker(e.nativeEvent.coordinate)
+            e => handleSelect(e.nativeEvent.coordinate)
             // console.log(e.nativeEvent.coordinate)
           }
-          onRegionChangeComplete={region => setRegion(region)}
-        />
+          onRegionChangeComplete={region => setRegion(region)}>
+          {loading ? (
+            <></>
+          ) : (
+            recipesArray.map((marker, index) => (
+              <Marker
+                style={styles.marker}
+                pointerEvents="auto"
+                key={index}
+                onPress={e => console.log(e.nativeEvent)}
+                coordinate={{
+                  latitude: parseFloat(marker.recipe.latitude),
+                  longitude: parseFloat(marker.recipe.longitude),
+                }}>
+                <Image
+                  style={styles.markerImage}
+                  source={require('../../assets/images/recipe.png')}
+                />
+                <Text style={styles.subtitle}>{marker.recipe.name}</Text>
+                <Callout
+                  tooltip
+                  style={styles.customView}
+                  onPress={() => {
+                    console.log(marker.id);
+                    try {
+                      AsyncStorage.setItem('id', marker.id);
+                    } catch (error) {
+                      // Error saving data
+                      console.log(error);
+                    }
+                    const jumpToAction = TabActions.jumpTo('Recipe', {
+                      id: marker.id,
+                    });
 
-        {
-          // if state contains marker variable with a valid value, render the marker
-          marker !== '' && (
-            <Marker
-              style={styles.marker}
-              // draggable
-              pinColor="#4EAC9F"
-              coordinate={marker}
-              onDragEnd={e => setMarker(e.nativeEvent.coordinate)}
-            />
-          )
-        }
+                    navigation.dispatch(jumpToAction);
+                  }}>
+                  <View style={styles.calloutText}>
+                    <Text style={[styles.subtitle, styles.locationButton]}>
+                      View recipe
+                    </Text>
+                  </View>
+                </Callout>
+              </Marker>
+            ))
+          )}
+        </MapView>
       </View>
-      <Text>{JSON.stringify(marker)}</Text>
       <View style={styles.buttons}>
         <TouchableHighlight onPress={() => {}}>
           <View style={[styles.Button, styles.locationButton]}>
@@ -222,7 +275,9 @@ const Browse = ({route, navigation}) => {
         </TouchableHighlight>
       </View>
 
-      {recipesArray !== null ? (
+      {/* {loading ? (
+        <Text style={styles.title}>Pick a country</Text>
+      ) : (
         <FlatList
           horizontal={true}
           data={recipesArray}
@@ -243,10 +298,8 @@ const Browse = ({route, navigation}) => {
             />
           )}
         />
-      ) : (
-        <Text>Pick a country</Text>
-      )}
-    </ScrollView>
+      )} */}
+    </SafeAreaView>
   );
 };
 
@@ -267,31 +320,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 10,
+    // borderRadius: 10,
     overflow: 'hidden',
-    marginBottom: 20,
+    // margin: 20,
+    // marginTop: 50,
   },
-  Button: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-around',
-    // width: Dimensions.get('window').width * 0.5,
-  },
-  locationButton: {
-    backgroundColor: '#4EAC9F',
-  },
-  randomButton: {
-    backgroundColor: '#64578A',
-  },
-  shareButton: {
-    backgroundColor: '#1D1334',
-  },
-  textcolor: {color: '#fff'},
-
   map: {
-    width: Dimensions.get('window').width * 0.85,
-    height: Dimensions.get('window').height * 0.35,
+    width: Dimensions.get('window').width * 1,
+    height: Dimensions.get('window').height * 1,
+
     // width: 50,
     // height: 50
   },
@@ -303,12 +340,50 @@ const styles = StyleSheet.create({
     // top: 100,
     // zIndex: 4,
   },
+  Button: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    padding: 10,
+    justifyContent: 'space-around',
+    // width: Dimensions.get('window').width * 0.5,
+  },
+  marker: {
+    alignItems: 'center',
+  },
+  markerImage: {
+    width: 50,
+    height: 50,
+    // top: 0,
+    // left: 0,
+    // backgroundColor: colors.pink,
+  },
+  subtitle: {
+    color: colors.textcolor,
+    backgroundColor: '#fff',
+    padding: 5,
+    borderRadius: 5,
+    textAlign: 'center',
+    // width: 100,
+  },
+  locationButton: {
+    backgroundColor: colors.maincolor,
+  },
+  randomButton: {
+    backgroundColor: colors.secondarycolor,
+  },
+  shareButton: {
+    backgroundColor: '#1D1334',
+  },
+  textcolor: {color: '#fff'},
+
   buttons: {
+    position: 'absolute',
+    bottom: 55,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: Dimensions.get('window').width * 0.85,
     // overflow:'hidden',
-    marginBottom: 20,
+    // marginBottom: 10,
   },
   Icon: {
     marginRight: 10,

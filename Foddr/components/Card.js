@@ -67,15 +67,6 @@ const Card = ({
 
           navigation.dispatch(jumpToAction);
           //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
-
-          // navigation.dispatch(
-          //   CommonActions.navigate({
-          //     name: 'Recipe',
-          //     params: {
-          //       id: recipeId,
-          //     },
-          //   }),
-          // );
         }
       }}
       style={styles.foodcard}

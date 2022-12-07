@@ -13,13 +13,13 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 
 const AddIngredient = props => {
-  const [text, setText] = useState('');
+  // const [text, setText] = useState('');
   return (
     <View>
       <TouchableOpacity
         style={[styles.colordBorder, styles.addView, styles.addButton]}
         onPress={() => {
-          props.parentCallback(text);
+          props.parentCallbackIng();
         }}>
         <Text style={[styles.addTitle]}>
           Click me to add another ingredient
@@ -45,10 +45,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     borderColor: colors.maincolor,
-    // borderTopColor: colors.firstColor,
-    // borderRightColor: colors.secondColor,
-    // borderBottomColor: colors.thirthColor,
-    // borderLeftColor: colors.fourthColor,
   },
   addTitle: {
     color: colors.textcolor,
