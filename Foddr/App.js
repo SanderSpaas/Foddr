@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
   Dimensions,
   PermissionsAndroid,
+  StatusBar,
 } from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 // var ImagePicker = require('react-native-image-picker');
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -27,12 +28,13 @@ import {firebase} from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import firestore from '@react-native-firebase/firestore';
 import Geocoder from 'react-native-geocoding';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 const auth = firebase.auth();
 const db = firebase.firestore();
 // const perf = firebase.performance();
 //function to request permission for android
 //TODO add IOS suppport for permission requests
-Geocoder.init("AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo"); // use a valid API key
+Geocoder.init('AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo'); // use a valid API key
 
 const permission = () => {
   PermissionsAndroid.request(
@@ -49,6 +51,10 @@ GoogleSignin.configure({
     '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
   offlineAccess: true,
 });
+
+//background color for our pages
+const navTheme = DefaultTheme;
+navTheme.colors.background = colors.backgroundcolor;
 
 const Tab = createBottomTabNavigator();
 
@@ -76,49 +82,56 @@ const App: () => Node = () => {
     console.log('state = definitely not signed in');
     //the user is not logged in
     return (
-      <NavigationContainer>
-        <Tab.Navigator
-          initialRouteName="LoginChooser"
-          screenOptions={{
-            headerShown: false,
-            tabBarStyle: {display: 'none'},
-          }}>
-          {/* //hidden tabs so we can navigate to them */}
-          <Tab.Screen
-            name="LoginChooser"
-            component={LoginChooser}
-            options={{
-              tabBarItemStyle: {display: 'none'},
-              tabBarLabel: 'LoginChooser',
-              tabBarIcon: ({color, size}) => (
-                <FontIcon name="edit" color={colors.gray} size={30} solid />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Login"
-            component={Login}
-            options={{
-              tabBarItemStyle: {display: 'none'},
-              tabBarLabel: 'Login',
-              tabBarIcon: ({color, size}) => (
-                <FontIcon name="edit" color={colors.gray} size={30} solid />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Signup"
-            component={Signup}
-            options={{
-              tabBarItemStyle: {display: 'none'},
-              tabBarLabel: 'Signup',
-              tabBarIcon: ({color, size}) => (
-                <FontIcon name="edit" color={colors.gray} size={30} solid />
-              ),
-            }}
-          />
-        </Tab.Navigator>
-      </NavigationContainer>
+      <SafeAreaProvider>
+        <StatusBar
+          backgroundColor="#61dafb00"
+          // hidden={true}
+          translucent={true}
+        />
+        <NavigationContainer theme={navTheme}>
+          <Tab.Navigator
+            initialRouteName="LoginChooser"
+            screenOptions={{
+              headerShown: false,
+              tabBarStyle: {display: 'none'},
+            }}>
+            {/* //hidden tabs so we can navigate to them */}
+            <Tab.Screen
+              name="LoginChooser"
+              component={LoginChooser}
+              options={{
+                tabBarItemStyle: {display: 'none'},
+                tabBarLabel: 'LoginChooser',
+                tabBarIcon: ({color, size}) => (
+                  <FontIcon name="edit" color={colors.gray} size={30} solid />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Login"
+              component={Login}
+              options={{
+                tabBarItemStyle: {display: 'none'},
+                tabBarLabel: 'Login',
+                tabBarIcon: ({color, size}) => (
+                  <FontIcon name="edit" color={colors.gray} size={30} solid />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Signup"
+              component={Signup}
+              options={{
+                tabBarItemStyle: {display: 'none'},
+                tabBarLabel: 'Signup',
+                tabBarIcon: ({color, size}) => (
+                  <FontIcon name="edit" color={colors.gray} size={30} solid />
+                ),
+              }}
+            />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
     );
   }
   console.log('state = definitely signed in');
@@ -145,108 +158,114 @@ const App: () => Node = () => {
   // const usersCollection = db.collection('Users');
   // console.log(usersCollection);
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Feed"
-        screenOptions={{
-          headerShown: false,
-          tabBarHideOnKeyboard: true,
-        }}>
-        <Tab.Screen
-          name="Discover"
-          component={Home}
-          options={{
-            tabBarLabel: 'Discover',
-            tabBarActiveTintColor: colors.maincolor,
-            tabBarIcon: ({focused, color, size}) => (
-              <FontIcon
-                name="compass"
-                color={focused ? colors.maincolor : colors.gray}
-                size={30}
-                solid
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Browse"
-          component={Browse}
-          options={{
-            tabBarLabel: 'Browse',
-            tabBarActiveTintColor: colors.secondarycolor,
-            tabBarIcon: ({focused, color, size}) => (
-              <FontIcon
-                name="globe-europe"
-                color={focused ? colors.secondarycolor : colors.gray}
-                size={30}
-                solid
-              />
-            ),
-            tabBarBadge: 3,
-          }}
-        />
-        <Tab.Screen
-          name="Favourites"
-          component={Favorites}
-          options={{
-            tabBarLabel: 'Favourites',
-            tabBarActiveTintColor: colors.quatrarycolor,
-            tabBarIcon: ({focused, color, size}) => (
-              <FontIcon
-                name="heart"
-                color={focused ? colors.quatrarycolor : colors.gray}
-                size={30}
-                solid
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Add recipe"
-          component={AddRecipe}
-          options={{
-            tabBarLabel: 'Add recipe',
-            tabBarActiveTintColor: colors.triarycolor,
-            tabBarIcon: ({focused, color, size}) => (
-              <FontIcon
-                name="edit"
-                color={focused ? colors.triarycolor : colors.gray}
-                size={30}
-                solid
-              />
-            ),
-          }}
-        />
-        {/* //hidden tabs so we can navigate to them */}
-        <Tab.Screen
-          name="Recipe"
-          component={Recipe}
-          options={({navigation, route}) => ({
-            tabBarLabel: 'Recipe',
-            tabBarItemStyle: {display: 'none'},
-            tabBarIcon: ({focused, color, size}) => (
-              <FontIcon
-                name="edit"
-                color={focused ? colors.pink : colors.gray}
-                // color={colors.gray}
-                size={30}
-                solid
-              />
-            ),
-          })}
-        />
-        <Tab.Screen
-          name="LoginChooser"
-          component={LoginChooser}
-          options={{
-            tabBarLabel: 'LoginChooser',
-            tabBarItemStyle: {display: 'none'},
-            tabBarIcon: ({color, size}) => (
-              <FontIcon name="edit" color={colors.gray} size={30} solid />
-            ),
-          }}
-        />
-        {/* <Tab.Screen
+    <SafeAreaProvider>
+      <StatusBar
+        backgroundColor="#61dafb00"
+        // hidden={true}
+        translucent={true}
+      />
+      <NavigationContainer theme={navTheme}>
+        <Tab.Navigator
+          initialRouteName="Feed"
+          screenOptions={{
+            headerShown: false,
+            tabBarHideOnKeyboard: true,
+          }}>
+          <Tab.Screen
+            name="Discover"
+            component={Home}
+            options={{
+              tabBarLabel: 'Discover',
+              tabBarActiveTintColor: colors.maincolor,
+              tabBarIcon: ({focused, color, size}) => (
+                <FontIcon
+                  name="compass"
+                  color={focused ? colors.maincolor : colors.gray}
+                  size={30}
+                  solid
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Browse"
+            component={Browse}
+            options={{
+              tabBarLabel: 'Browse',
+              tabBarActiveTintColor: colors.secondarycolor,
+              tabBarIcon: ({focused, color, size}) => (
+                <FontIcon
+                  name="globe-europe"
+                  color={focused ? colors.secondarycolor : colors.gray}
+                  size={30}
+                  solid
+                />
+              ),
+              tabBarBadge: 3,
+            }}
+          />
+          <Tab.Screen
+            name="Favourites"
+            component={Favorites}
+            options={{
+              tabBarLabel: 'Favourites',
+              tabBarActiveTintColor: colors.quatrarycolor,
+              tabBarIcon: ({focused, color, size}) => (
+                <FontIcon
+                  name="heart"
+                  color={focused ? colors.quatrarycolor : colors.gray}
+                  size={30}
+                  solid
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Add recipe"
+            component={AddRecipe}
+            options={{
+              tabBarLabel: 'Add recipe',
+              tabBarActiveTintColor: colors.triarycolor,
+              tabBarIcon: ({focused, color, size}) => (
+                <FontIcon
+                  name="edit"
+                  color={focused ? colors.triarycolor : colors.gray}
+                  size={30}
+                  solid
+                />
+              ),
+            }}
+          />
+          {/* //hidden tabs so we can navigate to them */}
+          <Tab.Screen
+            name="Recipe"
+            component={Recipe}
+            options={({navigation, route}) => ({
+              tabBarLabel: 'Recipe',
+              tabBarItemStyle: {display: 'none'},
+              tabBarIcon: ({focused, color, size}) => (
+                <FontIcon
+                  name="edit"
+                  color={focused ? colors.pink : colors.gray}
+                  // color={colors.gray}
+                  size={30}
+                  solid
+                />
+              ),
+            })}
+          />
+          <Tab.Screen
+            name="LoginChooser"
+            component={LoginChooser}
+            options={{
+              tabBarLabel: 'LoginChooser',
+              tabBarItemStyle: {display: 'none'},
+              tabBarIcon: ({color, size}) => (
+                <FontIcon name="edit" color={colors.gray} size={30} solid />
+              ),
+            }}
+          />
+          {/* <Tab.Screen
           name="Login"
           component={Login}
           options={{
@@ -257,8 +276,9 @@ const App: () => Node = () => {
             ),
           }}
         /> */}
-      </Tab.Navigator>
-    </NavigationContainer>
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 

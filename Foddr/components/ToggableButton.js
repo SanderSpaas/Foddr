@@ -24,7 +24,7 @@ const ToggableButton = ({text, color, talkToParent, enabled}) => {
       style={
         enabled
           ?[styles.card, {backgroundColor: color, borderColor: color}]
-          :  [styles.card, {borderColor: color}]
+          :  [styles.card, {borderColor: color,backgroundColor: '#fff'}]
       }
       onPress={() => {
         handleClick();

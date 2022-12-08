@@ -103,27 +103,6 @@ const Favorites = ({route, navigation}) => {
       ) : (
         <Text>Go like some recipes 🥺🤧🤪</Text>
       )}
-      {/* {recipeData !== null ? (
-        <FlatList
-          horizontal={true}
-          data={recipeData}
-          style={{height: 250}}
-          renderItem={({item}) => (
-            <Card
-              name={item._data.name}
-              rating={(
-                item._data.rating.rating / item._data.rating.amountOfRatings
-              ).toFixed(1)}
-              time={item._data.time}
-              imgUrl={item._data.image}
-            />
-
-            // <Text>{item.instructions}</Text>
-          )}
-        />
-      ) : (
-        <Text>Pick a country</Text>
-      )} */}
     </SafeAreaView>
   );
 };
@@ -134,22 +113,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FCF9F2',
+    backgroundColor: colors.maincolor,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  container: {
-    // flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-
   Button: {
     flexDirection: 'row',
     borderRadius: 10,

@@ -14,6 +14,7 @@ import {
   FlatList,
   Switch,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {SvgUri} from 'react-native-svg';
 
@@ -25,7 +26,6 @@ import firestore from '@react-native-firebase/firestore';
 // import functions from '@react-native-firebase/functions';
 import colors from '../theme/colors.js';
 import SVGImg from '../assets/images/gradient.svg';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Like from '../components/Like.js';
 import ToggableButton from '../components/ToggableButton.js';
 import Instruction from '../components/Instruction.component.js';
@@ -34,9 +34,14 @@ import Camera from '../components/Camera.js';
 import ProgressBar from 'react-native-progress/Bar';
 import Ingredient from '../components/Ingredient.component.js';
 import AddIngredient from '../components/AddIngredient.component.js';
+import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
+import MapView from 'react-native-map-clustering';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import storage from '@react-native-firebase/storage';
 const auth = firebase.auth();
 const db = firebase.firestore();
-let amountofPages = 6;
+
+let amountofPages = 8;
 const AddRecipe = ({route, navigation}) => {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
@@ -61,6 +66,17 @@ const AddRecipe = ({route, navigation}) => {
   const [reload, setReload] = useState(false);
   const [fileUri, setFileUri] = useState('');
   const [page, setPage] = useState(0);
+
+  const [marker, setMarker] = useState({
+    latitude: 51,
+    longitude: 4,
+  });
+  const [region, setRegion] = useState({
+    latitude: 51.186533128908827,
+    longitude: 4.52344711124897,
+    latitudeDelta: 50.59454374963337,
+    longitudeDelta: 4.682658165693283,
+  });
   // const [isLoading, setLoading] = useState(false);
   function talkToParent(data) {
     // console.log(data); // LOGS DATA FROM CHILD
@@ -89,9 +105,6 @@ const AddRecipe = ({route, navigation}) => {
   }
 
   const handleUri = fileUri => {
-    // setFormData({
-    //   fileUri: fileUri,
-    // });
     setFormData({
       ...formData,
       fileUri: fileUri,
@@ -149,14 +162,46 @@ const AddRecipe = ({route, navigation}) => {
     // setInstruction(instructionArray);
     console.log('instructies delete: ' + JSON.stringify(instructions));
   };
+  
   handleSubmit = async () => {
     //gaan nakijken of we op de laatste pagina zitten anders gewoon + doen
     if (page === amountofPages) {
+      //gaan nakijken of alles ingevuld is
+      //eerst image in online store gaan smijten en dan daarvan de link ophalen
+
       console.log('yey');
+      firestore()
+        .collection('recipes')
+        .add({
+          // id: faker.random.alphaNumeric(15),
+          image: 'https://loremflickr.com/640/480/food',
+          longitude: marker.longitude,
+          latitude: marker.latitude,
+          // tags: []
+          ingredients: ingredients,
+          instructions: instructions,
+          name: formData.name,
+          rating: {
+            amountOfRatings: 0,
+            rating: 0,
+          },
+          likes: [],
+          time: formData.time,
+          seasons: {
+            fall: formData.fall,
+            winter: formData.winter,
+            spring: formData.spring,
+            summer: formData.summer,
+          },
+        })
+        .then(() => {
+          console.log('recipe added!');
+        });
+
+      //alles gaan resetten in de states
     } else {
       setPage(page + 1);
-    } 
-    
+    }
   };
 
   const pageSwitcher = () => {
@@ -167,7 +212,12 @@ const AddRecipe = ({route, navigation}) => {
       case 0:
         return (
           <>
-            <Text style={styles.title}>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/recipe.png')}
+              resizeMode="contain"
+            />
+            <Text style={styles.titleSmall}>
               Go through the steps to add a recipe.
             </Text>
           </>
@@ -175,6 +225,11 @@ const AddRecipe = ({route, navigation}) => {
       case 1:
         return (
           <>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/name.png')}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>What is the recipe called?</Text>
             <View>
               <Text style={styles.label}>Fill in the recipe name</Text>
@@ -254,6 +309,30 @@ const AddRecipe = ({route, navigation}) => {
       case 4:
         return (
           <>
+            <Text style={styles.absoluteText}>Where does it come from?</Text>
+            <View style={styles.container}>
+              <MapView
+                clusterColor={'#4EAC9F'}
+                style={styles.map}
+                clustering={true}
+                region={region}
+                onPress={
+                  e => setMarker(e.nativeEvent.coordinate)
+                  // console.log(e.nativeEvent.coordinate)
+                }>
+                <Marker coordinate={marker}></Marker>
+              </MapView>
+            </View>
+          </>
+        );
+      case 5:
+        return (
+          <>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/cookingTime.png')}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>How long does it take to cook?</Text>
             <View>
               <Text style={styles.label}>Time in minutes</Text>
@@ -269,14 +348,14 @@ const AddRecipe = ({route, navigation}) => {
             </View>
           </>
         );
-      case 5:
+      case 6:
         return (
           <>
             <Text style={styles.title}>Add a picture</Text>
             <Camera handleUri={handleUri} uri={formData.fileUri} />
           </>
         );
-      case 6:
+      case 7:
         return (
           <>
             <Text style={styles.title}>What are the ingredients?</Text>
@@ -306,6 +385,17 @@ const AddRecipe = ({route, navigation}) => {
             <AddIngredient parentCallbackIng={handleCallbackIng} />
           </>
         );
+      case 8:
+        return (
+          <>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/logo-lg.png')}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>Are you sure this is everything?</Text>
+          </>
+        );
       default:
         return (
           <>
@@ -315,37 +405,42 @@ const AddRecipe = ({route, navigation}) => {
     }
   };
   return (
-    <SafeAreaView style={styles.layout}>
+    <View style={styles.layout}>
       {/* <ScrollView contentContainerStyle={styles.layout}> */}
       <Image
         style={styles.blob}
         source={require('../assets/images/wave.png')}
       />
       <View style={styles.center}>{pageSwitcher()}</View>
-      <View style={styles.buttonContainer}>
-        {page > 0 && (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setPage(page - 1)}>
-            <Text style={styles.buttonText}>Back</Text>
+
+      <View style={styles.bottemNav}>
+        <View style={styles.buttonContainer}>
+          {page > 0 && (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setPage(page - 1)}>
+              <Text style={styles.buttonText}>Back</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>
+              {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
+            </Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>
-            {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
+        </View>
+        <View style={styles.layout}>
+          <ProgressBar
+            progress={page / amountofPages}
+            width={200}
+            color={colors.maincolor}
+            borderRadius={5}
+            height={10}
+          />
+          <Text style={styles.progressText}>
+            Step {page} out of {amountofPages}
           </Text>
-        </TouchableOpacity>
+        </View>
       </View>
-      <ProgressBar
-        progress={page / amountofPages}
-        width={200}
-        color={colors.maincolor}
-        borderRadius={5}
-        height={10}
-      />
-      <Text style={styles.progressText}>
-        Step {page} out of {amountofPages}
-      </Text>
 
       {/* <Text>We have our data</Text> */}
       {/* <TouchableHighlight
@@ -367,11 +462,53 @@ const AddRecipe = ({route, navigation}) => {
       {/* <TouchableHighlight onPress={postUser} style={styles.btnSection}>
               <Text style={styles.btnSend}>Add User</Text>
             </TouchableHighlight> */}
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    // flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // borderRadius: 10,
+    overflow: 'hidden',
+    // margin: 20,
+    // marginTop: 50,
+  },
+  map: {
+    width: Dimensions.get('window').width * 1,
+    height: Dimensions.get('window').height * 1,
+
+    // width: 50,
+    // height: 50
+  },
+  absoluteText: {
+    position: 'absolute',
+    top: -75,
+    zIndex: 5,
+    backgroundColor: colors.backgroundcolor,
+    color: colors.textcolor,
+    padding: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    borderRadius: 5,
+    width: Dimensions.get('window').width * 0.7,
+    alignSelf: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    color: '#000',
+    borderRadius: 3,
+  },
+
   layout: {
     alignItems: 'center',
     // justifyContent: 'center',
@@ -382,6 +519,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: Dimensions.get('window').height * 0.6,
     // backgroundColor: colors.purple,
+  },
+  bottemNav: {
+    backgroundColor: colors.backgroundcolor,
+    borderRadius: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -414,6 +555,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.textcolor,
     textAlign: 'center',
+  },
+  titleSmall: {
+    fontSize: 20,
+    color: colors.textcolor,
+    textAlign: 'center',
+    width: Dimensions.get('window').width * 0.8,
   },
   label: {
     color: colors.textcolor,
@@ -460,14 +607,7 @@ const styles = StyleSheet.create({
     // flexBasis: Dimensions.get('window').height * 0.2,
     // height: Dimensions.get('window').height * 0.5,
   },
-  // root: {
-  //   // flex: 1,
-  //   flexDirection: 'column',
-  //   alignItems: 'center',
-  //   // justifyContent: 'space-between',
-  //   justifyContent: 'center',
-  //   backgroundColor: colors.backgroundcolor,
-  // },
+
   ingredient: {
     fontSize: 20,
     // zIndex: 20,
@@ -506,9 +646,10 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   image: {
-    width: Dimensions.get('window').width,
-    height: 200,
-    position: 'absolute',
+    width: Dimensions.get('window').width * 0.8,
+    height: 250,
+    // position: 'absolute',
+    // backgroundColor: colors.purple,
   },
   titleText: {
     position: 'absolute',

@@ -149,7 +149,7 @@ const Browse = ({route, navigation}) => {
   }
   const from = route?.params?.from;
   return (
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
       {/* <Image
         style={styles.blob}
         source={require('../../assets/images/wave.png')}
@@ -311,7 +311,7 @@ const Browse = ({route, navigation}) => {
           )}
         />
       )} */}
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -340,17 +340,6 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width * 1,
     height: Dimensions.get('window').height * 1,
-
-    // width: 50,
-    // height: 50
-  },
-  marker: {
-    // position: 'absolute',
-    // width: 50,
-    // height: 50,
-    // left: 50,
-    // top: 100,
-    // zIndex: 4,
   },
   Button: {
     flexDirection: 'row',
@@ -365,9 +354,6 @@ const styles = StyleSheet.create({
   markerImage: {
     width: 50,
     height: 50,
-    // top: 0,
-    // left: 0,
-    // backgroundColor: colors.pink,
   },
   subtitle: {
     color: colors.textcolor,
