@@ -136,10 +136,11 @@ const styles = {
     color: colors.textcolor,
   },
   image: {
-    // width: 250,
+    // width: 300,
     height: 110,
     borderRadius: 10,
     backgroundColor: '#fff',
+    // zIndex: 10,
   },
   touch: {
     position: 'absolute',

@@ -212,27 +212,39 @@ const Browse = ({route, navigation}) => {
                 />
                 <Text style={styles.subtitle}>{marker.recipe.name}</Text>
                 <Callout
-                  tooltip
+                  tooltip={true}
                   style={styles.customView}
-                  onPress={() => {
-                    console.log(marker.id);
-                    try {
-                      AsyncStorage.setItem('id', marker.id);
-                    } catch (error) {
-                      // Error saving data
-                      console.log(error);
-                    }
-                    const jumpToAction = TabActions.jumpTo('Recipe', {
-                      id: marker.id,
-                    });
+                  // onPress={() => {
+                  //   console.log(marker.id);
+                  //   try {
+                  //     AsyncStorage.setItem('id', marker.id);
+                  //   } catch (error) {
+                  //     // Error saving data
+                  //     console.log(error);
+                  //   }
+                  //   const jumpToAction = TabActions.jumpTo('Recipe', {
+                  //     id: marker.id,
+                  //   });
 
-                    navigation.dispatch(jumpToAction);
-                  }}>
-                  <View style={styles.calloutText}>
-                    <Text style={[styles.subtitle, styles.locationButton]}>
+                  //   navigation.dispatch(jumpToAction);
+                  // }}
+                >
+                  
+                    <Card
+                      name={marker.recipe.name}
+                      imgUrl={marker.recipe.image}
+                      rating={[
+                        marker.recipe.rating.rating,
+                        marker.recipe.rating.amountOfRatings,
+                      ]}
+                      time={marker.recipe.time}
+                      likes={marker.recipe.likes}
+                      recipeId={marker.id}
+                    />
+                    {/* <Text style={[styles.subtitle, styles.locationButton]}>
                       View recipe
-                    </Text>
-                  </View>
+                    </Text> */}
+                  
                 </Callout>
               </Marker>
             ))
