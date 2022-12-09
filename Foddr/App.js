@@ -42,6 +42,7 @@ const permission = () => {
     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   );
 };
 GoogleSignin.configure({
@@ -160,7 +161,7 @@ const App: () => Node = () => {
   return (
     <SafeAreaProvider>
       <StatusBar
-        backgroundColor="#61dafb00"
+        backgroundColor="#d2d2d220"
         // hidden={true}
         translucent={true}
       />

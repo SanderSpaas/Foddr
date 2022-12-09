@@ -17,6 +17,7 @@ function Camera({handleUri, uri}) {
   launchCamera = () => {
     let options = {
       saveToPhotos: true,
+      includeBase64: true,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -30,13 +31,14 @@ function Camera({handleUri, uri}) {
         console.log('ImagePicker Error: ', response.error);
       } else {
         console.log('response', JSON.stringify(response));
-        handleUri(response.assets[0].uri);
+        handleUri(response.assets[0].uri, response.assets[0].base64);
       }
     });
   };
 
   launchImageLibrary = () => {
     let options = {
+      includeBase64: true,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -50,7 +52,7 @@ function Camera({handleUri, uri}) {
         console.log('ImagePicker Error: ', response.error);
       } else {
         console.log('response', JSON.stringify(response));
-        handleUri(response.assets[0].uri);
+        handleUri(response.assets[0].uri, response.assets[0].base64);
       }
     });
   };

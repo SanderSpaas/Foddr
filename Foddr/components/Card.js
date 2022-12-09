@@ -24,9 +24,6 @@ import Rating from './Rating';
 
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
-// let likesArray;
-let counter = 0;
-// const db = firebase.firestore();
 
 const Card = ({
   name,
@@ -72,7 +69,6 @@ const Card = ({
       style={styles.foodcard}
       style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
       <View>
-        {/* <Text>{imgUrl}</Text> */}
         <Image style={styles.image} source={{uri: imgUrl}} />
         <Like likes={likes} recipeId={recipeId} />
         <Rating rating={rating} />
@@ -130,7 +126,6 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   titel: {
     width: 180,
     color: colors.textcolor,
@@ -141,42 +136,6 @@ const styles = {
     borderRadius: 10,
     backgroundColor: '#fff',
     // zIndex: 10,
-  },
-  touch: {
-    position: 'absolute',
-    zIndex: 5,
-    width: 50,
-    height: 50,
-    // backgroundColor: '#000',
-    top: 0,
-    right: 0,
-    borderRadius: 50,
-  },
-  likeBackdrop: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    zIndex: 2,
-    borderRadius: 50,
-    margin: 5,
-  },
-  like: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-    // padding: 20,
-    zIndex: 3,
-    color: '#fff',
-    opacity: 0.4,
-    // width: 5,
-    // height: 50,
-  },
-  liked: {
-    color: colors.pink,
-    opacity: 1,
   },
   textcolor: {
     color: colors.textcolor,

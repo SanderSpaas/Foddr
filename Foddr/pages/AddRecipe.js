@@ -36,7 +36,7 @@ import Ingredient from '../components/Ingredient.component.js';
 import AddIngredient from '../components/AddIngredient.component.js';
 import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import storage from '@react-native-firebase/storage';
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -62,6 +62,7 @@ const AddRecipe = ({route, navigation}) => {
     summer: false,
     time: 0,
     fileUri: '',
+    base64: '',
   });
   const [reload, setReload] = useState(false);
   const [fileUri, setFileUri] = useState('');
@@ -104,10 +105,11 @@ const AddRecipe = ({route, navigation}) => {
     console.log(formData);
   }
 
-  const handleUri = fileUri => {
+  const handleUri = (fileUri, base64) => {
     setFormData({
       ...formData,
       fileUri: fileUri,
+      base64: base64,
     });
   };
   function handleCallbackIng() {
@@ -162,19 +164,35 @@ const AddRecipe = ({route, navigation}) => {
     // setInstruction(instructionArray);
     console.log('instructies delete: ' + JSON.stringify(instructions));
   };
-  
+
   handleSubmit = async () => {
     //gaan nakijken of we op de laatste pagina zitten anders gewoon + doen
     if (page === amountofPages) {
       //gaan nakijken of alles ingevuld is
       //eerst image in online store gaan smijten en dan daarvan de link ophalen
+      // create bucket storage reference to not yet existing image
+      const reference = storage().ref(formData.name + '.jpeg');
+      const task = reference.putString(
+        formData.base64,
+        firebase.storage.StringFormat.BASE64,
+      );
 
-      console.log('yey');
+      task.on('state_changed', taskSnapshot => {
+        console.log(
+          `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
+        );
+      });
+
+      task.then(() => {
+        console.log('Image uploaded to the bucket!');
+      });
+      const url = await reference.getDownloadURL();
+      //het recept gaan opslaan
       firestore()
         .collection('recipes')
         .add({
           // id: faker.random.alphaNumeric(15),
-          image: 'https://loremflickr.com/640/480/food',
+          image: url,
           longitude: marker.longitude,
           latitude: marker.latitude,
           // tags: []

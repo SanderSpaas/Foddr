@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,7 +6,7 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
   ScrollView,
   FlatList,
@@ -16,14 +16,19 @@ import Card from '../../components/Card.js';
 // import {colors} from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 // import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
+import {
+  AnimatedRegion,
+  Marker,
+  PROVIDER_GOOGLE,
+  Callout,
+} from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 // import MapMarker from 'react-native-maps';
 // var MapView = require('react-native-maps');
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../../theme/colors.js';
-import {faker} from '@faker-js/faker';
+import {faker, VehicleModule} from '@faker-js/faker';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,10 +37,14 @@ import {
   CommonActions,
   TabActions,
 } from '@react-navigation/native';
+import SVGImg from '../../assets/images/current-location-icon.svg';
+import LocationButton from '../../components/LocationButton.js';
+import RandomButton from '../../components/RandomButton.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const recipesArray = [];
 const Browse = ({route, navigation}) => {
+  const mapViewRef = useRef(MapView);
   function addTestItem() {
     firestore()
       .collection('recipes')
@@ -105,7 +114,7 @@ const Browse = ({route, navigation}) => {
         recipe: queryDocumentSnapshot.data(),
       });
     });
-    // setRecipeData(recipesArray);
+    setRecipeData(recipesArray);
     setLoading(false);
     // console.log(recipeData);
   }
@@ -119,13 +128,13 @@ const Browse = ({route, navigation}) => {
     return unsubscribe;
   }, [navigation]);
 
-  // const [recipeData, setRecipeData] = useState();
+  const [recipeData, setRecipeData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState({
     latitude: 16.186533128908827,
     longitude: 1.52344711124897,
-    latitudeDelta: 50.59454374963337,
-    longitudeDelta: 4.682658165693283,
+    latitudeDelta: 30.59454374963337,
+    longitudeDelta: 1.682658165693283,
   });
   const [marker, setMarker] = useState({
     latitude: 16,
@@ -133,20 +142,20 @@ const Browse = ({route, navigation}) => {
     // latitudeDelta: 50,
     // longitudeDelta: 4,
   });
-  const [location, setLocation] = useState('No location selected');
-  function handleSelect(coordinate) {
-    console.log(coordinate);
-    setMarker(coordinate);
-    Geocoder.from(coordinate.latitude, coordinate.longitude)
-      .then(json => {
-        // console.log(json);
-        setLocation(json.results[7].formatted_address);
+  // const [location, setLocation] = useState('No location selected');
+  // function handleSelect(coordinate) {
+  //   console.log(coordinate);
+  //   setMarker(coordinate);
+  //   Geocoder.from(coordinate.latitude, coordinate.longitude)
+  //     .then(json => {
+  //       // console.log(json);
+  //       setLocation(json.results[7].formatted_address);
 
-        var addressComponent = json.results[0].address_components[0];
-        console.log(addressComponent);
-      })
-      .catch(error => console.warn(error));
-  }
+  //       var addressComponent = json.results[0].address_components[0];
+  //       console.log(addressComponent);
+  //     })
+  //     .catch(error => console.warn(error));
+  // }
   const from = route?.params?.from;
   return (
     <View style={styles.root}>
@@ -184,67 +193,72 @@ const Browse = ({route, navigation}) => {
       {/* <Text style={styles.title}>{`Browse (from ${from})`}</Text> */}
       <View style={styles.container}>
         <MapView
-          clusterColor={'#4EAC9F'}
+          showsUserLocation={true}
+          showsMyLocationButton={false}
+          clusterColor={colors.maincolor}
           style={styles.map}
+          ref={mapViewRef}
+          mapType={'terrain'}
           region={region}
           clustering={true}
-          onPress={
-            e => handleSelect(e.nativeEvent.coordinate)
-            // console.log(e.nativeEvent.coordinate)
-          }
-          onRegionChangeComplete={region => setRegion(region)}>
+          // onPress={
+          //   e => handleSelect(e.nativeEvent.coordinate)
+          //   // console.log(e.nativeEvent.coordinate)
+          // }
+          // onRegionChangeComplete={region => setRegion(region)}
+        >
           {loading ? (
             <></>
           ) : (
-            recipesArray.map((marker, index) => (
+            recipeData.map((marker, index) => (
               <Marker
-                style={styles.marker}
-                pointerEvents="auto"
+                // pointerEvents="auto"
                 key={index}
+                style={{resizeMode: 'contain', alignItems: 'center'}}
+                tracksViewChanges={false}
+                icon={require('../../assets/images/recipeIcon.png')}
                 onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
                   latitude: parseFloat(marker.recipe.latitude),
                   longitude: parseFloat(marker.recipe.longitude),
                 }}>
-                <Image
-                  style={styles.markerImage}
-                  source={require('../../assets/images/recipe.png')}
-                />
+                {/* <Image
+                 
+                  source={}
+                /> */}
                 <Text style={styles.subtitle}>{marker.recipe.name}</Text>
                 <Callout
                   tooltip={true}
                   style={styles.customView}
-                  // onPress={() => {
-                  //   console.log(marker.id);
-                  //   try {
-                  //     AsyncStorage.setItem('id', marker.id);
-                  //   } catch (error) {
-                  //     // Error saving data
-                  //     console.log(error);
-                  //   }
-                  //   const jumpToAction = TabActions.jumpTo('Recipe', {
-                  //     id: marker.id,
-                  //   });
+                  onPress={() => {
+                    console.log(marker.id);
+                    try {
+                      AsyncStorage.setItem('id', marker.id);
+                    } catch (error) {
+                      // Error saving data
+                      console.log(error);
+                    }
+                    const jumpToAction = TabActions.jumpTo('Recipe', {
+                      id: marker.id,
+                    });
 
-                  //   navigation.dispatch(jumpToAction);
-                  // }}
-                >
-                  
-                    <Card
-                      name={marker.recipe.name}
-                      imgUrl={marker.recipe.image}
-                      rating={[
-                        marker.recipe.rating.rating,
-                        marker.recipe.rating.amountOfRatings,
-                      ]}
-                      time={marker.recipe.time}
-                      likes={marker.recipe.likes}
-                      recipeId={marker.id}
-                    />
-                    {/* <Text style={[styles.subtitle, styles.locationButton]}>
+                    navigation.dispatch(jumpToAction);
+                  }}>
+                  <Card
+                    name={marker.recipe.name}
+                    imgUrl={marker.recipe.image}
+                    rating={[
+                      marker.recipe.rating.rating,
+                      marker.recipe.rating.amountOfRatings,
+                    ]}
+                    time={marker.recipe.time}
+                    likes={marker.recipe.likes}
+                    recipeId={marker.id}
+                  />
+
+                  {/* <Text style={[styles.subtitle, styles.locationButton]}>
                       View recipe
                     </Text> */}
-                  
                 </Callout>
               </Marker>
             ))
@@ -252,19 +266,13 @@ const Browse = ({route, navigation}) => {
         </MapView>
       </View>
       <View style={styles.buttons}>
-        <TouchableHighlight onPress={() => {}}>
-          <View style={[styles.Button, styles.locationButton]}>
-            <FontIcon
-              name="map-marker-alt"
-              size={20}
-              solid
-              color={'#fff'}
-              style={styles.Icon}
-            />
-            <Text style={styles.textcolor}>Use my location</Text>
-          </View>
-        </TouchableHighlight>
-        <TouchableHighlight
+        {loading ? (
+          <></>
+        ) : (
+          <RandomButton mapViewRef={mapViewRef} recipeData={recipeData} />
+        )}
+        <LocationButton mapViewRef={mapViewRef} />
+        {/* <TouchableHighlight
           onPress={() => {
             addTestItem();
           }}>
@@ -284,7 +292,7 @@ const Browse = ({route, navigation}) => {
           <View style={[styles.Button, styles.shareButton]}>
             <FontIcon name="share-alt" size={20} solid color={'#fff'} />
           </View>
-        </TouchableHighlight>
+        </TouchableHighlight> */}
       </View>
 
       {/* {loading ? (
@@ -341,19 +349,13 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 1,
     height: Dimensions.get('window').height * 1,
   },
-  Button: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-around',
-    // width: Dimensions.get('window').width * 0.5,
-  },
-  marker: {
-    alignItems: 'center',
-  },
+
   markerImage: {
     width: 50,
     height: 50,
+  },
+  currentLocation: {
+    color: colors.textcolor,
   },
   subtitle: {
     color: colors.textcolor,
@@ -361,22 +363,20 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     textAlign: 'center',
-    // width: 100,
+    marginTop: 65,
   },
-  locationButton: {
-    backgroundColor: colors.maincolor,
-  },
+
   randomButton: {
     backgroundColor: colors.secondarycolor,
   },
   shareButton: {
-    backgroundColor: '#1D1334',
+    backgroundColor: colors.triarycolor,
   },
   textcolor: {color: '#fff'},
 
   buttons: {
-    position: 'absolute',
-    bottom: 55,
+    // position: 'absolute',
+    // bottom: 55,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: Dimensions.get('window').width * 0.85,
