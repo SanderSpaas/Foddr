@@ -25,7 +25,7 @@ import Rating from './Rating';
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
 
-const Card = ({
+const MapCard = ({
   name,
   imgUrl,
   onPress,
@@ -44,7 +44,7 @@ const Card = ({
     <TouchableOpacity
       onPress={() => {
         {
-          // console.log(recipeId);
+          console.log(recipeId);
           // console.log(navigation)
           // navigation.push('Recipe', {
           //   params: {id: recipeId},
@@ -68,11 +68,38 @@ const Card = ({
       }}
       style={styles.foodcard}
       style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
-      <View>
-        <Image style={styles.image} source={{uri: imgUrl}} />
-        <Like likes={likes} recipeId={recipeId} />
-        <Rating rating={rating} />
+      <View
+        style={{
+          borderRadius: 10,
+          // height: 250,
+          overflow: 'hidden',
+        }}>
+        <Text
+          style={{
+            // height: 150,
+            top: -50,
+            // width: 270,
+            height: 150,
+            overflow: 'hidden',
+            borderRadius: 10,
+            // backgroundColor: '#fff',
+            // zIndex: 10,
+          }}>
+          <Image
+            style={{
+              borderRadius: 10,
+            }}
+            source={{
+              width: 270,
+              height: 110,
+              uri: imgUrl,
+            }}
+            resizeMode="cover"
+          />
+        </Text>
+
         <View style={styles.bottemItems}>
+          <Rating rating={rating} />
           <Text numberOfLines={1} style={styles.titel}>
             {name}
           </Text>
@@ -86,15 +113,6 @@ const Card = ({
   );
 };
 
-Card.defaultProps = {
-  recipeName: 'DEFAULT - Fried chicken',
-  // imgUrl: require('../../assets/images/grill.png'),
-  onPress: () => {},
-  rating: '4.0',
-  time: 20,
-  liked: false,
-  recipeId: 1,
-};
 const styles = {
   //css voor foodcard
   foodcard: {
@@ -114,6 +132,8 @@ const styles = {
     marginRight: 10,
   },
   bottemItems: {
+    position: 'absolute',
+    bottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 5,
@@ -141,4 +161,4 @@ const styles = {
     color: colors.textcolor,
   },
 };
-export default Card;
+export default MapCard;

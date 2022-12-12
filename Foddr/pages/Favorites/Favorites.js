@@ -50,7 +50,6 @@ const Favorites = ({route, navigation}) => {
     });
     // console.log(recipesArray);
     setRecipeData(recipesArray);
-
     // return recipesList;
   }
   useEffect(() => {

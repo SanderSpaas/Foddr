@@ -17,7 +17,7 @@ const Rating = ({rating}) => {
     <View style={styles.rating}>
       <FontIcon name="star" size={15} solid color={colors.secondarycolor} />
       <Text style={styles.ratingText}>
-        {(rating[0] / rating[1]).toFixed(1)}
+        {rating[0] === 0 ? 0 : (rating[0] / rating[1]).toFixed(1)}
       </Text>
     </View>
   );

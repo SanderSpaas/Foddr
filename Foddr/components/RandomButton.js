@@ -12,13 +12,13 @@ import GetLocation from 'react-native-get-location';
 
 const RandomButton = ({ mapViewRef, recipeData }) => {
   function getRandomLocation() {
-    console.log(recipeData);
+    // console.log(recipeData);
     let recipeObj =
       recipeData[Math.floor(Math.random() * (recipeData.length - 0) + 0)];
-    console.log(
-      recipeData[Math.floor(Math.random() * (recipeData.length - 0) + 0)]
-        .recipe,
-    );
+    // console.log(
+    //   recipeData[Math.floor(Math.random() * (recipeData.length - 0) + 0)]
+    //     .recipe,
+    // );
     let regionObj = {
       latitude: parseFloat(recipeObj.recipe.latitude),
       longitude: parseFloat(recipeObj.recipe.longitude),
