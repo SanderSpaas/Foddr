@@ -59,8 +59,6 @@ const Browse = ({route, navigation}) => {
   const [marker, setMarker] = useState({
     latitude: 16,
     longitude: 1,
-    // latitudeDelta: 50,
-    // longitudeDelta: 4,
   });
   const mapViewRef = useRef(MapView);
   function addTestItem() {
@@ -118,34 +116,6 @@ const Browse = ({route, navigation}) => {
       });
   }
 
-  //TODO fetch all the recipes for the selected country
-
-  //Fetching all the liked recipes from the user
-  // async function getRecipes() {
-  //   setLoading(true);
-  //   recipesArray.length = 0;
-  //   const recipes = await (
-  //     await firestore().collection('recipes').get()
-  //   ).forEach(queryDocumentSnapshot => {
-  //     recipesArray.push({
-  //       id: queryDocumentSnapshot.id,
-  //       recipe: queryDocumentSnapshot.data(),
-  //     });
-  //   });
-  //   setRecipeData(recipesArray);
-  //   setLoading(false);
-  //   // console.log(recipeData);
-  // }
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     // The screen is focused
-  //     // Call any action and update
-  //     getRecipes();
-  //   });
-  //   // Return the function to unsubscribe from the event so it gets removed on unmount
-  //   return unsubscribe;
-  // }, [navigation]);
-
   useEffect(() => {
     //only do the isloading thing once
     recipesArray.length = 0;
@@ -172,56 +142,9 @@ const Browse = ({route, navigation}) => {
     // Stop listening for updates when no longer required
     return () => subscriber();
   });
-
-  // const [location, setLocation] = useState('No location selected');
-  // function handleSelect(coordinate) {
-  //   console.log(coordinate);
-  //   setMarker(coordinate);
-  //   Geocoder.from(coordinate.latitude, coordinate.longitude)
-  //     .then(json => {
-  //       // console.log(json);
-  //       setLocation(json.results[7].formatted_address);
-
-  //       var addressComponent = json.results[0].address_components[0];
-  //       console.log(addressComponent);
-  //     })
-  //     .catch(error => console.warn(error));
-  // }
   const from = route?.params?.from;
   return (
     <View style={styles.root}>
-      {/* <Image
-        style={styles.blob}
-        source={require('../../assets/images/wave.png')}
-      /> */}
-      {/* <View style={[styles.searchBar, styles.locationBar]}>
-        <FontIcon
-          style={styles.searchBarIcon}
-          name="location-arrow"
-          size={20}
-          color={colors.textcolor}
-        />
-        
-        <View>
-          <Text style={styles.locationBarText}>{location}</Text>
-         
-        </View>
-      </View> */}
-      {/* <View style={styles.searchBar}>
-        <FontIcon
-          style={styles.searchBarIcon}
-          name="search"
-          size={20}
-          solid
-          color={'#333333'}
-        />
-        <TextInput
-          style={styles.searchBarInput}
-          placeholder="Enter recipe name"
-        />
-      </View> */}
-
-      {/* <Text style={styles.title}>{`Browse (from ${from})`}</Text> */}
       <View style={styles.container}>
         <MapView
           showsUserLocation={true}
@@ -231,17 +154,10 @@ const Browse = ({route, navigation}) => {
           ref={mapViewRef}
           mapType={'terrain'}
           region={region}
-          clustering={true}
-          // onPress={
-          //   e => handleSelect(e.nativeEvent.coordinate)
-          //   // console.log(e.nativeEvent.coordinate)
-          // }
-          // onRegionChangeComplete={region => setRegion(region)}
-        >
+          clustering={true}>
           {initialData &&
             recipeData.map((marker, index) => (
               <Marker
-                // pointerEvents="auto"
                 key={index}
                 style={{resizeMode: 'contain', alignItems: 'center'}}
                 tracksViewChanges={false}
@@ -291,53 +207,7 @@ const Browse = ({route, navigation}) => {
         )}
 
         <LocationButton mapViewRef={mapViewRef} />
-        {/* <TouchableHighlight
-          onPress={() => {
-            addTestItem();
-          }}>
-          <View style={[styles.Button, styles.randomButton]}>
-            <FontIcon
-              name="dice"
-              size={20}
-              solid
-              color={'#fff'}
-              style={styles.Icon}
-            />
-            <Text style={styles.textcolor}>Random</Text>
-          </View>
-        </TouchableHighlight>
-
-        <TouchableHighlight onPress={() => {}}>
-          <View style={[styles.Button, styles.shareButton]}>
-            <FontIcon name="share-alt" size={20} solid color={'#fff'} />
-          </View>
-        </TouchableHighlight> */}
       </View>
-
-      {/* {loading ? (
-        <Text style={styles.title}>Pick a country</Text>
-      ) : (
-        <FlatList
-          horizontal={true}
-          data={recipesArray}
-          keyExtractor={item => item.id}
-          style={{height: 250}}
-          renderItem={({item}) => (
-            // <Text>{item.recipe.name}</Text>
-            <Card
-              name={item.recipe.name}
-              imgUrl={item.recipe.image}
-              rating={[
-                item.recipe.rating.rating,
-                item.recipe.rating.amountOfRatings,
-              ]}
-              time={item.recipe.time}
-              likes={item.recipe.likes}
-              recipeId={item.id}
-            />
-          )}
-        />
-      )} */}
     </View>
   );
 };
