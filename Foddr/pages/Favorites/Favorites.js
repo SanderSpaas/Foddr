@@ -24,45 +24,42 @@ import colors from '../../theme/colors.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const {uid} = auth.currentUser;
-let recipesArray = [];
 
 const Favorites = ({route, navigation}) => {
-  //TODO fetch all the recipes for the selected country
-  async function getLikes() {
-    recipesArray.length = 0;
-    const recipes = await (
-      await firestore().collection('recipes').get()
-    ).forEach(queryDocumentSnapshot => {
-      if (queryDocumentSnapshot.data().likes.includes(uid)) {
-        // console.log(
-        //   queryDocumentSnapshot.data().likes +
-        //     ' : ' +
-        //     uid +
-        //     ' ' +
-        //     queryDocumentSnapshot.data().likes.includes(uid),
-        // );
-        recipesArray.push({
-          id: queryDocumentSnapshot.id,
-          recipe: queryDocumentSnapshot.data(),
-        });
-        //hier
-      }
-    });
-    // console.log(recipesArray);
-    setRecipeData(recipesArray);
-    // return recipesList;
-  }
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // The screen is focused
-      // Call any action recipesArray
-      getLikes();
+    //only do the isloading thing once
+    const ref = firebase.firestore().collection('recipes');
+    setLoading(true);
+    const subscriber = ref.onSnapshot(snapshot => {
+      let recipesArray = [];
+      setRecipeData([]);
+      // recipesArray = recipeData;
+      snapshot.forEach(doc => {
+        if (doc.data().likes.includes(uid)) {
+          console.log(
+            doc.data().likes +
+              ' : ' +
+              uid +
+              ' ' +
+              doc.data().likes.includes(uid),
+          );
+          recipesArray.push({
+            id: doc.id,
+            recipe: doc.data(),
+          });
+        }
+      });
+      setRecipeData(recipesArray);
+      console.log('recipesArray', recipesArray);
+      setLoading(false);
+      // filterRecipes();
     });
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
 
   const [recipeData, setRecipeData] = useState();
+  const [loading, setLoading] = useState(false);
   const from = route?.params?.from;
   return (
     <SafeAreaView contentContainerStyle={styles.root}>
@@ -70,21 +67,18 @@ const Favorites = ({route, navigation}) => {
         style={styles.blob}
         source={require('../../assets/images/wave.png')}
       />
-      <View style={[styles.titleBar, styles.locationBar]}>
+      <View style={[styles.titleBar]}>
         <View>
           <Text style={styles.barText}>Your favorites ❤️</Text>
         </View>
       </View>
-      {/* <Text>{recipeData}</Text> */}
-      {recipeData !== null ? (
+      {!loading ? (
         <FlatList
-          // horizontal={true}
-          data={recipesArray}
+          data={recipeData}
           keyExtractor={item => item.id}
-          // style={{ justifyContent: 'center' }}
+          style={styles.list}
           contentContainerStyle={styles.likedItems}
           renderItem={({item}) => (
-            // <Text>{item.recipe.name}</Text>
             <Card
               name={item.recipe.name}
               imgUrl={item.recipe.image}
@@ -100,7 +94,7 @@ const Favorites = ({route, navigation}) => {
           )}
         />
       ) : (
-        <Text>Go like some recipes 🥺🤧🤪</Text>
+        <Text style={styles.motivator}>Go like some recipes 😉</Text>
       )}
     </SafeAreaView>
   );
@@ -120,6 +114,9 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'space-around',
     // width: Dimensions.get('window').width * 0.5,
+  },
+  list: {
+    // marginTop: 70,
   },
   likedItems: {
     justifyContent: 'center',
@@ -155,6 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     position: 'absolute',
     height: 50,
+    zIndex: 2,
   },
   barText: {
     color: colors.textcolor,
@@ -164,6 +162,28 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: 110,
     marginBottom: -15,
+    zIndex: 1,
+  },
+  motivator: {
+    textAlign: 'center',
+    alignSelf: 'center',
+    position: 'absolute',
+    top: Dimensions.get('window').height * 0.4,
+    backgroundColor: colors.maincolor,
+    padding: 10,
+    borderRadius: 5,
+    width: Dimensions.get('window').width * 0.7,
+    fontSize: 20,
+    color: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    borderRadius: 3,
   },
 });
 export default Favorites;

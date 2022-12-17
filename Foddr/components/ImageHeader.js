@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, Component} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,17 +10,41 @@ import {
   Image,
   ScrollView,
   FlatList,
+  Animated,
 } from 'react-native';
 import colors from '../theme/colors';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import Like from './Like';
 import SVGImg from '../assets/images/gradient.svg';
 import {useNavigation} from '@react-navigation/native';
-
-const ImageHeader = ({recipeData, route}) => {
+import Rating from './Rating';
+const ImageHeader = ({recipeData, route, scrollY, scrollYSticky}) => {
+  // const [scrollYComp, setScrollYComp] = useState(
+  //   new Animated.Value(scrollY),
+  // );
   const navigation = useNavigation();
+  const height = scrollY.interpolate({
+    inputRange: [0, 250],
+    outputRange: [250, 125],
+    extrapolate: 'clamp',
+  });
+
+  // scrollYStickyOffset.setOffset(200);
+  console.log('scrollY', scrollY);
   return (
-    <View style={styles.imagecontainer}>
+    <Animated.View
+      style={[
+        {height: height},
+        styles.imagecontainer,
+        {
+          position: 'absolute',
+          top: scrollYSticky,
+          // top: 100,
+          left: 0,
+          right: 0,
+          height: height,
+        },
+      ]}>
       <TouchableHighlight
         onPress={() => {
           navigation.goBack();
@@ -34,52 +58,71 @@ const ImageHeader = ({recipeData, route}) => {
       <View style={styles.likeContainer}>
         <Like likes={recipeData.likes} recipeId={route.params.id} />
       </View>
-      <Text style={styles.titleText}>{recipeData.name}</Text>
+      <Text style={styles.titleText} numberOfLines={1}>
+        {recipeData.name}
+      </Text>
       <Text style={styles.timeText}>{recipeData.time}min</Text>
-      <Image style={styles.image} source={{uri: recipeData.image}} />
-      <SVGImg
-        style={styles.overlay}
-        width={Dimensions.get('window').width}
-        height={200}
+      <Animated.Image
+        style={[styles.image, {height: height}]}
+        source={{uri: recipeData.image}}
+        resizeMode="cover"
       />
-    </View>
+      <Animated.View
+        style={[
+          {
+            position: 'absolute',
+            top: scrollYSticky,
+            height: height,
+            overflow: 'hidden',
+          },
+        ]}>
+        <SVGImg
+          style={styles.overlay}
+          // style={[styles.overlay,{height: height}]}
+          width={Dimensions.get('window').width}
+          height={250}
+          resizeMode="stretch"
+        />
+      </Animated.View>
+
+      {/* <Animated.View style={{position: 'absolute'}}> */}
+      <View style={styles.titleBar}>
+        <Text style={styles.barText}>
+          {recipeData.forPeople}
+          <FontIcon
+            // style={styles.arrow}
+            name="portrait"
+            size={25}
+            color={colors.secondarycolor}
+          />
+
+          {/* Recipe ❤️ {route.params.id} */}
+          <Rating
+            rating={[
+              recipeData.rating.rating,
+              recipeData.rating.amountOfRatings,
+            ]}
+          />
+        </Text>
+        {/* <NumericInput
+                minValue={1}
+                type="up-down"
+                onChange={value => console.log(value)}
+              /> */}
+      </View>
+      <Image
+        style={[styles.blob]}
+        source={require('../assets/images/wave.png')}
+      />
+      {/* </Animated.View> */}
+    </Animated.View>
   );
 };
-const styles = StyleSheet.create({
-  root: {
-    // flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.backgroundcolor,
-  },
-  ingredient: {
-    fontSize: 20,
-    // zIndex: 20,
-    padding: 20,
-    backgroundColor: colors.backgroundcolor,
-    flexDirection: 'row',
-  },
-  text: {
-    color: colors.textcolor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // textAlign: 'center',
-  },
-  recipe: {
-    flex: 1,
-    position: 'absolute',
 
-    marginTop: 300,
-    zIndex: 19,
-    color: colors.textcolor,
-    // backgroundColor: colors.pink,
-    height: 500,
-    width: 250,
-  },
+const styles = StyleSheet.create({
   imagecontainer: {
     position: 'absolute',
-    height: 200,
+    // height: 200,
     zIndex: 2,
   },
   overlay: {
@@ -87,7 +130,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: Dimensions.get('window').width,
-    height: 200,
+    flex: 1,
+    // minHeight: 100,
+    // maxHeight: 200,
     position: 'absolute',
   },
   titleText: {
@@ -132,7 +177,6 @@ const styles = StyleSheet.create({
     right: 0,
     margin: 10,
   },
-
   titleBar: {
     width: Dimensions.get('window').width * 0.85,
     backgroundColor: '#fff',
@@ -152,9 +196,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     // position: 'absolute',
     height: 50,
-    // zIndex: 10,
+    zIndex: 2,
     position: 'absolute',
-    top: 200,
+    bottom: -90,
   },
   barText: {
     color: colors.textcolor,
@@ -166,7 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: -15,
     // zIndex: 10,
     position: 'absolute',
-    top: 200,
+    bottom: -90,
   },
 });
 export default ImageHeader;

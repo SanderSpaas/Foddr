@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: Dimensions.get('window').width * 0.45,
     height: 75,
-    borderWidth: 5,
+    // borderWidth: 3,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',

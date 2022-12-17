@@ -77,7 +77,7 @@ const Card = ({
             {name}
           </Text>
           <View style={styles.row}>
-            <Text style={styles.textcolor}>{time}min </Text>
+            <Text style={styles.textcolor}>{time} min </Text>
             <FontIcon name="clock" size={20} solid color={'#333333'} />
           </View>
         </View>
@@ -99,7 +99,7 @@ const styles = {
   //css voor foodcard
   foodcard: {
     width: 250,
-    height: 150,
+    height: 170,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -132,7 +132,7 @@ const styles = {
   },
   image: {
     // width: 300,
-    height: 110,
+    height: 130,
     borderRadius: 10,
     backgroundColor: '#fff',
     // zIndex: 10,

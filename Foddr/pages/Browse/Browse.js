@@ -43,15 +43,20 @@ import LocationButton from '../../components/LocationButton.js';
 import RandomButton from '../../components/RandomButton.js';
 import {Svg, Image as ImageSvg} from 'react-native-svg';
 import {WebView} from 'react-native-webview';
+import SeasonButton from '../../components/SeasonButton.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
-const recipesArray = [];
+const fallImg = '../../assets/images/fallIcon.png';
+const winterImg = '../../assets/images/winterIcon.png';
+const springImg = '../../assets/images/springIcon.png';
+const summerImg = '../../assets/images/summerIcon.png';
+
 const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
+  const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [initialData, setInitialData] = useState(false);
   const [region, setRegion] = useState({
-    latitude: 16.186533128908827,
+    latitude: 51.186533128908827,
     longitude: 1.52344711124897,
     latitudeDelta: 30.59454374963337,
     longitudeDelta: 1.682658165693283,
@@ -60,6 +65,13 @@ const Browse = ({route, navigation}) => {
     latitude: 16,
     longitude: 1,
   });
+  const [seasons, setSeasons] = useState({
+    fall: true,
+    spring: true,
+    summer: true,
+    winter: true,
+  });
+
   const mapViewRef = useRef(MapView);
   function addTestItem() {
     firestore()
@@ -115,37 +127,81 @@ const Browse = ({route, navigation}) => {
         console.log('recipe added!');
       });
   }
-
   useEffect(() => {
-    //only do the isloading thing once
-    recipesArray.length = 0;
     const ref = firebase.firestore().collection('recipes');
+    // setLoading(true);
     const subscriber = ref.onSnapshot(snapshot => {
-      setLoading(true);
+      let recipesArray = [];
+      setRecipeData([]);
       snapshot.forEach(doc => {
-        console.log('doc.id', doc.id);
+        // console.log('doc.id', doc.id + ': ' + doc.data().name);
         recipesArray.push({
           id: doc.id,
           recipe: doc.data(),
         });
       });
-
       setRecipeData(recipesArray);
-      setInitialData(true);
-      // console.log('loading', loading);
-      // setLoading(false);
-      // console.log('loading', loading);
-      console.log('initialData', initialData);
-      console.log('recipeData', recipeData);
+      // setRecipeDataRender(recipesArray);
+      filterRecipes();
     });
-
     // Stop listening for updates when no longer required
     return () => subscriber();
-  });
+  }, []);
+
+  function talkToParent(data) {
+    // setLoading(true);
+    // console.log('loading bij klikken seiszoen', loading);
+    // console.log(data); // LOGS DATA FROM CHILD
+    if (data[0] === fallImg) {
+      updateSeason('fall', data[1]);
+      // console.log('loading', loading);
+      // setLoading(!loading);
+      // console.log('loading', loading);
+    } else if (data[0] === winterImg) {
+      updateSeason('winter', data[1]);
+    } else if (data[0] === springImg) {
+      updateSeason('spring', data[1]);
+    } else if (data[0] === summerImg) {
+      updateSeason('summer', data[1]);
+    } else {
+      console.log('something went wrong with that season mate');
+    }
+    filterRecipes();
+  }
+  function updateSeason(season, value) {
+    let ingredientsObj = seasons;
+    ingredientsObj[season] = value;
+    setSeasons(ingredientsObj);
+    console.log('seasons', seasons);
+  }
+  function filterRecipes() {
+    let filteredRecipes = recipeData.filter(recipeData =>
+      showRecipe(recipeData.recipe.seasons),
+    );
+    // console.log('=====================');
+    // filteredRecipes.forEach(item => console.log(item.recipe.name));
+    setRecipeDataRender(filteredRecipes);
+    console.log('recipeDataRender', ' has been set');
+    // setLoading(false);
+    // setInitialData(true);
+    // console.log('initialData', initialData);
+  }
+  function showRecipe(recipeSeasons) {
+    let show = false;
+    Object.entries(recipeSeasons).forEach(recipeSeason => {
+      const [key, value] = recipeSeason;
+      if (recipeSeason[1] && seasons[key]) {
+        show = recipeSeason[1];
+      }
+    });
+    return show;
+  }
+
   const from = route?.params?.from;
   return (
     <View style={styles.root}>
       <View style={styles.container}>
+        {/* <Text style={styles.title}>de loading state: {loading}</Text> */}
         <MapView
           showsUserLocation={true}
           showsMyLocationButton={false}
@@ -155,12 +211,12 @@ const Browse = ({route, navigation}) => {
           mapType={'terrain'}
           region={region}
           clustering={true}>
-          {initialData &&
-            recipeData.map((marker, index) => (
+          {recipeDataRender &&
+            recipeDataRender.map((marker, index) => (
               <Marker
                 key={index}
                 style={{resizeMode: 'contain', alignItems: 'center'}}
-                tracksViewChanges={false}
+                tracksViewChanges={!recipeDataRender}
                 icon={require('../../assets/images/recipeIcon.png')}
                 onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
@@ -202,9 +258,44 @@ const Browse = ({route, navigation}) => {
         </MapView>
       </View>
       <View style={styles.buttons}>
-        {initialData && (
-          <RandomButton mapViewRef={mapViewRef} recipeData={recipeData} />
+        {recipeDataRender !== undefined && ( //TODO dont render this if no recipes are available
+          <RandomButton mapViewRef={mapViewRef} recipeData={recipeDataRender} />
         )}
+        <View style={styles.seasonButtons}>
+          <SeasonButton
+            imgUrl={require(fallImg)}
+            color={'#f8312f'}
+            colorBackground={'#ffa289'}
+            talkToParent={talkToParent}
+            enabled={seasons.fall}
+            id={fallImg}
+            X
+          />
+          <SeasonButton
+            imgUrl={require(winterImg)}
+            color={'#0084ce'}
+            colorBackground={'#6595cb'}
+            talkToParent={talkToParent}
+            enabled={seasons.winter}
+            id={winterImg}
+          />
+          <SeasonButton
+            imgUrl={require(springImg)}
+            color={'#ff6cc8'}
+            colorBackground={'#ffb9d6'}
+            talkToParent={talkToParent}
+            enabled={seasons.spring}
+            id={springImg}
+          />
+          <SeasonButton
+            imgUrl={require(summerImg)}
+            color={'#ff822d'}
+            colorBackground={'#f5de7e'}
+            talkToParent={talkToParent}
+            enabled={seasons.summer}
+            id={summerImg}
+          />
+        </View>
 
         <LocationButton mapViewRef={mapViewRef} />
       </View>
@@ -221,8 +312,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCF9F2',
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    fontSize: 20,
+    color: colors.textcolor,
+    padding: 10,
+    backgroundColor: colors.pink,
+    zIndex: 20,
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * 0.5,
   },
   container: {
     // flex: 1,
@@ -238,7 +334,11 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 1,
     height: Dimensions.get('window').height * 1,
   },
-
+  seasonButtons: {
+    position: 'absolute',
+    right: -20,
+    bottom: Dimensions.get('window').height * 0.3,
+  },
   markerImage: {
     width: 50,
     height: 50,
@@ -294,29 +394,6 @@ const styles = StyleSheet.create({
     elevation: 9,
     color: '#000',
     borderRadius: 3,
-  },
-  searchBarInput: {
-    color: colors.textcolor,
-    width: 500,
-    paddingLeft: 15,
-  },
-  searchBarIcon: {
-    marginLeft: 10,
-  },
-  locationBar: {
-    position: 'absolute',
-    height: 50,
-    borderRadius: 3,
-  },
-  locationBarText: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-    paddingLeft: 15,
-  },
-  locationBarCountry: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-    paddingLeft: 15,
   },
   blob: {
     width: Dimensions.get('window').width,

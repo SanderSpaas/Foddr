@@ -42,10 +42,11 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let amountofPages = 8;
+var docRef;
 const AddRecipe = ({route, navigation}) => {
-  useEffect(() => {
-    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, []);
+  // useEffect(() => {
+  //   LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+  // }, []);
   // const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
   const [instructions, setInstructions] = useState([
@@ -67,7 +68,7 @@ const AddRecipe = ({route, navigation}) => {
   const [reload, setReload] = useState(false);
   const [fileUri, setFileUri] = useState('');
   const [page, setPage] = useState(0);
-
+  const [postPage, setPostPage] = useState(false);
   const [marker, setMarker] = useState({
     latitude: 51,
     longitude: 4,
@@ -79,6 +80,7 @@ const AddRecipe = ({route, navigation}) => {
     longitudeDelta: 4.682658165693283,
   });
   // const [isLoading, setLoading] = useState(false);
+
   function talkToParent(data) {
     // console.log(data); // LOGS DATA FROM CHILD
     if (data[0] === '🍁 Fall 🍂') {
@@ -102,7 +104,6 @@ const AddRecipe = ({route, navigation}) => {
         summer: !formData.summer,
       });
     }
-    console.log(formData);
   }
 
   const handleUri = (fileUri, base64) => {
@@ -113,6 +114,7 @@ const AddRecipe = ({route, navigation}) => {
     });
   };
   function handleCallbackIng() {
+    //TODO let the user add the amount of people the recipe is for
     let ingredientsArray = ingredients;
     ingredientsArray.push({name: 'name', amount: 0, unitOfMeasure: 'gr'});
     setIngredients(ingredientsArray);
@@ -168,60 +170,61 @@ const AddRecipe = ({route, navigation}) => {
   handleSubmit = async () => {
     //gaan nakijken of we op de laatste pagina zitten anders gewoon + doen
     if (page === amountofPages) {
-      //gaan nakijken of alles ingevuld is
-      //eerst image in online store gaan smijten en dan daarvan de link ophalen
-      // create bucket storage reference to not yet existing image
-      const reference = storage().ref(formData.name + '.jpeg');
-      const task = reference.putString(
-        formData.base64,
-        firebase.storage.StringFormat.BASE64,
-      );
+      // gaan nakijken of alles ingevuld is
+      // Upload the image to Firebase Storage
+      const fileUploadTask = storage()
+        .ref(formData.name + '.jpeg')
+        .putString(formData.base64, firebase.storage.StringFormat.BASE64);
 
-      task.on('state_changed', taskSnapshot => {
-        console.log(
-          `${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`,
-        );
-      });
-
-      task.then(() => {
-        console.log('Image uploaded to the bucket!');
-      });
-      const url = await reference.getDownloadURL();
-      //het recept gaan opslaan
-      firestore()
-        .collection('recipes')
-        .add({
-          // id: faker.random.alphaNumeric(15),
-          image: url,
-          longitude: marker.longitude,
-          latitude: marker.latitude,
-          // tags: []
-          ingredients: ingredients,
-          instructions: instructions,
-          name: formData.name,
-          rating: {
-            amountOfRatings: 0,
-            rating: 0,
-          },
-          likes: [],
-          time: formData.time,
-          seasons: {
-            fall: formData.fall,
-            winter: formData.winter,
-            spring: formData.spring,
-            summer: formData.summer,
-          },
-        })
-        .then(() => {
-          console.log('recipe added!');
+      fileUploadTask.then(() => {
+        // Get the URL of the uploaded image
+        fileUploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+          console.log('downloadURL', downloadURL);
+          // Create a new document in Firestore with the recipe data
+          firestore()
+            .collection('recipes')
+            .add({
+              image: downloadURL,
+              longitude: marker.longitude,
+              latitude: marker.latitude,
+              // tags: []
+              ingredients: ingredients,
+              instructions: instructions,
+              name: formData.name,
+              rating: {
+                amountOfRatings: 0,
+                rating: 0,
+              },
+              likes: [],
+              time: formData.time,
+              seasons: {
+                fall: formData.fall,
+                winter: formData.winter,
+                spring: formData.spring,
+                summer: formData.summer,
+              },
+            })
+            .then(() => {
+              console.log('recipe added!');
+            });
         });
-
-      //alles gaan resetten in de states
+        setPostPage(true);
+      });
+    
     } else {
       setPage(page + 1);
     }
   };
+  function cleanUp() {
+    //alles gaan resetten in de states
+    setFormData({});
+    setIngredients([]);
+    setInstructions([]);
+    setPage(0);
+    setPostPage(false);
+    navigation.navigate('Browse')
 
+}
   const pageSwitcher = () => {
     // console.log(JSON.stringify(formData));
     // console.log(JSON.stringify(instructions));
@@ -300,25 +303,25 @@ const AddRecipe = ({route, navigation}) => {
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'🍁 Fall 🍂'}
-                color={colors.quatrarycolor}
+                color={'#ffa289'}
                 enabled={formData.fall}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'⛄ Winter ❄️'}
-                color={colors.maincolor}
+                color={'#6595cb'}
                 enabled={formData.winter}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'🌼 Spring 🌷'}
-                color={colors.secondarycolor}
+                color={'#ffb9d6'}
                 enabled={formData.spring}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={' 🏵️️ Summer ⛅'}
-                color={colors.triarycolor}
+                color={'#f5de7e'}
                 enabled={formData.summer}
               />
             </View>
@@ -412,6 +415,26 @@ const AddRecipe = ({route, navigation}) => {
               resizeMode="contain"
             />
             <Text style={styles.title}>Are you sure this is everything?</Text>
+            {postPage && (
+              <>
+                <View style={styles.modalBackdrop}></View>
+                <View style={styles.modal}>
+                  <Image
+                    style={styles.imageModal}
+                    source={require('../assets/images/logo-lg.png')}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.textModal}>
+                    Thank you for sharing your epic recipe with us!
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.buttonModal}
+                    onPress={() => cleanUp()}>
+                    <Text style={styles.textButtonModal}>Check it out</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </>
         );
       default:
@@ -424,67 +447,94 @@ const AddRecipe = ({route, navigation}) => {
   };
   return (
     <View style={styles.layout}>
-      {/* <ScrollView contentContainerStyle={styles.layout}> */}
       <Image
         style={styles.blob}
         source={require('../assets/images/wave.png')}
       />
       <View style={styles.center}>{pageSwitcher()}</View>
-
-      <View style={styles.bottemNav}>
-        <View style={styles.buttonContainer}>
-          {page > 0 && (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setPage(page - 1)}>
-              <Text style={styles.buttonText}>Back</Text>
+      {!postPage && (
+        <View style={styles.bottemNav}>
+          <View style={styles.buttonContainer}>
+            {page > 0 && (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setPage(page - 1)}>
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>
+                {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
+              </Text>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>
-              {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
+          </View>
+          <View style={styles.layout}>
+            <ProgressBar
+              progress={page / amountofPages}
+              width={200}
+              color={colors.maincolor}
+              borderRadius={5}
+              height={10}
+            />
+            <Text style={styles.progressText}>
+              Step {page} out of {amountofPages}
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.layout}>
-          <ProgressBar
-            progress={page / amountofPages}
-            width={200}
-            color={colors.maincolor}
-            borderRadius={5}
-            height={10}
-          />
-          <Text style={styles.progressText}>
-            Step {page} out of {amountofPages}
-          </Text>
-        </View>
-      </View>
-
-      {/* <Text>We have our data</Text> */}
-      {/* <TouchableHighlight
-        onPress={() => {
-          navigation.goBack();
-        }}
-        style={styles.backButton}>
-        <>
-          <FontIcon style={styles.arrow} name="arrow-left" size={20} solid />
-          <View style={styles.arrowBackdrop}></View>
-        </>
-      </TouchableHighlight> */}
-      {/* <View style={styles.likeContainer}>
-        <Like likes={recipeData.likes} recipeId={route.params.id} />
-      </View> */}
-
-      {/* </ScrollView> */}
-
-      {/* <TouchableHighlight onPress={postUser} style={styles.btnSection}>
-              <Text style={styles.btnSend}>Add User</Text>
-            </TouchableHighlight> */}
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  modalBackdrop: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    position: 'absolute',
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  modal: {
+    position: 'absolute',
+    backgroundColor: colors.backgroundcolor,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    top: Dimensions.get('window').height * 0.1,
+    width: Dimensions.get('window').width * 0.75,
+    height: Dimensions.get('window').height * 0.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    color: '#000',
+  },
+  imageModal: {
+    width: Dimensions.get('window').width * 0.8,
+    height: 200,
+    // position: 'absolute',
+    // backgroundColor: colors.purple,
+  },
+  textModal: {
+    color: colors.textcolor,
+    textAlign: 'center',
+    width: Dimensions.get('window').width * 0.6,
+    padding: 20,
+    fontSize: 18,
+  },
+
+  buttonModal: {
+    backgroundColor: colors.maincolor,
+    padding: 15,
+    borderRadius: 5,
+    width: Dimensions.get('window').width * 0.4,
+  },
+  textButtonModal: {color: '#fff', textAlign: 'center', fontSize: 18},
   container: {
     // flex: 1,
     backgroundColor: '#fff',

@@ -52,6 +52,8 @@ const styles = {
   buttonLocation: {
     borderRadius: 5,
     padding: 10,
+    // borderWidth: 3,
+    borderColor: '#fff',
     backgroundColor: '#fff',
     position: 'absolute',
     right: -15,
