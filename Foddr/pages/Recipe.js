@@ -15,7 +15,6 @@ import {
   Animated,
 } from 'react-native';
 import {SvgUri} from 'react-native-svg';
-// import Card from '../components/Card/Card.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -35,42 +34,24 @@ const Recipe = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
-  async function getRecipe(id) {
-    let interID = id;
+  async function getRecipe() {
     setLoading(true);
     try {
-      const value = await AsyncStorage.getItem('id');
+      const value = await AsyncStorage.getItem('recipe');
       if (value !== null) {
         // We have data!!
-        interID = value;
-        console.log(value);
+        setRecipeData(JSON.parse(value));
       }
     } catch (error) {
       // Error retrieving data
       console.log('er gaat iets fout');
       console.log(error);
     }
-    const recipe = await firestore().collection('recipes').doc(interID).get();
-    // console.log(recipe._data);
-    setRecipeData(recipe._data);
     setLoading(false);
   }
   useFocusEffect(
     React.useCallback(() => {
-      // Do something when the screen is focused
-      //this doenst work because of the stupid bug
-      let {id} = route.params;
-      // console.log(route);
-      // console.log(navigation.params);
-      // console.log(id);
-      getRecipe(id);
-      console.log('recipeData', recipeData);
-
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-        // route.params = null;
-      };
+      getRecipe();
     }, []),
   );
   const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
@@ -138,7 +119,7 @@ const Recipe = ({route, navigation}) => {
                   </Text>
                 ))}
               </View>
-              <View style={{padding:10}}>
+              <View style={{padding: 10}}>
                 {recipeData.instructions.map((item, index) => (
                   <Text style={styles.instructionItem} key={index}>
                     🥄{index}: {item}

@@ -231,12 +231,17 @@ const Browse = ({route, navigation}) => {
                     console.log(marker.id);
                     try {
                       AsyncStorage.setItem('id', marker.id);
+                      AsyncStorage.setItem(
+                        'recipe',
+                        JSON.stringify(marker.recipe),
+                      );
                     } catch (error) {
                       // Error saving data
                       console.log(error);
                     }
                     const jumpToAction = TabActions.jumpTo('Recipe', {
                       id: marker.id,
+                      recipe: marker.recipe,
                     });
 
                     navigation.dispatch(jumpToAction);

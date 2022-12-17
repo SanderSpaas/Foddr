@@ -80,14 +80,15 @@ const Favorites = ({route, navigation}) => {
           contentContainerStyle={styles.likedItems}
           renderItem={({item}) => (
             <Card
-              name={item.recipe.name}
-              imgUrl={item.recipe.image}
-              rating={[
-                item.recipe.rating.rating,
-                item.recipe.rating.amountOfRatings,
-              ]}
-              time={item.recipe.time}
-              likes={item.recipe.likes}
+              recipe={item.recipe}
+              // name={item.recipe.name}
+              // imgUrl={item.recipe.image}
+              // rating={[
+              //   item.recipe.rating.rating,
+              //   item.recipe.rating.amountOfRatings,
+              // ]}
+              // time={item.recipe.time}
+              // likes={item.recipe.likes}
               recipeId={item.id}
               vertical={true}
             />

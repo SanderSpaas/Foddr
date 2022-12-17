@@ -25,37 +25,16 @@ import Rating from './Rating';
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
 
-const Card = ({
-  name,
-  imgUrl,
-  onPress,
-  rating,
-  time,
-  likes,
-  recipeId,
-  vertical,
-}) => {
-  if (likes !== undefined) {
-    likesArray = likes;
-  }
+const Card = ({recipe, recipeId, vertical}) => {
   const navigation = useNavigation();
   // console.log('I am: ' + {name}.name + ' with id: ' + {recipeId}.recipeId);
   return (
     <TouchableOpacity
       onPress={() => {
         {
-          // console.log(recipeId);
-          // console.log(navigation)
-          // navigation.push('Recipe', {
-          //   params: {id: recipeId},
-          //   // merge: true,
-          // });
-          // navigation.dispatch({
-          //   ...CommonActions.setParams({id: recipeId}),
-          //   source: route.key,
-          // });
           try {
             AsyncStorage.setItem('id', recipeId);
+            AsyncStorage.setItem('recipe', JSON.stringify(recipe));
           } catch (error) {
             // Error saving data
             console.log(error);
@@ -69,15 +48,17 @@ const Card = ({
       style={styles.foodcard}
       style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
       <View>
-        <Image style={styles.image} source={{uri: imgUrl}} />
-        <Like likes={likes} recipeId={recipeId} />
-        <Rating rating={rating} />
+        <Image style={styles.image} source={{uri: recipe.image}} />
+        <Like likes={recipe.likes} recipeId={recipeId} />
+        <Rating
+          rating={[recipe.rating.rating, recipe.rating.amountOfRatings]}
+        />
         <View style={styles.bottemItems}>
           <Text numberOfLines={1} style={styles.titel}>
-            {name}
+            {recipe.name}
           </Text>
           <View style={styles.row}>
-            <Text style={styles.textcolor}>{time} min </Text>
+            <Text style={styles.textcolor}>{recipe.time} min </Text>
             <FontIcon name="clock" size={20} solid color={'#333333'} />
           </View>
         </View>
