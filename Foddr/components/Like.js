@@ -18,8 +18,6 @@ import {useNavigation} from '@react-navigation/native';
 const auth = firebase.auth();
 const {uid} = auth.currentUser;
 let likesArray;
-let counter = 0;
-// const db = firebase.firestore();
 
 const Like = ({likes, recipeId}) => {
   if (likes !== undefined) {
@@ -121,8 +119,8 @@ const styles = {
     width: 50,
     height: 50,
     // backgroundColor: '#000',
-    top: 0,
-    right: 0,
+    top: 9,
+    right: 7,
     borderRadius: 50,
   },
   likeBackdrop: {
@@ -148,7 +146,7 @@ const styles = {
     // height: 50,
   },
   liked: {
-    color: colors.pink,
+    color: colors.quatrarycolor,
     opacity: 1,
   },
   textcolor: {

@@ -18,11 +18,14 @@ const SeasonButton = ({
   colorBackground,
   talkToParent,
   id,
+  interactable,
 }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        talkToParent([id, !enabled]);
+        if (interactable) {
+          talkToParent([id, !enabled]);
+        }
       }}
       style={
         enabled
@@ -39,6 +42,9 @@ const SeasonButton = ({
     </TouchableOpacity>
   );
 };
+SeasonButton.defaultProps = {
+  interactable: true,
+}
 const styles = {
   buttonLocation: {
     borderRadius: 5,

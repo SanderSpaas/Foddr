@@ -41,7 +41,7 @@ import storage from '@react-native-firebase/storage';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let amountofPages = 8;
+let amountofPages = 10;
 var docRef;
 const AddRecipe = ({route, navigation}) => {
   // useEffect(() => {
@@ -57,6 +57,8 @@ const AddRecipe = ({route, navigation}) => {
   ]);
   const [formData, setFormData] = useState({
     name: '',
+    description: '',
+    amountOfPeople: 0,
     fall: false,
     winter: false,
     spring: false,
@@ -184,13 +186,16 @@ const AddRecipe = ({route, navigation}) => {
           firestore()
             .collection('recipes')
             .add({
+              name: formData.name,
+              description: formData.description,
               image: downloadURL,
               longitude: marker.longitude,
               latitude: marker.latitude,
               // tags: []
+              amountOfPeople: formData.amountOfPeople,
               ingredients: ingredients,
               instructions: instructions,
-              name: formData.name,
+
               rating: {
                 amountOfRatings: 0,
                 rating: 0,
@@ -210,7 +215,6 @@ const AddRecipe = ({route, navigation}) => {
         });
         setPostPage(true);
       });
-    
     } else {
       setPage(page + 1);
     }
@@ -222,9 +226,8 @@ const AddRecipe = ({route, navigation}) => {
     setInstructions([]);
     setPage(0);
     setPostPage(false);
-    navigation.navigate('Browse')
-
-}
+    navigation.navigate('Browse');
+  }
   const pageSwitcher = () => {
     // console.log(JSON.stringify(formData));
     // console.log(JSON.stringify(instructions));
@@ -272,6 +275,67 @@ const AddRecipe = ({route, navigation}) => {
       case 2:
         return (
           <>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/name.png')}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>
+              What is the description of the recipe?
+            </Text>
+            <View>
+              <Text style={styles.label}>
+                Tell me something about the recipe
+              </Text>
+              <TextInput
+                placeholderTextColor={colors.textcolor}
+                // placeholder="Fill in the recipe name"
+                multiline={true}
+                onChangeText={value =>
+                  setFormData({
+                    ...formData,
+                    description: value,
+                  })
+                }
+                value={formData.description}
+                style={[
+                  styles.colordBorder,
+                  styles.textInput,
+                  styles.textInputLong,
+                ]}
+              />
+            </View>
+          </>
+        );
+      case 3:
+        return (
+          <>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/name.png')}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>For how many people is the recipe?</Text>
+            <View>
+              <Text style={styles.label}>Fill in the amount of people</Text>
+              <TextInput
+                placeholderTextColor={colors.textcolor}
+                // placeholder="Fill in the recipe name"
+                onChangeText={value =>
+                  setFormData({
+                    ...formData,
+                    amountOfPeople: value,
+                  })
+                }
+                value={formData.amountOfPeople}
+                style={[styles.colordBorder, styles.textInput]}
+              />
+            </View>
+          </>
+        );
+      case 4:
+        return (
+          <>
             <Text style={styles.title}>What are the instructions?</Text>
             <View style={[styles.colordBorder, styles.instructions]}>
               <FlatList
@@ -293,7 +357,7 @@ const AddRecipe = ({route, navigation}) => {
             <AddInStruction parentCallback={handleCallback} />
           </>
         );
-      case 3:
+      case 5:
         return (
           <>
             <Text style={styles.title}>
@@ -327,7 +391,7 @@ const AddRecipe = ({route, navigation}) => {
             </View>
           </>
         );
-      case 4:
+      case 6:
         return (
           <>
             <Text style={styles.absoluteText}>Where does it come from?</Text>
@@ -346,7 +410,7 @@ const AddRecipe = ({route, navigation}) => {
             </View>
           </>
         );
-      case 5:
+      case 7:
         return (
           <>
             <Image
@@ -354,7 +418,7 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/cookingTime.png')}
               resizeMode="contain"
             />
-            <Text style={styles.title}>How long does it take to cook?</Text>
+            <Text style={styles.title}>How long does it take to prepare?</Text>
             <View>
               <Text style={styles.label}>Time in minutes</Text>
               <TextInput
@@ -369,14 +433,14 @@ const AddRecipe = ({route, navigation}) => {
             </View>
           </>
         );
-      case 6:
+      case 8:
         return (
           <>
             <Text style={styles.title}>Add a picture</Text>
             <Camera handleUri={handleUri} uri={formData.fileUri} />
           </>
         );
-      case 7:
+      case 9:
         return (
           <>
             <Text style={styles.title}>What are the ingredients?</Text>
@@ -406,7 +470,7 @@ const AddRecipe = ({route, navigation}) => {
             <AddIngredient parentCallbackIng={handleCallbackIng} />
           </>
         );
-      case 8:
+      case 10:
         return (
           <>
             <Image
@@ -665,7 +729,8 @@ const styles = StyleSheet.create({
     color: colors.textcolor,
   },
   textInputLong: {
-    height: Dimensions.get('window').height * 0.3,
+    height: Dimensions.get('window').height * 0.2,
+    paddingLeft: 15,
     paddingTop: 15,
     textAlignVertical: 'top',
   },

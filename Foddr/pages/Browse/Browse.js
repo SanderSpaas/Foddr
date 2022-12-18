@@ -243,7 +243,6 @@ const Browse = ({route, navigation}) => {
                       id: marker.id,
                       recipe: marker.recipe,
                     });
-
                     navigation.dispatch(jumpToAction);
                   }}>
                   <MapCard
@@ -274,7 +273,6 @@ const Browse = ({route, navigation}) => {
             talkToParent={talkToParent}
             enabled={seasons.fall}
             id={fallImg}
-            X
           />
           <SeasonButton
             imgUrl={require(winterImg)}

@@ -167,12 +167,14 @@ const App: () => Node = () => {
       />
       <NavigationContainer theme={navTheme}>
         <Tab.Navigator
-          initialRouteName="Feed"
+          initialRouteName="Browse"
+          backBehavior="history"
           screenOptions={{
             headerShown: false,
             tabBarHideOnKeyboard: true,
+            tabBarStyle: {height: 60, padding: 10, paddingBottom: 5},
           }}>
-          <Tab.Screen
+          {/* <Tab.Screen
             name="Discover"
             component={Home}
             options={{
@@ -187,7 +189,7 @@ const App: () => Node = () => {
                 />
               ),
             }}
-          />
+          /> */}
           <Tab.Screen
             name="Browse"
             component={Browse}
@@ -291,17 +293,20 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 40,
+    marginTop: 50,
   },
-  button: {
-    backgroundColor: '#ededed',
-    borderRadius: 15,
-    padding: 7,
-    paddingLeft: 15,
-    paddingRight: 15,
-    fontSize: 15,
-    width: 100,
-    marginRight: 10,
-  },
+  // button: {
+  //   backgroundColor: '#ededed',
+  //   backgroundColor: colors.maincolor,
+  //   borderRadius: 15,
+  //   padding: 7,
+  //   paddingLeft: 15,
+  //   paddingRight: 15,
+  //   fontSize: 15,
+  //   width: 100,
+  //   height: 100,
+  //   marginRight: 10,
+  // },
   buttonText: {textAlign: 'center'},
 });
 

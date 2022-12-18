@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {cloneElement, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -80,7 +80,7 @@ const styles = {
   //css voor foodcard
   foodcard: {
     width: 250,
-    height: 170,
+    height: 180,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -91,35 +91,49 @@ const styles = {
     elevation: 9,
     borderRadius: 10,
     backgroundColor: '#fff',
-    marginLeft: 10,
-    marginRight: 10,
   },
   bottemItems: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    //center the items vertically
+    // justifyContent: 'center',
+    height: 45,
+    // backgroundColor: colors.pink,
     padding: 5,
+    // paddingTop: 15,
   },
   vertical: {
-    margin: 15,
+    margin: 10,
     width: Dimensions.get('window').width * 0.85,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   titel: {
     width: 180,
     color: colors.textcolor,
+    // fontWeight: 'bold',
+    fontSize: 16,
   },
   image: {
-    // width: 300,
-    height: 130,
-    borderRadius: 10,
+    width: 290,
+    // flex: 2,
+    alignSelf: 'center',
+    height: 125,
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 5,
     backgroundColor: '#fff',
     // zIndex: 10,
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   textcolor: {
     color: colors.textcolor,
+    fontWeight: 'bold',
   },
 };
 export default Card;

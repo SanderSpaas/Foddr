@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   Animated,
+  Button,
 } from 'react-native';
 import colors from '../theme/colors';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -18,19 +19,46 @@ import Like from './Like';
 import SVGImg from '../assets/images/gradient.svg';
 import {useNavigation} from '@react-navigation/native';
 import Rating from './Rating';
-const ImageHeader = ({recipeData, route, scrollY, scrollYSticky}) => {
-  // const [scrollYComp, setScrollYComp] = useState(
-  //   new Animated.Value(scrollY),
-  // );
+import SeasonButton from './SeasonButton';
+const fallImg = '../assets/images/fallIcon.png';
+const winterImg = '../assets/images/winterIcon.png';
+const springImg = '../assets/images/springIcon.png';
+const summerImg = '../assets/images/summerIcon.png';
+const ImageHeader = ({
+  recipeData,
+  route,
+  scrollY,
+  scrollYSticky,
+  talkToParent,
+}) => {
+  const [amountOfPeople, setAmountOfPeople] = useState(
+    parseInt(recipeData.amountOfPeople),
+  );
+  const handleIncrease = () => {
+    let people = amountOfPeople;
+    people++;
+    setAmountOfPeople(people);
+    talkToParent(people);
+    // console.log('amountOfPeople', amountOfPeople);
+  };
+
+  const handleDecrease = () => {
+    let people = amountOfPeople;
+    people--;
+    setAmountOfPeople(people);
+    if (people <= 1) {
+      setAmountOfPeople(1);
+    }
+    talkToParent(people);
+
+    // console.log('amountOfPeople', amountOfPeople);
+  };
   const navigation = useNavigation();
   const height = scrollY.interpolate({
     inputRange: [0, 250],
     outputRange: [250, 125],
     extrapolate: 'clamp',
   });
-
-  // scrollYStickyOffset.setOffset(200);
-  console.log('scrollY', scrollY);
   return (
     <Animated.View
       style={[
@@ -86,15 +114,71 @@ const ImageHeader = ({recipeData, route, scrollY, scrollYSticky}) => {
       </Animated.View>
 
       {/* <Animated.View style={{position: 'absolute'}}> */}
-      <View style={styles.titleBar}>
-        <Text style={styles.barText}>
-          {recipeData.forPeople}
-          <FontIcon
-            // style={styles.arrow}
-            name="portrait"
-            size={25}
+      {/* <View style={styles.titleBar}> */}
+
+      {/* <NumericInput
+                minValue={1}
+                type="up-down"
+                onChange={value => console.log(value)}
+              /> */}
+      {/* </View> */}
+      {/* <Image
+        style={[styles.blob]}
+        source={require('../assets/images/wave.png')}
+      /> */}
+      <View
+        style={{
+          borderBottomWidth: 1,
+          borderBottomColor: '#9ea9b5',
+          position: 'absolute',
+          bottom: -80,
+          left: 5,
+          right: 5,
+          paddingLeft: 10,
+          paddingRight: 10,
+          flexDirection: 'row',
+          backgroundColor: '#fff',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: 80,
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            // width: 50,
+            // borderColor: colors.secondarycolor,
+            // borderWidth: 3,
+          }}>
+          <Button
+            title="-"
+            onPress={handleDecrease}
             color={colors.secondarycolor}
           />
+          <Text
+            style={{
+              color: colors.secondarycolor,
+              fontSize: 20,
+              width: 30,
+              textAlign: 'center',
+            }}>
+            {amountOfPeople}
+          </Text>
+          <FontIcon
+            // style={styles.arrow}
+            name="user-alt"
+            size={20}
+            style={{padding: 5}}
+            color={colors.secondarycolor}
+          />
+          <Button
+            title="+"
+            onPress={handleIncrease}
+            color={colors.secondarycolor}
+          />
+        </View>
+        <Text style={styles.barText}>
+          {/* {recipeData.amountOfPeople} */}
 
           {/* Recipe ❤️ {route.params.id} */}
           <Rating
@@ -104,16 +188,51 @@ const ImageHeader = ({recipeData, route, scrollY, scrollYSticky}) => {
             ]}
           />
         </Text>
-        {/* <NumericInput
-                minValue={1}
-                type="up-down"
-                onChange={value => console.log(value)}
-              /> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            height: 60,
+            
+          }}>
+          {recipeData.seasons.fall && (
+            <SeasonButton
+              imgUrl={require(fallImg)}
+              colorBackground={'#ffa289'}
+              interactable={false}
+              enabled={recipeData.seasons.fall}
+              id={fallImg}
+            />
+          )}
+          {recipeData.seasons.winter && (
+            <SeasonButton
+              imgUrl={require(winterImg)}
+              colorBackground={'#6595cb'}
+              interactable={false}
+              enabled={recipeData.seasons.winter}
+              id={winterImg}
+            />
+          )}
+          {recipeData.seasons.spring && (
+            <SeasonButton
+              imgUrl={require(springImg)}
+              colorBackground={'#ffb9d6'}
+              interactable={false}
+              enabled={recipeData.seasons.spring}
+              id={springImg}
+            />
+          )}
+          {recipeData.seasons.summer && (
+            <SeasonButton
+              style={{margin: -5}}
+              imgUrl={require(summerImg)}
+              colorBackground={'#f5de7e'}
+              interactable={false}
+              enabled={recipeData.seasons.summer}
+              id={summerImg}
+            />
+          )}
+        </View>
       </View>
-      <Image
-        style={[styles.blob]}
-        source={require('../assets/images/wave.png')}
-      />
       {/* </Animated.View> */}
     </Animated.View>
   );
@@ -178,12 +297,13 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   titleBar: {
-    width: Dimensions.get('window').width * 0.85,
+    width: Dimensions.get('window').width * 0.95,
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 25,
+    alignSelf: 'center',
+    // margin: 25,
     padding: 5,
     shadowColor: '#000',
     shadowOffset: {
@@ -198,7 +318,7 @@ const styles = StyleSheet.create({
     height: 50,
     zIndex: 2,
     position: 'absolute',
-    bottom: -90,
+    bottom: -65,
   },
   barText: {
     color: colors.textcolor,
@@ -211,6 +331,9 @@ const styles = StyleSheet.create({
     // zIndex: 10,
     position: 'absolute',
     bottom: -90,
+    // backgroundColor: colors.maincolor,
+    borderBottomWidth: 3,
+    borderBottomColor: colors.maincolor,
   },
 });
 export default ImageHeader;
