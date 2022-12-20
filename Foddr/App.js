@@ -11,7 +11,6 @@ import {
   PermissionsAndroid,
   StatusBar,
 } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 // var ImagePicker = require('react-native-image-picker');
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
