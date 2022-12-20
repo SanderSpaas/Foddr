@@ -11,6 +11,7 @@ import {
   PermissionsAndroid,
   StatusBar,
 } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 // var ImagePicker = require('react-native-image-picker');
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -45,13 +46,13 @@ const permission = () => {
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   );
 };
-GoogleSignin.configure({
-  webClientId:
-    '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
-  ClientId:
-    '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
-  offlineAccess: true,
-});
+// GoogleSignin.configure({
+//   webClientId:
+//     '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
+//   ClientId:
+//     '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
+//   offlineAccess: true,
+// });
 
 //background color for our pages
 const navTheme = DefaultTheme;
