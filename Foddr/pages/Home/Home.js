@@ -21,9 +21,10 @@ import {Svg, Image as ImageSvg} from 'react-native-svg';
 import {WebView} from 'react-native-webview';
 import SeasonButton from '../../components/SeasonButton.js';
 import globalStyles from '../../theme/globalStyles.js';
-
+import Card from '../../components/Card.js';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import colors from '../../theme/colors.js';
 // const auth = firebase.auth();
 const db = firebase.firestore();
 const styles = StyleSheet.create({
@@ -36,14 +37,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7fb',
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
+    color: colors.maincolor,
+    fontSize: 30,
+    fontWeight: 'bold',
+    padding: 10,
   },
 });
 const Home = ({navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  function showRecipe(recipeSeasons, season) {
+    console.log('recipeSeasons[season]', Object.entries(recipeSeasons)[season]);
+    if (Object.entries(recipeSeasons)[season][1]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   useEffect(() => {
     const ref = firebase.firestore().collection('recipes');
@@ -67,38 +79,81 @@ const Home = ({navigation}) => {
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
+  return (
+    <View style={styles.root}>
+      {/* <StatusBar barStyle="light-content" /> */}
+      {!loading ? (
+        <ScrollView>
+          <View>
+            <Text style={styles.title}>Winter Recipes</Text>
+            <FlatList
+              data={recipeData.filter(recipeData =>
+                showRecipe(recipeData.recipe.seasons, 0),
+              )}
+              keyExtractor={item => item.id}
+              style={styles.list}
+              horizontal={true}
+              contentContainerStyle={styles.likedItems}
+              renderItem={({item}) => (
+                <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
+              )}
+            />
+          </View>
+          <View>
+            <Text style={styles.title}>Autumn Recipes</Text>
+            <FlatList
+              data={recipeData.filter(recipeData =>
+                showRecipe(recipeData.recipe.seasons, 1),
+              )}
+              keyExtractor={item => item.id}
+              style={styles.list}
+              horizontal={true}
+              contentContainerStyle={styles.likedItems}
+              renderItem={({item}) => (
+                <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
+              )}
+            />
+          </View>
 
-  <View style={styles.root}>
-    {/* <StatusBar barStyle="light-content" /> */}
-    {!loading ? (
-      <>
-        <FlatList
-          data={recipeData}
-          keyExtractor={item => item.id}
-          style={styles.list}
-          horizontal={true}
-          contentContainerStyle={styles.likedItems}
-          renderItem={({item}) => (
-            <Card recipe={item.recipe} recipeId={item.id} vertical={false} />
-          )}
-        />
-        <Button
-          title="Go to Details"
-          color="white"
-          backgroundColor={'#9388db'}
-          onPress={() => {
-            auth()
-              .signOut()
-              .then(() => console.log('User signed out!'));
-          }}
-        />
-      </>
-    ) : (
-      <Text style={[styles.motivator, globalStyles.shadow]}>
-        Go make some recipes 😉
-      </Text>
-    )}
-  </View>;
+          <View>
+            <Text style={styles.title}>Spring Recipes</Text>
+            <FlatList
+              data={recipeData.filter(recipeData =>
+                showRecipe(recipeData.recipe.seasons, 3),
+              )}
+              keyExtractor={item => item.id}
+              style={styles.list}
+              horizontal={true}
+              contentContainerStyle={styles.likedItems}
+              renderItem={({item}) => (
+                <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
+              )}
+            />
+          </View>
+          <View>
+            <Text style={styles.title}>Summer Recipes</Text>
+            <FlatList
+              data={recipeData.filter(recipeData =>
+                showRecipe(recipeData.recipe.seasons, 2),
+              )}
+              keyExtractor={item => item.id}
+              style={styles.list}
+              horizontal={true}
+              contentContainerStyle={styles.likedItems}
+              renderItem={({item}) => (
+                <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
+              )}
+            />
+          </View>
+          
+        </ScrollView>
+      ) : (
+        <Text style={[styles.motivator, globalStyles.shadow]}>
+          Go make some recipes 😉
+        </Text>
+      )}
+    </View>
+  );
 };
 
 export default Home;

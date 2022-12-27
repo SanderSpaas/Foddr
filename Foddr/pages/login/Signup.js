@@ -15,21 +15,32 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import globalStyles from '../../theme/globalStyles.js';
-
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 const Signup = ({route, navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   function signup() {
     //clearing errors
     setError('');
     // Checking if input is empty
-    if (email.trim().length === 0 || password.trim().length === 0) {
+    if (
+      email.trim().length === 0 ||
+      password.trim().length === 0 ||
+      name.trim().length === 0
+    ) {
       console.log('Please fill in all fields');
       setError('Please fill in all fields');
     } else {
       console.info('trying to log you in ' + email + ' ' + password);
+      // try {
+      //   AsyncStorage.setItem('name', name);
+      // } catch (error) {
+      //   // Error saving data
+      //   console.log(error);
+      // }
       setLoading(true);
       auth()
         .createUserWithEmailAndPassword(email.trim(), password.trim())
@@ -83,7 +94,17 @@ const Signup = ({route, navigation}) => {
         <Text style={globalStyles.title}>Hi!</Text>
         <Text style={globalStyles.subtitle}>Create new account</Text>
       </View>
-
+      <View>
+        <Text style={globalStyles.label}>Name</Text>
+        <TextInput
+          id="name"
+          style={globalStyles.textInput}
+          placeholder="Name"
+          onChangeText={value => setName(value)}
+          // value={email}
+          value="testUser"
+        />
+      </View>
       <View>
         <Text style={globalStyles.label}>Email</Text>
         <TextInput

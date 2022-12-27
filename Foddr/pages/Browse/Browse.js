@@ -172,7 +172,7 @@ const Browse = ({route, navigation}) => {
   }
   function filterRecipes() {
     let filteredRecipes = recipeData.filter(recipeData =>
-      showRecipe(recipeData.recipe.seasons),
+      showRecipe(recipeData.recipe.seasons)
     );
     // console.log('=====================');
     // filteredRecipes.forEach(item => console.log(item.recipe.name));

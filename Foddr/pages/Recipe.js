@@ -1,6 +1,4 @@
-// import PropTypes from 'prop-types';
 import React, {useState, useEffect} from 'react';
-// import {images} from 'theme';
 import {
   StyleSheet,
   Text,
@@ -19,7 +17,6 @@ import {SvgUri} from 'react-native-svg';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-// import functions from '@react-native-firebase/functions';
 import colors from '../theme/colors.js';
 import {useFocusEffect} from '@react-navigation/native';
 
@@ -41,6 +38,7 @@ const Recipe = ({route, navigation}) => {
   const stickyHeaderHeight = 100;
   const [timers, setTimers] = useState([]);
   const [amountOfPeople, setAmountOfPeople] = useState(0);
+  let recipeID;
 
   const talkToParent = amount => {
     setAmountOfPeople(amount);
@@ -70,10 +68,12 @@ const Recipe = ({route, navigation}) => {
   async function getRecipe() {
     setLoading(true);
     try {
-      const value = await AsyncStorage.getItem('recipe');
-      if (value !== null) {
+      const recipeData = await AsyncStorage.getItem('recipe');
+      recipeID = await AsyncStorage.getItem('id');
+      if (recipeData !== null) {
         // We have data!!
-        setRecipeData(JSON.parse(value));
+        console.log('recipeID', recipeID);
+        setRecipeData(JSON.parse(recipeData));
       }
     } catch (error) {
       // Error retrieving data
@@ -101,7 +101,6 @@ const Recipe = ({route, navigation}) => {
   }
   const screenHeight = Dimensions.get('window').height;
   return (
-    // <SafeAreaView contentContainerStyle={styles.root}>
     <View style={{height: screenHeight, backgroundColor: 'white'}}>
       {recipeData !== null && recipeData !== undefined ? (
         <>
@@ -192,13 +191,30 @@ const Recipe = ({route, navigation}) => {
                 <Text>I AM HERE FOR TESTING</Text>
               </TouchableHighlight>
 
+              <TouchableHighlight
+                onPress={() =>
+                  firestore()
+                    .collection('recipes')
+                    .doc(recipeID)
+                    .delete()
+                    .then(() => {
+                      console.log('Document successfully deleted!');
+                    })
+                    .catch(error => {
+                      console.error('Error deleting document: ', error);
+                    })
+                }
+                style={styles.timer}>
+                <Text>I AM HERE FOR DELETING</Text>
+              </TouchableHighlight>
+
               <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 <Text style={styles.title}>Ingredients</Text>
                 {recipeData.ingredients.map((item, index) => (
                   <Text style={styles.listItem} key={index}>
-                    🍴{item.name}{' '}
+                    🍴{item.name}
                     {(item.amount / recipeData.amountOfPeople) * amountOfPeople}
-                    {/* {item.amount}/{recipeData.amountOfPeople}*{amountOfPeople} */}{' '}
+                    {/* {item.amount}/{recipeData.amountOfPeople}*{amountOfPeople} */}
                     {item.unitOfMeasure}
                   </Text>
                 ))}
@@ -206,13 +222,9 @@ const Recipe = ({route, navigation}) => {
               <View style={{padding: 10, marginBottom: 150}}>
                 <Text style={styles.title}>Instructions</Text>
                 {recipeData.instructions.map((item, index) => (
-                  <View style={{flexDirection: 'row'}}>
-                    <Text style={styles.instructionItemKey} key={index}>
-                      {index + 1}
-                    </Text>
-                    <Text style={styles.instructionItem} key={index}>
-                      {item}
-                    </Text>
+                  <View style={{flexDirection: 'row'}} key={index + 1}>
+                    <Text style={styles.instructionItemKey}>{index + 1}</Text>
+                    <Text style={styles.instructionItem}>{item}</Text>
                   </View>
                 ))}
               </View>
