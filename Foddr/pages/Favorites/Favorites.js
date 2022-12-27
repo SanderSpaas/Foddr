@@ -14,17 +14,17 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import Button from '../../components/Button/Button.js';
 import Card from '../../components/Card';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-// import functions from '@react-native-firebase/functions';
 import colors from '../../theme/colors.js';
+import globalStyles from '../../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
-const {uid} = auth.currentUser;
-
+// const currentUser = auth.currentUser.uid;
+// console.log('currentUser',currentUser);
+// console.log('You are: ' + JSON.stringify(currentUser));
+// const uid = currentUser.uid;
 const Favorites = ({route, navigation}) => {
   useEffect(() => {
     //only do the isloading thing once
@@ -35,13 +35,13 @@ const Favorites = ({route, navigation}) => {
       setRecipeData([]);
       // recipesArray = recipeData;
       snapshot.forEach(doc => {
-        if (doc.data().likes.includes(uid)) {
+        if (doc.data().likes.includes(auth.currentUser.uid)) {
           console.log(
             doc.data().likes +
               ' : ' +
-              uid +
+              auth.currentUser.uid +
               ' ' +
-              doc.data().likes.includes(uid),
+              doc.data().likes.includes(auth.currentUser.uid),
           );
           recipesArray.push({
             id: doc.id,
@@ -62,14 +62,14 @@ const Favorites = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const from = route?.params?.from;
   return (
-    <SafeAreaView contentContainerStyle={styles.root}>
+    <SafeAreaView contentContainerStyle={globalStyles.root}>
       <Image
-        style={styles.blob}
+        style={globalStyles.blob}
         source={require('../../assets/images/wave.png')}
       />
-      <View style={[styles.titleBar]}>
+      <View style={[globalStyles.titleBar]}>
         <View>
-          <Text style={styles.barText}>Your favorites ❤️</Text>
+          <Text style={globalStyles.barText}>Your favorites ❤️</Text>
         </View>
       </View>
       {!loading ? (
@@ -79,91 +79,26 @@ const Favorites = ({route, navigation}) => {
           style={styles.list}
           contentContainerStyle={styles.likedItems}
           renderItem={({item}) => (
-            <Card
-              recipe={item.recipe}
-              // name={item.recipe.name}
-              // imgUrl={item.recipe.image}
-              // rating={[
-              //   item.recipe.rating.rating,
-              //   item.recipe.rating.amountOfRatings,
-              // ]}
-              // time={item.recipe.time}
-              // likes={item.recipe.likes}
-              recipeId={item.id}
-              vertical={true}
-            />
+            <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
           )}
         />
       ) : (
-        <Text style={styles.motivator}>Go like some recipes 😉</Text>
+        <Text style={[styles.motivator, globalStyles.shadow]}>
+          Go like some recipes 😉
+        </Text>
       )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    // flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.maincolor,
-  },
-  Button: {
-    flexDirection: 'row',
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-around',
-    // width: Dimensions.get('window').width * 0.5,
-  },
   list: {
-    // marginTop: 70,
+    marginBottom: 110,
   },
   likedItems: {
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: Dimensions.get('window').width * 0.85,
-    // overflow:'hidden',
-    marginBottom: 20,
-  },
-  Icon: {
-    marginRight: 10,
-  },
-  titleBar: {
-    width: Dimensions.get('window').width * 0.85,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 25,
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 3,
-    position: 'absolute',
-    height: 50,
-    zIndex: 2,
-  },
-  barText: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    marginBottom: -15,
-    zIndex: 1,
   },
   motivator: {
     textAlign: 'center',
@@ -176,15 +111,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.7,
     fontSize: 20,
     color: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 3,
   },
 });
 export default Favorites;

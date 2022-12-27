@@ -9,14 +9,11 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  // WebView,
   FlatList,
 } from 'react-native';
 import Button from '../../components/Button/Button.js';
 import MapCard from '../../components/MapCard.js';
-// import {colors} from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-// import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import {
   AnimatedRegion,
   Marker,
@@ -24,8 +21,6 @@ import {
   Callout,
 } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
-// import MapMarker from 'react-native-maps';
-// var MapView = require('react-native-maps');
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import colors from '../../theme/colors.js';
@@ -44,6 +39,7 @@ import RandomButton from '../../components/RandomButton.js';
 import {Svg, Image as ImageSvg} from 'react-native-svg';
 import {WebView} from 'react-native-webview';
 import SeasonButton from '../../components/SeasonButton.js';
+import globalStyles from '../../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 const fallImg = '../../assets/images/fallIcon.png';
@@ -206,7 +202,7 @@ const Browse = ({route, navigation}) => {
           showsUserLocation={true}
           showsMyLocationButton={false}
           clusterColor={colors.maincolor}
-          style={styles.map}
+          style={globalStyles.map}
           ref={mapViewRef}
           mapType={'terrain'}
           region={region}
@@ -262,7 +258,7 @@ const Browse = ({route, navigation}) => {
         </MapView>
       </View>
       <View style={styles.buttons}>
-        {recipeDataRender !== undefined && ( //TODO dont render this if no recipes are available
+        {recipeDataRender !== undefined && recipeDataRender !== null && ( //TODO dont render this if no recipes are available
           <RandomButton mapViewRef={mapViewRef} recipeData={recipeDataRender} />
         )}
         <View style={styles.seasonButtons}>
@@ -333,10 +329,6 @@ const styles = StyleSheet.create({
     // margin: 20,
     // marginTop: 50,
   },
-  map: {
-    width: Dimensions.get('window').width * 1,
-    height: Dimensions.get('window').height * 1,
-  },
   seasonButtons: {
     position: 'absolute',
     right: -20,
@@ -380,7 +372,6 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     width: Dimensions.get('window').width * 0.85,
-
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
@@ -397,56 +388,6 @@ const styles = StyleSheet.create({
     elevation: 9,
     color: '#000',
     borderRadius: 3,
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    marginBottom: -15,
-  },
-  //extra ccs
-  //css voor foodcard
-  foodcard: {
-    width: 250,
-    height: 150,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  bottemItems: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 5,
-  },
-  vertical: {
-    margin: 15,
-    width: Dimensions.get('window').width * 0.85,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  titel: {
-    width: 180,
-    color: colors.textcolor,
-  },
-  image: {
-    width: 300,
-    height: 110,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    zIndex: 100,
-  },
-  textcolor: {
-    color: colors.textcolor,
   },
 });
 export default Browse;

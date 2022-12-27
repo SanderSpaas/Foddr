@@ -38,6 +38,7 @@ import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import storage from '@react-native-firebase/storage';
+import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -254,9 +255,9 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/name.png')}
               resizeMode="contain"
             />
-            <Text style={styles.title}>What is the recipe called?</Text>
+            {/* <Text style={styles.title}>What is the recipe called?</Text> */}
             <View>
-              <Text style={styles.label}>Fill in the recipe name</Text>
+              <Text style={globalStyles.label}>Fill in the recipe name</Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
                 // placeholder="Fill in the recipe name"
@@ -267,7 +268,7 @@ const AddRecipe = ({route, navigation}) => {
                   })
                 }
                 value={formData.name}
-                style={[styles.colordBorder, styles.textInput]}
+                style={[styles.colordBorder, globalStyles.textInput]}
               />
             </View>
           </>
@@ -280,16 +281,15 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/name.png')}
               resizeMode="contain"
             />
-            <Text style={styles.title}>
+            {/* <Text style={styles.title}>
               What is the description of the recipe?
-            </Text>
+            </Text> */}
             <View>
-              <Text style={styles.label}>
+              <Text style={globalStyles.label}>
                 Tell me something about the recipe
               </Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
-                // placeholder="Fill in the recipe name"
                 multiline={true}
                 onChangeText={value =>
                   setFormData({
@@ -300,8 +300,8 @@ const AddRecipe = ({route, navigation}) => {
                 value={formData.description}
                 style={[
                   styles.colordBorder,
-                  styles.textInput,
-                  styles.textInputLong,
+                  globalStyles.textInput,
+                  globalStyles.textInputLong,
                 ]}
               />
             </View>
@@ -315,12 +315,14 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/name.png')}
               resizeMode="contain"
             />
-            <Text style={styles.title}>For how many people is the recipe?</Text>
+            {/* <Text style={styles.title}>For how many people is the recipe?</Text> */}
             <View>
-              <Text style={styles.label}>Fill in the amount of people</Text>
+              <Text style={globalStyles.label}>
+                Fill in the amount of people
+              </Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
-                // placeholder="Fill in the recipe name"
+                keyboardType="numeric"
                 onChangeText={value =>
                   setFormData({
                     ...formData,
@@ -328,7 +330,7 @@ const AddRecipe = ({route, navigation}) => {
                   })
                 }
                 value={formData.amountOfPeople}
-                style={[styles.colordBorder, styles.textInput]}
+                style={[styles.colordBorder, globalStyles.textInput]}
               />
             </View>
           </>
@@ -336,33 +338,41 @@ const AddRecipe = ({route, navigation}) => {
       case 4:
         return (
           <>
-            <Text style={styles.title}>What are the instructions?</Text>
-            <View style={[styles.colordBorder, styles.instructions]}>
-              <FlatList
-                data={instructions}
-                // keyExtractor={item => item}
-                extraData={reload}
-                // keyExtractor={ (item, index) => index }
-                renderItem={({item, index}) => (
-                  <Instruction
-                    instruction={item}
-                    index={index}
-                    key={index}
-                    deleteCallback={deleteCallback}
-                    editCallback={editCallback}
-                  />
-                )}
-              />
+            {/* <Text style={styles.title}>What are the instructions?</Text> */}
+            <View>
+              <Text style={globalStyles.label}>Fill in the instuctions</Text>
+              <View style={[styles.colordBorder, styles.instructions]}>
+                <FlatList
+                  data={instructions}
+                  // keyExtractor={item => item}
+                  extraData={reload}
+                  // keyExtractor={ (item, index) => index }
+                  renderItem={({item, index}) => (
+                    <Instruction
+                      instruction={item}
+                      index={index}
+                      key={index}
+                      deleteCallback={deleteCallback}
+                      editCallback={editCallback}
+                    />
+                  )}
+                />
+              </View>
+              <AddInStruction parentCallback={handleCallback} />
             </View>
-            <AddInStruction parentCallback={handleCallback} />
           </>
         );
       case 5:
         return (
           <>
-            <Text style={styles.title}>
+            {/* <Text style={styles.title}>
               In which seasons does this recipe belong?
-            </Text>
+            </Text> */}
+            <View>
+              <Text style={globalStyles.label}>
+                In which seasons does this recipe belong?
+              </Text>
+            </View>
             <View style={styles.seasonsBox}>
               <ToggableButton
                 talkToParent={talkToParent}
@@ -394,11 +404,13 @@ const AddRecipe = ({route, navigation}) => {
       case 6:
         return (
           <>
-            <Text style={styles.absoluteText}>Where does it come from?</Text>
+            <Text style={[styles.absoluteText, globalStyles.shadow]}>
+              Where does it come from?
+            </Text>
             <View style={styles.container}>
               <MapView
                 clusterColor={'#4EAC9F'}
-                style={styles.map}
+                style={globalStyles.map}
                 clustering={true}
                 region={region}
                 onPress={
@@ -418,9 +430,9 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/cookingTime.png')}
               resizeMode="contain"
             />
-            <Text style={styles.title}>How long does it take to prepare?</Text>
+            {/* <Text style={styles.title}>How long does it take to prepare?</Text> */}
             <View>
-              <Text style={styles.label}>Time in minutes</Text>
+              <Text style={globalStyles.label}>Time in minutes</Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
                 // placeholder="Minutes"
@@ -428,7 +440,7 @@ const AddRecipe = ({route, navigation}) => {
                 keyboardType="numeric"
                 maxLength={5}
                 value={formData.time}
-                style={[styles.colordBorder, styles.textInput]}
+                style={[styles.colordBorder, globalStyles.textInput]}
               />
             </View>
           </>
@@ -437,18 +449,20 @@ const AddRecipe = ({route, navigation}) => {
         return (
           <>
             <Text style={styles.title}>Add a picture</Text>
+            {/* <Text style={globalStyles.label}>Add a picture</Text> */}
             <Camera handleUri={handleUri} uri={formData.fileUri} />
           </>
         );
       case 9:
         return (
           <>
+            
             <Text style={styles.title}>What are the ingredients?</Text>
             <View style={[styles.colordBorder, styles.instructions]}>
               <View style={styles.legendaContainter}>
-                <Text style={styles.label}>Name</Text>
-                <Text style={styles.label}>amount</Text>
-                <Text style={styles.label}>unit of measurement</Text>
+                <Text style={globalStyles.label}>Name</Text>
+                <Text style={globalStyles.label}>amount</Text>
+                <Text style={globalStyles.label}>unit of measurement</Text>
               </View>
 
               <FlatList
@@ -482,7 +496,7 @@ const AddRecipe = ({route, navigation}) => {
             {postPage && (
               <>
                 <View style={styles.modalBackdrop}></View>
-                <View style={styles.modal}>
+                <View style={[styles.modal, globalStyles.shadow]}>
                   <Image
                     style={styles.imageModal}
                     source={require('../assets/images/logo-lg.png')}
@@ -512,7 +526,7 @@ const AddRecipe = ({route, navigation}) => {
   return (
     <View style={styles.layout}>
       <Image
-        style={styles.blob}
+        style={globalStyles.blob}
         source={require('../assets/images/wave.png')}
       />
       <View style={styles.center}>{pageSwitcher()}</View>
@@ -521,13 +535,15 @@ const AddRecipe = ({route, navigation}) => {
           <View style={styles.buttonContainer}>
             {page > 0 && (
               <TouchableOpacity
-                style={styles.button}
+                style={globalStyles.buttonSmall}
                 onPress={() => setPage(page - 1)}>
-                <Text style={styles.buttonText}>Back</Text>
+                <Text style={globalStyles.buttonText}>Back</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>
+            <TouchableOpacity
+              style={globalStyles.buttonSmall}
+              onPress={handleSubmit}>
+              <Text style={globalStyles.buttonText}>
                 {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
               </Text>
             </TouchableOpacity>
@@ -568,14 +584,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height * 0.5,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
     color: '#000',
   },
   imageModal: {
@@ -599,23 +607,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.4,
   },
   textButtonModal: {color: '#fff', textAlign: 'center', fontSize: 18},
-  container: {
-    // flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // borderRadius: 10,
-    overflow: 'hidden',
-    // margin: 20,
-    // marginTop: 50,
-  },
-  map: {
-    width: Dimensions.get('window').width * 1,
-    height: Dimensions.get('window').height * 1,
 
-    // width: 50,
-    // height: 50
-  },
   absoluteText: {
     position: 'absolute',
     top: -75,
@@ -629,16 +621,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: Dimensions.get('window').width * 0.7,
     alignSelf: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
     color: '#000',
-    borderRadius: 3,
   },
 
   layout: {
@@ -663,16 +646,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginBottom: 15,
   },
-  button: {
-    backgroundColor: colors.maincolor,
-    padding: 10,
-    borderRadius: 5,
-    width: Dimensions.get('window').width * 0.2,
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: '#fff',
-  },
+
   legendaContainter: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -686,7 +660,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     color: colors.textcolor,
-    textAlign: 'center',
   },
   titleSmall: {
     fontSize: 20,
@@ -694,173 +667,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     width: Dimensions.get('window').width * 0.8,
   },
-  label: {
-    color: colors.textcolor,
-  },
   seasonsBox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  colordBorder: {
-    borderRadius: 5,
-    borderWidth: 2,
-    borderColor: colors.maincolor,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    // marginLeft: 5,
-    // borderTopColor: colors.firstColor,
-    // borderRightColor: colors.secondColor,
-    // borderBottomColor: colors.thirthColor,
-    // borderLeftColor: colors.fourthColor,
-  },
-  textInput: {
-    width: Dimensions.get('window').width * 0.8,
-    height: 50,
-    paddingLeft: 15,
-    color: colors.textcolor,
-  },
-  textInputLong: {
-    height: Dimensions.get('window').height * 0.2,
-    paddingLeft: 15,
-    paddingTop: 15,
-    textAlignVertical: 'top',
-  },
   instructions: {
     width: Dimensions.get('window').width * 0.8,
-    // minHeight: Dimensions.get('window').height * 0.2,
-    // flexBasis: Dimensions.get('window').height * 0.2,
-    // height: Dimensions.get('window').height * 0.5,
-  },
-
-  ingredient: {
-    fontSize: 20,
-    // zIndex: 20,
-    padding: 20,
-    backgroundColor: colors.backgroundcolor,
-    flexDirection: 'row',
-  },
-  text: {
-    color: colors.textcolor,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // textAlign: 'center',
-  },
-  recipe: {
-    flex: 1,
-    position: 'absolute',
-
-    marginTop: 300,
-    // zIndex: 20,
-    color: colors.textcolor,
-    // backgroundColor: colors.pink,
-    height: 500,
-    width: 250,
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imagecontainer: {
-    position: 'absolute',
-    height: 200,
-    zIndex: 2,
-  },
-  overlay: {
-    zIndex: 3,
-  },
+
   image: {
     width: Dimensions.get('window').width * 0.8,
     height: 250,
     // position: 'absolute',
     // backgroundColor: colors.purple,
-  },
-  titleText: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    zIndex: 4,
-    fontWeight: 'bold',
-    fontSize: 20,
-    padding: 20,
-  },
-  timeText: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    zIndex: 4,
-    fontWeight: 'bold',
-    fontSize: 20,
-    padding: 20,
-  },
-  backButton: {
-    position: 'absolute',
-    zIndex: 4,
-    margin: 20,
-  },
-  arrowBackdrop: {
-    position: 'absolute',
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    borderRadius: 50,
-  },
-  arrow: {
-    position: 'absolute',
-    left: 10,
-    top: 10,
-    zIndex: 4,
-    color: '#fff',
-  },
-  likeContainer: {
-    position: 'absolute',
-    right: 0,
-    margin: 10,
-  },
-
-  titleBar: {
-    width: Dimensions.get('window').width * 0.8,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 25,
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 3,
-    // position: 'absolute',
-    height: 50,
-    // zIndex: 10,
-    position: 'absolute',
-    top: 200,
-  },
-  barText: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    // marginBottom: -15,
-    // zIndex: 10,
-    // position: 'absolute',
-    // top: 200,
   },
 });
 export default AddRecipe;

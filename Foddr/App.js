@@ -1,4 +1,3 @@
-// import 'react-native-gesture-handler';
 import React, {useState, useEffect, useRef} from 'react';
 import type {Node} from 'react';
 import {
@@ -11,9 +10,7 @@ import {
   PermissionsAndroid,
   StatusBar,
 } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-// var ImagePicker = require('react-native-image-picker');
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import Home from './pages/Home/Home';
@@ -26,7 +23,6 @@ import Signup from './pages/login/Signup';
 import AddRecipe from './pages/AddRecipe';
 import colors from './theme/colors';
 import {firebase} from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import firestore from '@react-native-firebase/firestore';
 import Geocoder from 'react-native-geocoding';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
@@ -35,7 +31,7 @@ const db = firebase.firestore();
 // const perf = firebase.performance();
 //function to request permission for android
 //TODO add IOS suppport for permission requests
-Geocoder.init('AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo'); // use a valid API key
+// Geocoder.init('AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo'); // use a valid API key
 
 const permission = () => {
   PermissionsAndroid.request(
@@ -46,39 +42,38 @@ const permission = () => {
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   );
 };
-// GoogleSignin.configure({
-//   webClientId:
-//     '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
-//   ClientId:
-//     '553114964900-o71tse0mnis9mvgiipjh7hftue9egqjg.apps.googleusercontent.com',
-//   offlineAccess: true,
-// });
 
 //background color for our pages
 const navTheme = DefaultTheme;
-navTheme.colors.background = colors.backgroundcolor;
+// navTheme.colors.background = colors.backgroundcolor;
+navTheme.colors.background = '#fff';
 
 const Tab = createBottomTabNavigator();
 
 const App: () => Node = () => {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
   useEffect(() => {
     permission();
     const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
 
   // Handle user state changes
   function onAuthStateChanged(user) {
     // console.log('user is currently logged in: ' + user);
-
     setUser(user);
     if (initializing) {
       setInitializing(false);
     }
   }
-  if (initializing) return null; //make it return the splashscreen with our cute logo
+  if (initializing)
+    return (
+      <View>
+        <Text>IK ben aan het opstarten</Text>
+      </View>
+    ); //make it return the splashscreen with our cute logo
 
   if (!user) {
     console.log('state = definitely not signed in');
@@ -140,10 +135,12 @@ const App: () => Node = () => {
   //Once the user creation has happened successfully, we can add the currentUser into firestore
   //with the appropriate details.
   //TODO change currentuser to use user??
-  const ref = db.collection('users').doc(uid);
+
   const currentUser = firebase.auth().currentUser;
   // console.log('You are: ' + JSON.stringify(currentUser));
   const uid = currentUser.uid;
+  console.log('uid', uid);
+  const ref = db.collection('users').doc(uid);
   const userData = {
     lastLoginTime: new Date(),
     // favorites: ['Lasagna bolognaise'],
@@ -152,10 +149,10 @@ const App: () => Node = () => {
     .firestore()
     .doc('users/' + uid)
     .set(userData, {merge: true});
-  // console.log(
-  //   'All current user data ' +
-  //     db.collection('users').doc(auth.currentUser.uid).get(),
-  // );
+  console.log(
+    'All current user data ' +
+      db.collection('users').doc(auth.currentUser.uid).get(),
+  );
 
   // const usersCollection = db.collection('Users');
   // console.log(usersCollection);
@@ -175,7 +172,7 @@ const App: () => Node = () => {
             tabBarHideOnKeyboard: true,
             tabBarStyle: {height: 60, padding: 10, paddingBottom: 5},
           }}>
-          {/* <Tab.Screen
+          <Tab.Screen
             name="Discover"
             component={Home}
             options={{
@@ -190,7 +187,7 @@ const App: () => Node = () => {
                 />
               ),
             }}
-          /> */}
+          />
           <Tab.Screen
             name="Browse"
             component={Browse}
@@ -285,30 +282,5 @@ const App: () => Node = () => {
     </SafeAreaProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    paddingTop: 5,
-    paddingLeft: 10,
-  },
-  icon: {
-    width: 30,
-    height: 40,
-    marginTop: 50,
-  },
-  // button: {
-  //   backgroundColor: '#ededed',
-  //   backgroundColor: colors.maincolor,
-  //   borderRadius: 15,
-  //   padding: 7,
-  //   paddingLeft: 15,
-  //   paddingRight: 15,
-  //   fontSize: 15,
-  //   width: 100,
-  //   height: 100,
-  //   marginRight: 10,
-  // },
-  buttonText: {textAlign: 'center'},
-});
 
 export default App;

@@ -6,7 +6,7 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -16,7 +16,6 @@ import colors from '../theme/colors';
 import {useNavigation} from '@react-navigation/native';
 
 const auth = firebase.auth();
-const {uid} = auth.currentUser;
 let likesArray;
 
 const Like = ({likes, recipeId}) => {
@@ -29,22 +28,11 @@ const Like = ({likes, recipeId}) => {
 
   function handleCheck() {
     if (likesArray == undefined) {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // // console.log(likesArray.includes(uid));
-      // console.log('undefined');
-      // return handleCheck();
       return false;
     } else if (likesArray.lenght == 0) {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // console.log(likesArray.includes(uid));
       return false;
     } else {
-      // console.log('=============================');
-      // console.log(name + ' ' + likesArray + ' : ' + uid);
-      // console.log(likesArray.includes(uid));
-      return likesArray.includes(uid);
+      return likesArray.includes(auth.currentUser.uid);
     }
   }
   function addToLiked(recipeID) {
@@ -54,10 +42,10 @@ const Like = ({likes, recipeId}) => {
       .collection('recipes')
       .doc(recipeID)
       .update({
-        likes: firebase.firestore.FieldValue.arrayUnion(uid),
+        likes: firebase.firestore.FieldValue.arrayUnion(auth.currentUser.uid),
       });
     console.log('Updated likes');
-    setLiked(handleCheck(likesArray.push(uid)));
+    setLiked(handleCheck(likesArray.push(auth.currentUser.uid)));
   }
   function removeFromLiked(recipeID) {
     //removing user id from liked array in recipe
@@ -65,17 +53,17 @@ const Like = ({likes, recipeId}) => {
       .firestore()
       .collection('recipes')
       .doc(recipeID)
-      .update({likes: firebase.firestore.FieldValue.arrayRemove(uid)});
+      .update({
+        likes: firebase.firestore.FieldValue.arrayRemove(auth.currentUser.uid),
+      });
     console.log('removed like');
 
     setLiked(handleCheck(likesArray.pop()));
   }
-
-  // console.log(likes);
   return (
     <>
       {liked ? (
-        <TouchableHighlight
+        <TouchableOpacity
           onPress={() => {
             removeFromLiked(recipeId);
           }}
@@ -90,24 +78,18 @@ const Like = ({likes, recipeId}) => {
             />
             <View style={styles.likeBackdrop}></View>
           </>
-        </TouchableHighlight>
+        </TouchableOpacity>
       ) : (
-        <TouchableHighlight
+        <TouchableOpacity
           onPress={() => {
             addToLiked(recipeId);
           }}
           style={styles.touch}>
           <>
-            <FontIcon
-              style={styles.like}
-              name="heart"
-              size={20}
-              solid
-              // color={'#333333'}
-            />
+            <FontIcon style={styles.like} name="heart" size={20} solid />
             <View style={styles.likeBackdrop}></View>
           </>
-        </TouchableHighlight>
+        </TouchableOpacity>
       )}
     </>
   );
@@ -118,7 +100,6 @@ const styles = {
     zIndex: 5,
     width: 50,
     height: 50,
-    // backgroundColor: '#000',
     top: 9,
     right: 7,
     borderRadius: 50,
@@ -138,19 +119,13 @@ const styles = {
     position: 'absolute',
     right: 15,
     top: 15,
-    // padding: 20,
     zIndex: 3,
     color: '#fff',
     opacity: 0.4,
-    // width: 5,
-    // height: 50,
   },
   liked: {
     color: colors.quatrarycolor,
     opacity: 1,
-  },
-  textcolor: {
-    color: colors.textcolor,
   },
 };
 export default Like;

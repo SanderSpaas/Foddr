@@ -6,22 +6,14 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Image,
   ScrollView,
 } from 'react-native';
 import colors from '../../theme/colors.js';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
-// import {
-//   defaultMessages,
-//   defaultRules,
-//   FieldsToValidate,
-//   useValidation,
-// } from 'react-simple-form-validator';
-interface FunctionFormProps {
-  validation: FieldsToValidate;
-}
+import globalStyles from '../../theme/globalStyles.js';
 
 const Login = ({route, navigation}) => {
   const [email, setEmail] = useState('');
@@ -58,161 +50,75 @@ const Login = ({route, navigation}) => {
     }
   }
   return (
-    <ScrollView contentContainerStyle={styles.root}>
+    <ScrollView contentContainerStyle={globalStyles.root}>
       {loading !== false ? (
         <>
           <Image
             source={require('../../assets/images/loader.gif')}
-            style={styles.loader}
+            style={globalStyles.loader}
           />
-          <View style={styles.loaderframe}></View>
+          <View style={globalStyles.loaderframe}></View>
         </>
       ) : (
         <></>
       )}
       <Image
-        style={styles.blob}
+        style={globalStyles.blob}
         source={require('../../assets/images/wave.png')}
       />
-      <TouchableHighlight
-        style={styles.backbutton}
+      <TouchableOpacity
+        style={globalStyles.backbutton}
         onPress={() => {
           navigation.navigate('LoginChooser');
         }}>
         <FontIcon name="arrow-left" size={30} solid color={'#333333'} />
-      </TouchableHighlight>
+      </TouchableOpacity>
       <View>
-        <Text style={styles.title}>Welcome!</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
+        <Text style={globalStyles.title}>Welcome!</Text>
+        <Text style={globalStyles.subtitle}>Sign in to continue</Text>
       </View>
-      <TextInput
-        id="email"
-        style={styles.input}
-        placeholder="Email"
-        onChangeText={value => setEmail(value)}
-        // value={email}
-        value="test@gmail.com"
-      />
-      <TextInput
-        id="password"
-        style={styles.input}
-        secureTextEntry
-        placeholder="Password"
-        onChangeText={value => setPassword(value)}
-        // value={password}
-        value="Azerty123"
-      />
-      <TouchableHighlight
-        style={styles.loginButton}
+      <View>
+        <Text style={globalStyles.label}>Email</Text>
+        <TextInput
+          id="email"
+          style={globalStyles.textInput}
+          placeholder="Email"
+          onChangeText={value => setEmail(value)}
+          // value={email}
+          value="test@gmail.com"
+        />
+      </View>
+      <View>
+        <Text style={globalStyles.label}>Enter the password</Text>
+        <TextInput
+          id="password"
+          style={globalStyles.textInput}
+          secureTextEntry
+          placeholder="Password"
+          onChangeText={value => setPassword(value)}
+          // value={password}
+          value="Azerty123"
+        />
+      </View>
+      <TouchableOpacity
+        style={globalStyles.button}
         onPress={() => {
           login();
         }}>
-        <Text style={styles.textcolor}>Login</Text>
-      </TouchableHighlight>
-      {error && <Text style={styles.error}>{error}</Text>}
-      <View style={styles.bottemText}>
-        <Text>Don't have an account? </Text>
-        <TouchableHighlight
-          style={styles.link}
+        <Text style={globalStyles.buttonText}>Sign in</Text>
+      </TouchableOpacity>
+      {error && <Text style={globalStyles.error}>{error}</Text>}
+      <View style={globalStyles.bottemText}>
+        <Text style={globalStyles.text}>Don't have an account? </Text>
+        <TouchableOpacity
+          style={globalStyles.link}
           onPress={() => {
             navigation.navigate('Signup');
           }}>
-          <Text style={styles.link}>Sign up.</Text>
-        </TouchableHighlight>
+          <Text style={[globalStyles.text, globalStyles.link]}>Sign up.</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#FCF9F2',
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    marginBottom: -15,
-  },
-  error: {
-    backgroundColor: colors.quatrarycolor,
-    color: '#fff',
-    padding: 10,
-    width: Dimensions.get('window').width * 0.5,
-    textAlign: 'center',
-    borderRadius: 5,
-  },
-  backbutton: {
-    alignSelf: 'flex-start',
-    marginLeft: 30,
-    backgroundColor: '#fff',
-    padding: 10,
-    width: 50,
-    borderRadius: 40,
-  },
-  loginButton: {
-    backgroundColor: colors.maincolor,
-    width: Dimensions.get('window').width * 0.5,
-    padding: 15,
-    borderRadius: 5,
-    marginBottom: 50,
-  },
-  textcolor: {
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  input: {
-    borderBottomColor: colors.secondarycolor,
-    borderBottomWidth: 5,
-    width: Dimensions.get('window').width * 0.5,
-    marginBottom: 10,
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    color: colors.textcolor,
-  },
-  subtitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    textAlign: 'left',
-    color: colors.textcolor,
-    marginBottom: 50,
-  },
-  bottemText: {
-    flexDirection: 'row',
-    marginBottom: 25,
-    borderTopColor: colors.secondarycolor,
-    borderTopWidth: 5,
-    paddingTop: 15,
-    width: Dimensions.get('window').width * 0.6,
-    justifyContent: 'center',
-  },
-  link: {
-    textDecorationLine: 'underline',
-  },
-  loader: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: 250,
-    width: 100,
-    height: 100,
-    borderRadius: 25,
-    zIndex: 3,
-    backgroundColor: '#fff',
-  },
-  loaderframe: {
-    position: 'absolute',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-    zIndex: 2,
-    backgroundColor: '#C0C0C0',
-    opacity: 0.4,
-  },
-});
 export default Login;

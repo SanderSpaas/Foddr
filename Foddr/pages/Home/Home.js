@@ -1,11 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Dimensions,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import PropTypes from 'prop-types';
-import {StyleSheet, Text, View, StatusBar} from 'react-native';
 import Button from '../../components/Button/Button.js';
-// import {colors} from '../../theme/colors';
-// import {createAlarm, getAlarms} from 'react-native-simple-alarm';
-// import moment from 'moment';
+import auth from '@react-native-firebase/auth';
+import SVGImg from '../../assets/images/current-location-icon.svg';
+import LocationButton from '../../components/LocationButton.js';
+import RandomButton from '../../components/RandomButton.js';
+import {Svg, Image as ImageSvg} from 'react-native-svg';
+import {WebView} from 'react-native-webview';
+import SeasonButton from '../../components/SeasonButton.js';
+import globalStyles from '../../theme/globalStyles.js';
 
+import {firebase} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+// const auth = firebase.auth();
+const db = firebase.firestore();
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -20,41 +40,65 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-// async function alarm() {
-//   try {
-//     await createAlarm({
-//       active: true,
-//       date: new Date(new Date().getTime() + 1 * 60000),
-//       message: 'your timer has finished',
-//       // snooze: 1,
-//     });
-//   } catch (e) {}
-//   const alarms = await getAlarms();
-//   console.log(alarms);
-// }
-const Home = ({navigation}) => (
+const Home = ({navigation}) => {
+  const [recipeData, setRecipeData] = useState([]);
+  const [recipeDataRender, setRecipeDataRender] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const ref = firebase.firestore().collection('recipes');
+    setLoading(true);
+    const subscriber = ref.onSnapshot(snapshot => {
+      let recipesArray = [];
+      setRecipeData([]);
+      snapshot.forEach(doc => {
+        // console.log('doc.id', doc.id + ': ' + doc.data().name);
+        recipesArray.push({
+          id: doc.id,
+          recipe: doc.data(),
+        });
+      });
+      setRecipeData(recipesArray);
+      console.log('recipesArray', recipesArray);
+      setLoading(false);
+      // setRecipeDataRender(recipesArray);
+      // filterRecipes();
+    });
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }, []);
+
   <View style={styles.root}>
-    <StatusBar barStyle="light-content" />
-    <Text style={styles.title}>Home</Text>
-    <Button
-      title="Go to Details"
-      color="white"
-      backgroundColor={'#9388db'}
-      onPress={() => {
-        // alarm();
-      }}
-    />
-  </View>
-);
-
-Home.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }),
-};
-
-Home.defaultProps = {
-  navigation: {navigate: () => null},
+    {/* <StatusBar barStyle="light-content" /> */}
+    {!loading ? (
+      <>
+        <FlatList
+          data={recipeData}
+          keyExtractor={item => item.id}
+          style={styles.list}
+          horizontal={true}
+          contentContainerStyle={styles.likedItems}
+          renderItem={({item}) => (
+            <Card recipe={item.recipe} recipeId={item.id} vertical={false} />
+          )}
+        />
+        <Button
+          title="Go to Details"
+          color="white"
+          backgroundColor={'#9388db'}
+          onPress={() => {
+            auth()
+              .signOut()
+              .then(() => console.log('User signed out!'));
+          }}
+        />
+      </>
+    ) : (
+      <Text style={[styles.motivator, globalStyles.shadow]}>
+        Go make some recipes 😉
+      </Text>
+    )}
+  </View>;
 };
 
 export default Home;

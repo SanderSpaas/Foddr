@@ -23,7 +23,6 @@ import Like from './Like';
 import Rating from './Rating';
 
 const auth = firebase.auth();
-const {uid} = auth.currentUser;
 
 const MapCard = ({
   name,
@@ -45,15 +44,6 @@ const MapCard = ({
       onPress={() => {
         {
           console.log(recipeId);
-          // console.log(navigation)
-          // navigation.push('Recipe', {
-          //   params: {id: recipeId},
-          //   // merge: true,
-          // });
-          // navigation.dispatch({
-          //   ...CommonActions.setParams({id: recipeId}),
-          //   source: route.key,
-          // });
           try {
             AsyncStorage.setItem('id', recipeId);
           } catch (error) {
