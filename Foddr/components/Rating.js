@@ -1,16 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
+  View
 } from 'react-native';
-import colors from '../theme/colors';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import colors from '../theme/colors';
 
 const Rating = ({rating}) => {
   return (

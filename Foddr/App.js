@@ -17,22 +17,25 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import LoginChooser from './pages/login/LoginChooser';
 import Login from './pages/login/Login';
 import Signup from './pages/login/Signup';
-import BottomNav from './components/BottemNav';
+import BottomNav from './Navigation/BottemNav';
+import SideBar from './Navigation/SideBar';
 import colors from './theme/colors';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import Geocoder from 'react-native-geocoding';
 import globalStyles from './theme/globalStyles';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {GEOCODERAPI_KEY} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Camera from './components/CameraProfile';
 const auth = firebase.auth();
 const db = firebase.firestore();
+// let userName;
 // const perf = firebase.performance();
 //function to request permission for android
 //TODO add IOS suppport for permission requests
 // Geocoder.init('AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo'); // use a valid API key
-Geocoder.init(GEOCODERAPI_KEY); // use a valid API key
+// Geocoder.init(GEOCODERAPI_KEY); // use a valid API key
 
 const permission = () => {
   PermissionsAndroid.request(
@@ -134,27 +137,26 @@ const App: () => Node = () => {
     );
   }
   console.log('state = definitely signed in');
+
   //Once the user creation has happened successfully, we can add the currentUser into firestore
   //with the appropriate details.
-  //TODO change currentuser to use user??
-
-  const currentUser = firebase.auth().currentUser;
-  // console.log('You are: ' + JSON.stringify(currentUser));
-  const uid = currentUser.uid;
-  console.log('uid', uid);
-  const ref = db.collection('users').doc(uid);
-  const userData = {
-    lastLoginTime: new Date(),
-    // favorites: ['Lasagna bolognaise'],
-  };
-  firebase
-    .firestore()
-    .doc('users/' + uid)
-    .set(userData, {merge: true});
-  console.log(
-    'All current user data ' +
-      JSON.stringify(db.collection('users').doc(uid).get()),
-  );
+  getUserName().then(name => {
+    if (firebase.auth().currentUser.displayName === null) {
+      firebase
+        .auth()
+        .currentUser.updateProfile({
+          displayName: name,
+        })
+        .then(() => {
+          console.log('updated profile');
+          removeItemValue('name');
+          console.log(
+            'All current user data ' +
+              JSON.stringify(firebase.auth().currentUser?.toJSON()),
+          );
+        });
+    }
+  });
 
   return (
     <SafeAreaProvider>
@@ -163,55 +165,12 @@ const App: () => Node = () => {
         // hidden={true}
         translucent={true}
       />
-      <TouchableOpacity
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-        <FontIcon name="user-alt" size={30} color="white" />
-      </TouchableOpacity>
+
       <NavigationContainer theme={navTheme}>
         <Drawer.Navigator
-          drawerContent={props => (
-            <View
-              style={{
-                // justifyContent: 'center',
-                // alignContent: 'center',
-                alignItems: 'center',
-                // backgroundColor: 'red',
-              }}>
-              <Image
-                style={{width: 150, height: 150}}
-                source={require('../Foddr/assets/images/logo-lg.png')}
-                resizeMode="contain"
-              />
-              {/* <Image
-                source={require('../Foddr/assets/images/pfPicture.png')}
-                style={{width: 150, height: 150, borderRadius: 200}}
-              /> */}
-              <Text style={globalStyles.text}>Hi!</Text>
-              <Text style={globalStyles.text}>Your name</Text>
-              <TouchableOpacity
-                style={globalStyles.buttonMedium}
-                onPress={() => {
-                  auth.signOut().then(() => console.log('User signed out!'));
-                }}>
-                <Text style={globalStyles.buttonText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          options={{
-            drawerLabel: () => null,
-            // title: null,
-            drawerContentOptions: {
-              activeTintColor: colors.maincolor,
-            },
-            // drawerIcon: () => (
-            //
-            // ),
-
-            // drawerItemStyle: {display: 'none'},
-            headerStyle: {
-              // height: 0,
-            },
-            // headerLeft: () => null,
+          drawerContent={props => <SideBar />}
+          screenOptions={{
+            headerShown: false,
           }}>
           <Drawer.Screen name="Profile" component={BottomNav} />
         </Drawer.Navigator>
@@ -219,5 +178,28 @@ const App: () => Node = () => {
     </SafeAreaProvider>
   );
 };
-
+//getting our user name
+async function getUserName() {
+  try {
+    const name = await AsyncStorage.getItem('name');
+    if (name !== null) {
+      // We have data!!
+      console.log('name', name);
+      return name;
+    }
+  } catch (error) {
+    // Error retrieving data
+    console.log('er gaat iets fout');
+    console.log(error);
+  }
+  return 'The unnamed one';
+}
+async function removeItemValue(key) {
+  try {
+    await AsyncStorage.removeItem(key);
+    return true;
+  } catch (exception) {
+    return false;
+  }
+}
 export default App;

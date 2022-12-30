@@ -1,25 +1,14 @@
-import React, {useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firebase } from '@react-native-firebase/auth';
 import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
+  TabActions, useNavigation
+} from '@react-navigation/native';
+import React from 'react';
+import {
+  Dimensions, Image, Text, TouchableOpacity, View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import colors from '../theme/colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  useNavigation,
-  CommonActions,
-  TabActions,
-} from '@react-navigation/native';
-import Like from './Like';
 import Rating from './Rating';
 
 const auth = firebase.auth();

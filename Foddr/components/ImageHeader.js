@@ -1,23 +1,18 @@
-import React, {useState, Component} from 'react';
+
+import React, { useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableHighlight,
-  Image,
-  ScrollView,
-  FlatList,
   Animated,
   Button,
+  Dimensions,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
-import colors from '../theme/colors';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import Like from './Like';
 import SVGImg from '../assets/images/gradient.svg';
-import {useNavigation} from '@react-navigation/native';
+import colors from '../theme/colors';
+import BackButton from './BackButton';
+import Like from './Like';
 import Rating from './Rating';
 import SeasonButton from './SeasonButton';
 const fallImg = '../assets/images/fallIcon.png';
@@ -53,7 +48,6 @@ const ImageHeader = ({
 
     // console.log('amountOfPeople', amountOfPeople);
   };
-  const navigation = useNavigation();
   const height = scrollY.interpolate({
     inputRange: [0, 250],
     outputRange: [250, 125],
@@ -73,16 +67,7 @@ const ImageHeader = ({
           height: height,
         },
       ]}>
-      <TouchableHighlight
-        onPress={() => {
-          navigation.goBack();
-        }}
-        style={styles.backButton}>
-        <>
-          <FontIcon style={styles.arrow} name="arrow-left" size={20} solid />
-          <View style={styles.arrowBackdrop}></View>
-        </>
-      </TouchableHighlight>
+      <BackButton />
       <View style={styles.likeContainer}>
         <Like likes={recipeData.likes} recipeId={route.params.id} />
       </View>
@@ -192,7 +177,6 @@ const ImageHeader = ({
           style={{
             flexDirection: 'row',
             height: 60,
-            
           }}>
           {recipeData.seasons.fall && (
             <SeasonButton
@@ -262,6 +246,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     padding: 20,
+    color: '#fff',
   },
   timeText: {
     position: 'absolute',
@@ -269,28 +254,11 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 4,
     fontWeight: 'bold',
+    color: '#fff',
     fontSize: 20,
     padding: 20,
   },
-  backButton: {
-    position: 'absolute',
-    zIndex: 4,
-    margin: 20,
-  },
-  arrowBackdrop: {
-    position: 'absolute',
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    borderRadius: 50,
-  },
-  arrow: {
-    position: 'absolute',
-    left: 10,
-    top: 10,
-    zIndex: 4,
-    color: '#fff',
-  },
+
   likeContainer: {
     position: 'absolute',
     right: 0,

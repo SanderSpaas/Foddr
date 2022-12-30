@@ -1,11 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  TextInput,
-  Dimensions,
+  Dimensions, SafeAreaView, StyleSheet,
+  Text, TextInput, TouchableOpacity
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';

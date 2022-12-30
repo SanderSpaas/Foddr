@@ -1,18 +1,14 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {useNavigation} from '@react-navigation/native';
 import {
+  Dimensions,
+  Image,
   StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Image,
-  Dimensions,
-  Button,
   TouchableOpacity,
+  View
 } from 'react-native';
 import colors from '../../theme/colors.js';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import auth from '@react-native-firebase/auth';
 import globalStyles from '../../theme/globalStyles.js';
 
 const styles = StyleSheet.create({
@@ -47,7 +43,6 @@ const LoginChooser = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.root}>
-      <StatusBar barStyle="light-content" />
       <Image
         style={styles.image}
         source={require('../../assets/images/logo-lg.png')}

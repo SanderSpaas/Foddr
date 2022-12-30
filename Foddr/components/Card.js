@@ -1,34 +1,26 @@
-import React, {cloneElement, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
+  TabActions, useNavigation
+} from '@react-navigation/native';
+import React from 'react';
+import {
+  Dimensions, Image, Text, TouchableOpacity, View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  useNavigation,
-  CommonActions,
-  TabActions,
-} from '@react-navigation/native';
 import Like from './Like';
 import Rating from './Rating';
 
-const Card = ({recipe, recipeId, vertical}) => {
+const Card = ({recipe, recipeId, vertical, sidebar}) => {
   const navigation = useNavigation();
-  // console.log('I am: ' + {name}.name + ' with id: ' + {recipeId}.recipeId);
+  // console.log('card with id: ' + JSON.stringify({recipeId}));
+  // console.log('recipe', recipe);
   return (
     <TouchableOpacity
       onPress={() => {
         {
           try {
-            AsyncStorage.setItem('id', recipeId);
+            AsyncStorage.setItem('id', {recipeId}.recipeId);
             AsyncStorage.setItem('recipe', JSON.stringify(recipe));
           } catch (error) {
             // Error saving data
@@ -41,14 +33,28 @@ const Card = ({recipe, recipeId, vertical}) => {
         }
       }}
       style={styles.foodcard}
-      style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
+      style={[
+        styles.foodcard,
+        vertical ? styles.vertical : sidebar ? styles.sidebar : styles.foodcard,
+      ]}>
       <View>
-        <Image style={styles.image} source={{uri: recipe.image}} />
+        <Image
+          style={[
+            styles.image,
+            vertical
+              ? styles.verticalImg
+              : sidebar
+              ? styles.sidebarImg
+              : styles.image,
+          ]}
+          source={{uri: recipe.image}}
+        />
         <Like likes={recipe.likes} recipeId={recipeId} />
         <Rating
           rating={[recipe.rating.rating, recipe.rating.amountOfRatings]}
         />
-        <View style={styles.bottemItems}>
+        <View
+          style={[styles.bottemItems, vertical ? styles.bottemItems: styles.sidebarBottemItems ]}>
           <Text numberOfLines={1} style={styles.titel}>
             {recipe.name}
           </Text>
@@ -91,16 +97,29 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    //center the items vertically
-    // justifyContent: 'center',
-    height: 45,
-    // backgroundColor: colors.pink,
-    padding: 5,
-    // paddingTop: 15,
   },
   vertical: {
     margin: 10,
     width: Dimensions.get('window').width * 0.85,
+  },
+  verticalImg: {
+    margin: 10,
+    width: Dimensions.get('window').width * 0.8,
+  },
+  sidebar: {
+    // margin: 10,
+    height: 205,
+    width: Dimensions.get('window').width * 0.7,
+  },
+  sidebarImg: {
+    // margin: 10,
+    height: 150,
+    width: Dimensions.get('window').width * 0.65,
+  },
+  sidebarBottemItems: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10,
   },
   row: {
     flexDirection: 'row',

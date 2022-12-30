@@ -1,57 +1,44 @@
 // import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
-import type {Node} from 'react';
+import React from 'react';
 import {
-  StyleSheet,
-  Image,
-  Button,
-  View,
-  Dimensions,
-  Text,
-  TouchableOpacity,
+  Dimensions, Image, StyleSheet, Text,
+  TouchableOpacity, View
 } from 'react-native';
-var ImagePicker = require('react-native-image-picker');
 import colors from '../theme/colors';
+var ImagePicker = require('react-native-image-picker');
 
 function Camera({handleUri, uri}) {
+  let options = {
+    saveToPhotos: true,
+    includeBase64: true,
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
   launchCamera = () => {
-    let options = {
-      saveToPhotos: true,
-      includeBase64: true,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
     ImagePicker.launchCamera(options, response => {
-      console.log('Response = ', response);
+      // console.log('Response = ', response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        console.log('response', JSON.stringify(response));
+        // console.log('response', JSON.stringify(response));
         handleUri(response.assets[0].uri, response.assets[0].base64);
       }
     });
   };
 
   launchImageLibrary = () => {
-    let options = {
-      includeBase64: true,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
     ImagePicker.launchImageLibrary(options, response => {
-      console.log('Response = ', response);
+      // console.log('Response = ', response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        console.log('response', JSON.stringify(response));
+        // console.log('response', JSON.stringify(response));
         handleUri(response.assets[0].uri, response.assets[0].base64);
       }
     });
@@ -65,12 +52,6 @@ function Camera({handleUri, uri}) {
     }
   }
 
-  function handleName(e) {
-    setName(e.target.value);
-  }
-  function handleLocation(e) {
-    setLocation(e.target.value);
-  }
   return (
     <>
       <TouchableOpacity onPress={launchImageLibrary} style={styles.border}>

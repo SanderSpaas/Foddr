@@ -1,15 +1,7 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Image,
+  Image, TouchableOpacity
 } from 'react-native';
-import colors from '../theme/colors';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import GetLocation from 'react-native-get-location';
 
 const SeasonButton = ({
   imgUrl,
@@ -24,7 +16,7 @@ const SeasonButton = ({
     <TouchableOpacity
       onPress={() => {
         if (interactable) {
-          talkToParent([id, !enabled]);
+          talkToParent(id, !enabled);
         }
       }}
       style={

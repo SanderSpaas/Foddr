@@ -1,51 +1,27 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  FlatList,
-} from 'react-native';
-import Button from '../../components/Button/Button.js';
-import MapCard from '../../components/MapCard.js';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import {
-  AnimatedRegion,
-  Marker,
-  PROVIDER_GOOGLE,
-  Callout,
-} from 'react-native-maps';
-import MapView from 'react-native-map-clustering';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import colors from '../../theme/colors.js';
-import {faker, VehicleModule} from '@faker-js/faker';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Geocoder from 'react-native-geocoding';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firebase } from '@react-native-firebase/auth';
+import { TabActions } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  useNavigation,
-  CommonActions,
-  TabActions,
-} from '@react-navigation/native';
-import SVGImg from '../../assets/images/current-location-icon.svg';
-import LocationButton from '../../components/LocationButton.js';
-import RandomButton from '../../components/RandomButton.js';
-import {Svg, Image as ImageSvg} from 'react-native-svg';
-import {WebView} from 'react-native-webview';
-import SeasonButton from '../../components/SeasonButton.js';
-import globalStyles from '../../theme/globalStyles.js';
+  Dimensions, StyleSheet,
+  Text,
+  View
+} from 'react-native';
+import MapView from 'react-native-map-clustering';
+import { Callout, Marker } from 'react-native-maps';
+import Loader from '../components/Loader.js';
+import LocationButton from '../components/LocationButton.js';
+import MapCard from '../components/MapCard.js';
+import RandomButton from '../components/RandomButton.js';
+import SeasonButton from '../components/SeasonButton.js';
+import colors from '../theme/colors.js';
+import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
-const fallImg = '../../assets/images/fallIcon.png';
-const winterImg = '../../assets/images/winterIcon.png';
-const springImg = '../../assets/images/springIcon.png';
-const summerImg = '../../assets/images/summerIcon.png';
+const fallImg = '../assets/images/fallIcon.png';
+const winterImg = '../assets/images/winterIcon.png';
+const springImg = '../assets/images/springIcon.png';
+const summerImg = '../assets/images/summerIcon.png';
 
 const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
@@ -57,10 +33,6 @@ const Browse = ({route, navigation}) => {
     latitudeDelta: 30.59454374963337,
     longitudeDelta: 1.682658165693283,
   });
-  const [marker, setMarker] = useState({
-    latitude: 16,
-    longitude: 1,
-  });
   const [seasons, setSeasons] = useState({
     fall: true,
     spring: true,
@@ -69,64 +41,12 @@ const Browse = ({route, navigation}) => {
   });
 
   const mapViewRef = useRef(MapView);
-  function addTestItem() {
-    firestore()
-      .collection('recipes')
-      .add({
-        // id: faker.random.alphaNumeric(15),
-        image: 'https://loremflickr.com/640/480/food',
-        longitude: faker.random.numeric(2),
-        latitude: faker.random.numeric(2),
-        // tags: []
-        ingredients: [
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-          {
-            'Unit of measure': 'gr',
-            Amount: faker.random.numeric(2),
-            Name: faker.word.noun(),
-          },
-        ],
-        instructions: faker.lorem.paragraphs(5),
-        name: faker.word.adjective() + ' ' + faker.word.noun(),
-        rating: {
-          amountOfRatings: 3,
-          rating: 10,
-        },
-        likes: [],
-        time: faker.random.numeric(2),
-      })
-      .then(() => {
-        console.log('recipe added!');
-      });
-  }
+  const markerRef = useRef(Marker);
+
   useEffect(() => {
     const ref = firebase.firestore().collection('recipes');
-    // setLoading(true);
     const subscriber = ref.onSnapshot(snapshot => {
+      setLoading(true);
       let recipesArray = [];
       setRecipeData([]);
       snapshot.forEach(doc => {
@@ -137,50 +57,29 @@ const Browse = ({route, navigation}) => {
         });
       });
       setRecipeData(recipesArray);
-      // setRecipeDataRender(recipesArray);
       filterRecipes();
     });
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
 
-  function talkToParent(data) {
-    // setLoading(true);
-    // console.log('loading bij klikken seiszoen', loading);
-    // console.log(data); // LOGS DATA FROM CHILD
-    if (data[0] === fallImg) {
-      updateSeason('fall', data[1]);
-      // console.log('loading', loading);
-      // setLoading(!loading);
-      // console.log('loading', loading);
-    } else if (data[0] === winterImg) {
-      updateSeason('winter', data[1]);
-    } else if (data[0] === springImg) {
-      updateSeason('spring', data[1]);
-    } else if (data[0] === summerImg) {
-      updateSeason('summer', data[1]);
-    } else {
-      console.log('something went wrong with that season mate');
-    }
-    filterRecipes();
-  }
   function updateSeason(season, value) {
     let ingredientsObj = seasons;
     ingredientsObj[season] = value;
     setSeasons(ingredientsObj);
     console.log('seasons', seasons);
+    filterRecipes();
   }
   function filterRecipes() {
     let filteredRecipes = recipeData.filter(recipeData =>
-      showRecipe(recipeData.recipe.seasons)
+      showRecipe(recipeData.recipe.seasons),
     );
     // console.log('=====================');
     // filteredRecipes.forEach(item => console.log(item.recipe.name));
+
     setRecipeDataRender(filteredRecipes);
     console.log('recipeDataRender', ' has been set');
-    // setLoading(false);
-    // setInitialData(true);
-    // console.log('initialData', initialData);
+    setLoading(false);
   }
   function showRecipe(recipeSeasons) {
     let show = false;
@@ -196,8 +95,8 @@ const Browse = ({route, navigation}) => {
   const from = route?.params?.from;
   return (
     <View style={styles.root}>
+      <Loader loading={loading} />
       <View style={styles.container}>
-        {/* <Text style={styles.title}>de loading state: {loading}</Text> */}
         <MapView
           showsUserLocation={true}
           showsMyLocationButton={false}
@@ -206,23 +105,29 @@ const Browse = ({route, navigation}) => {
           ref={mapViewRef}
           mapType={'terrain'}
           region={region}
-          clustering={true}>
-          {recipeDataRender &&
+          clustering={true}
+          toolbarEnabled={false}>
+          {!loading &&
             recipeDataRender.map((marker, index) => (
               <Marker
                 key={index}
-                style={{resizeMode: 'contain', alignItems: 'center'}}
+                style={{
+                  resizeMode: 'contain',
+                }}
+                useRef={markerRef}
+                identifier={marker.id}
                 tracksViewChanges={!recipeDataRender}
-                icon={require('../../assets/images/recipeIcon.png')}
+                icon={require('../assets/images/recipeIcon.png')}
                 onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
                   latitude: parseFloat(marker.recipe.latitude),
                   longitude: parseFloat(marker.recipe.longitude),
                 }}>
-                <Text style={styles.subtitle}>{marker.recipe.name}</Text>
+                <Text style={[styles.subtitle, {textAlign: 'center'}]}>
+                  {marker.recipe.name}
+                </Text>
                 <Callout
                   tooltip={true}
-                  style={styles.customView}
                   onPress={() => {
                     console.log(marker.id);
                     try {
@@ -258,41 +163,45 @@ const Browse = ({route, navigation}) => {
         </MapView>
       </View>
       <View style={styles.buttons}>
-        {recipeDataRender !== undefined && recipeDataRender !== null && ( //TODO dont render this if no recipes are available
-          <RandomButton mapViewRef={mapViewRef} recipeData={recipeDataRender} />
-        )}
+        {recipeDataRender !== undefined &&
+          recipeDataRender !== null && ( //TODO dont render this if no recipes are available
+            <RandomButton
+              mapViewRef={mapViewRef}
+              recipeData={recipeDataRender}
+            />
+          )}
         <View style={styles.seasonButtons}>
           <SeasonButton
             imgUrl={require(fallImg)}
             color={'#f8312f'}
             colorBackground={'#ffa289'}
-            talkToParent={talkToParent}
+            talkToParent={updateSeason}
             enabled={seasons.fall}
-            id={fallImg}
+            id={'fall'}
           />
           <SeasonButton
             imgUrl={require(winterImg)}
             color={'#0084ce'}
             colorBackground={'#6595cb'}
-            talkToParent={talkToParent}
+            talkToParent={ updateSeason}
             enabled={seasons.winter}
-            id={winterImg}
+            id={'winter'}
           />
           <SeasonButton
             imgUrl={require(springImg)}
             color={'#ff6cc8'}
             colorBackground={'#ffb9d6'}
-            talkToParent={talkToParent}
+            talkToParent={updateSeason}
             enabled={seasons.spring}
-            id={springImg}
+            id={'spring'}
           />
           <SeasonButton
             imgUrl={require(summerImg)}
             color={'#ff822d'}
             colorBackground={'#f5de7e'}
-            talkToParent={talkToParent}
+            talkToParent={updateSeason}
             enabled={seasons.summer}
-            id={summerImg}
+            id={'summer'}
           />
         </View>
 

@@ -1,49 +1,37 @@
 // import PropTypes from 'prop-types';
-import React, {useState, useEffect} from 'react';
-import {LogBox} from 'react-native';
+import React, {useState} from 'react';
 import {
+  Dimensions,
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Dimensions,
   TextInput,
-  TouchableHighlight,
-  Image,
-  ScrollView,
-  FlatList,
-  Switch,
   TouchableOpacity,
-  KeyboardAvoidingView,
+  View,
 } from 'react-native';
-import {SvgUri} from 'react-native-svg';
 
-import {Keyboard} from 'react-native';
-import Card from '../components/Card.js';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-// import functions from '@react-native-firebase/functions';
-import colors from '../theme/colors.js';
-import SVGImg from '../assets/images/gradient.svg';
-import Like from '../components/Like.js';
-import ToggableButton from '../components/ToggableButton.js';
-import Instruction from '../components/Instruction.component.js';
-import AddInStruction from '../components/AddInstruction.component.js';
-import Camera from '../components/Camera.js';
-import ProgressBar from 'react-native-progress/Bar';
-import Ingredient from '../components/Ingredient.component.js';
-import AddIngredient from '../components/AddIngredient.component.js';
-import {Marker, PROVIDER_GOOGLE, Callout} from 'react-native-maps';
-import MapView from 'react-native-map-clustering';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import storage from '@react-native-firebase/storage';
+import {Keyboard} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import MapView from 'react-native-map-clustering';
+import {Marker} from 'react-native-maps';
+import ProgressBar from 'react-native-progress/Bar';
+import AddItem from '../components/AddItem.js';
+import Camera from '../components/Camera.js';
+import Ingredient from '../components/Ingredient.component.js';
+import Instruction from '../components/Instruction.component.js';
+import Modal from '../components/Modal.js';
+import ToggableButton from '../components/ToggableButton.js';
+import colors from '../theme/colors.js';
 import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let amountofPages = 10;
-var docRef;
 const AddRecipe = ({route, navigation}) => {
   // useEffect(() => {
   //   LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
@@ -54,7 +42,7 @@ const AddRecipe = ({route, navigation}) => {
     'This is a instruction, click me to edit me! Or add another instruction by clicking the + button',
   ]);
   const [ingredients, setIngredients] = useState([
-    {name: 'Maybe a carrot', amount: 3, unitOfMeasure: 'whole'},
+    {name: '', amount: 0, unitOfMeasure: ''},
   ]);
   const [formData, setFormData] = useState({
     name: '',
@@ -85,28 +73,10 @@ const AddRecipe = ({route, navigation}) => {
   // const [isLoading, setLoading] = useState(false);
 
   function talkToParent(data) {
-    // console.log(data); // LOGS DATA FROM CHILD
-    if (data[0] === '🍁 Fall 🍂') {
-      setFormData({
-        ...formData,
-        fall: !formData.fall,
-      });
-    } else if (data[0] === '⛄ Winter ❄️') {
-      setFormData({
-        ...formData,
-        winter: !formData.winter,
-      });
-    } else if (data[0] === '🌼 Spring 🌷') {
-      setFormData({
-        ...formData,
-        spring: !formData.spring,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        summer: !formData.summer,
-      });
-    }
+    setFormData({
+      ...formData,
+      [data]: !formData[data],
+    });
   }
 
   const handleUri = (fileUri, base64) => {
@@ -117,9 +87,8 @@ const AddRecipe = ({route, navigation}) => {
     });
   };
   function handleCallbackIng() {
-    //TODO let the user add the amount of people the recipe is for
     let ingredientsArray = ingredients;
-    ingredientsArray.push({name: 'name', amount: 0, unitOfMeasure: 'gr'});
+    ingredientsArray.push({name: '', amount: '', unitOfMeasure: ''});
     setIngredients(ingredientsArray);
     setReload(!reload);
     console.log('ingredienten: ' + JSON.stringify(ingredients));
@@ -153,7 +122,6 @@ const AddRecipe = ({route, navigation}) => {
     let instructionArray = instructions;
     instructionArray[index] = value;
     // console.log(instruction);
-    // setInstruction(instructionArray);
     setInstructions(instructionArray);
 
     console.log('instructies edit: ' + JSON.stringify(instructions));
@@ -162,11 +130,8 @@ const AddRecipe = ({route, navigation}) => {
     console.log('removing item at index: ' + index);
     let instructionArray = instructions;
     instructionArray.splice(index, 1);
-    // console.log(instructionArray);
-    // this.setState({ data: null }, () => { this.setState({ data: actualData }) });
     setReload(!reload);
     setInstructions(instructionArray);
-    // setInstruction(instructionArray);
     console.log('instructies delete: ' + JSON.stringify(instructions));
   };
 
@@ -227,6 +192,7 @@ const AddRecipe = ({route, navigation}) => {
     setInstructions([]);
     setPage(0);
     setPostPage(false);
+    console.log('cleaned up');
     navigation.navigate('Browse');
   }
   const pageSwitcher = () => {
@@ -275,37 +241,39 @@ const AddRecipe = ({route, navigation}) => {
         );
       case 2:
         return (
-          <>
-            <Image
-              style={styles.image}
-              source={require('../assets/images/name.png')}
-              resizeMode="contain"
-            />
-            {/* <Text style={styles.title}>
+          <KeyboardAvoidingView behavior="padding">
+            <ScrollView>
+              <Image
+                style={styles.image}
+                source={require('../assets/images/name.png')}
+                resizeMode="contain"
+              />
+              {/* <Text style={styles.title}>
               What is the description of the recipe?
             </Text> */}
-            <View>
-              <Text style={globalStyles.label}>
-                Tell me something about the recipe
-              </Text>
-              <TextInput
-                placeholderTextColor={colors.textcolor}
-                multiline={true}
-                onChangeText={value =>
-                  setFormData({
-                    ...formData,
-                    description: value,
-                  })
-                }
-                value={formData.description}
-                style={[
-                  styles.colordBorder,
-                  globalStyles.textInput,
-                  globalStyles.textInputLong,
-                ]}
-              />
-            </View>
-          </>
+              <View>
+                <Text style={globalStyles.label}>
+                  Tell me something about the recipe
+                </Text>
+                <TextInput
+                  placeholderTextColor={colors.textcolor}
+                  multiline={true}
+                  onChangeText={value =>
+                    setFormData({
+                      ...formData,
+                      description: value,
+                    })
+                  }
+                  value={formData.description}
+                  style={[
+                    styles.colordBorder,
+                    globalStyles.textInput,
+                    globalStyles.textInputLong,
+                  ]}
+                />
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         );
       case 3:
         return (
@@ -326,9 +294,10 @@ const AddRecipe = ({route, navigation}) => {
                 onChangeText={value =>
                   setFormData({
                     ...formData,
-                    amountOfPeople: value,
+                    amountOfPeople: value.replace(/[^0-9]/g, ''),
                   })
                 }
+                maxLength={2}
                 value={formData.amountOfPeople}
                 style={[styles.colordBorder, globalStyles.textInput]}
               />
@@ -339,7 +308,11 @@ const AddRecipe = ({route, navigation}) => {
         return (
           <>
             {/* <Text style={styles.title}>What are the instructions?</Text> */}
-            <View>
+            <View
+              style={{
+                height: Dimensions.get('window').height - 400,
+                backgroundColor: 'pink',
+              }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
                 <FlatList
@@ -358,7 +331,7 @@ const AddRecipe = ({route, navigation}) => {
                   )}
                 />
               </View>
-              <AddInStruction parentCallback={handleCallback} />
+              <AddItem parentCallback={handleCallback} title={'instruction'} />
             </View>
           </>
         );
@@ -377,24 +350,28 @@ const AddRecipe = ({route, navigation}) => {
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'🍁 Fall 🍂'}
+                id={'fall'}
                 color={'#ffa289'}
                 enabled={formData.fall}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'⛄ Winter ❄️'}
+                id={'winter'}
                 color={'#6595cb'}
                 enabled={formData.winter}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={'🌼 Spring 🌷'}
+                id={'spring'}
                 color={'#ffb9d6'}
                 enabled={formData.spring}
               />
               <ToggableButton
                 talkToParent={talkToParent}
                 text={' 🏵️️ Summer ⛅'}
+                id={'summer'}
                 color={'#f5de7e'}
                 enabled={formData.summer}
               />
@@ -430,13 +407,15 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/cookingTime.png')}
               resizeMode="contain"
             />
-            {/* <Text style={styles.title}>How long does it take to prepare?</Text> */}
+            <Text style={styles.title}>How long does it take to prepare?</Text>
             <View>
               <Text style={globalStyles.label}>Time in minutes</Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
-                // placeholder="Minutes"
-                onChangeText={value => setFormData({...formData, time: value})}
+                placeholder="0"
+                onChangeText={value =>
+                  setFormData({...formData, time: value.replace(/[^0-9]/g, '')})
+                }
                 keyboardType="numeric"
                 maxLength={5}
                 value={formData.time}
@@ -456,9 +435,16 @@ const AddRecipe = ({route, navigation}) => {
       case 9:
         return (
           <>
-            
             <Text style={styles.title}>What are the ingredients?</Text>
-            <View style={[styles.colordBorder, styles.instructions]}>
+            <View
+              style={[
+                styles.colordBorder,
+                styles.instructions,
+                {
+                  height: Dimensions.get('window').height - 400,
+                  // backgroundColor: 'pink',
+                },
+              ]}>
               <View style={styles.legendaContainter}>
                 <Text style={globalStyles.label}>Name</Text>
                 <Text style={globalStyles.label}>amount</Text>
@@ -481,7 +467,7 @@ const AddRecipe = ({route, navigation}) => {
                 )}
               />
             </View>
-            <AddIngredient parentCallbackIng={handleCallbackIng} />
+            <AddItem parentCallback={handleCallbackIng} title={'ingredient'} />
           </>
         );
       case 10:
@@ -493,26 +479,7 @@ const AddRecipe = ({route, navigation}) => {
               resizeMode="contain"
             />
             <Text style={styles.title}>Are you sure this is everything?</Text>
-            {postPage && (
-              <>
-                <View style={styles.modalBackdrop}></View>
-                <View style={[styles.modal, globalStyles.shadow]}>
-                  <Image
-                    style={styles.imageModal}
-                    source={require('../assets/images/logo-lg.png')}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.textModal}>
-                    Thank you for sharing your epic recipe with us!
-                  </Text>
-                  <TouchableOpacity
-                    style={styles.buttonModal}
-                    onPress={() => cleanUp()}>
-                    <Text style={styles.textButtonModal}>Check it out</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
+            {postPage && <Modal cleanUp={cleanUp} />}
           </>
         );
       default:
@@ -567,58 +534,16 @@ const AddRecipe = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  modalBackdrop: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    position: 'absolute',
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-  },
-  modal: {
-    position: 'absolute',
-    backgroundColor: colors.backgroundcolor,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    top: Dimensions.get('window').height * 0.1,
-    width: Dimensions.get('window').width * 0.75,
-    height: Dimensions.get('window').height * 0.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#000',
-  },
-  imageModal: {
-    width: Dimensions.get('window').width * 0.8,
-    height: 200,
-    // position: 'absolute',
-    // backgroundColor: colors.purple,
-  },
-  textModal: {
-    color: colors.textcolor,
-    textAlign: 'center',
-    width: Dimensions.get('window').width * 0.6,
-    padding: 20,
-    fontSize: 18,
-  },
-
-  buttonModal: {
-    backgroundColor: colors.maincolor,
-    padding: 15,
-    borderRadius: 5,
-    width: Dimensions.get('window').width * 0.4,
-  },
-  textButtonModal: {color: '#fff', textAlign: 'center', fontSize: 18},
-
   absoluteText: {
     position: 'absolute',
     top: -75,
     zIndex: 5,
-    backgroundColor: colors.backgroundcolor,
+    backgroundColor: 'white',
     color: colors.textcolor,
     padding: 10,
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    borderRadius: 5,
     width: Dimensions.get('window').width * 0.7,
     alignSelf: 'center',
     color: '#000',
@@ -626,8 +551,6 @@ const styles = StyleSheet.create({
 
   layout: {
     alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: colors.backgroundColor,
   },
   center: {
     alignItems: 'center',
@@ -637,6 +560,7 @@ const styles = StyleSheet.create({
   },
   bottemNav: {
     backgroundColor: colors.backgroundcolor,
+    backgroundColor: 'white',
     borderRadius: 5,
   },
   buttonContainer: {
@@ -663,6 +587,7 @@ const styles = StyleSheet.create({
   },
   titleSmall: {
     fontSize: 20,
+    padding: 15,
     color: colors.textcolor,
     textAlign: 'center',
     width: Dimensions.get('window').width * 0.8,
@@ -684,8 +609,6 @@ const styles = StyleSheet.create({
   image: {
     width: Dimensions.get('window').width * 0.8,
     height: 250,
-    // position: 'absolute',
-    // backgroundColor: colors.purple,
   },
 });
 export default AddRecipe;

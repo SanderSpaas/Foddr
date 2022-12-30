@@ -1,23 +1,13 @@
 import React from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
+  Dimensions, StyleSheet,
+  Text, TouchableOpacity
 } from 'react-native';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import colors from '../theme/colors';
-import {useNavigation} from '@react-navigation/native';
 
-const ToggableButton = ({text, color, talkToParent, enabled}) => {
+const ToggableButton = ({text, color,id, talkToParent, enabled}) => {
   function handleClick() {
-    talkToParent([text, !enabled]);
+    talkToParent(id);
   }
   return (
     <TouchableOpacity

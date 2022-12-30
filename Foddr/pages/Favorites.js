@@ -1,30 +1,15 @@
-// import PropTypes from 'prop-types';
-import React, {useState, useEffect} from 'react';
-// import {images} from 'theme';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
+  Dimensions, FlatList, Image, SafeAreaView, StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableHighlight,
-  Image,
-  ScrollView,
-  FlatList,
-  SafeAreaView,
+  View
 } from 'react-native';
-import Card from '../../components/Card';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import colors from '../../theme/colors.js';
-import globalStyles from '../../theme/globalStyles.js';
+import Card from '../components/Card';
+import colors from '../theme/colors.js';
+import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
-// const currentUser = auth.currentUser.uid;
-// console.log('currentUser',currentUser);
-// console.log('You are: ' + JSON.stringify(currentUser));
-// const uid = currentUser.uid;
 const Favorites = ({route, navigation}) => {
   useEffect(() => {
     //only do the isloading thing once
@@ -36,13 +21,13 @@ const Favorites = ({route, navigation}) => {
       // recipesArray = recipeData;
       snapshot.forEach(doc => {
         if (doc.data().likes.includes(auth.currentUser.uid)) {
-          console.log(
-            doc.data().likes +
-              ' : ' +
-              auth.currentUser.uid +
-              ' ' +
-              doc.data().likes.includes(auth.currentUser.uid),
-          );
+          // console.log(
+          //   doc.data().likes +
+          //     ' : ' +
+          //     auth.currentUser.uid +
+          //     ' ' +
+          //     doc.data().likes.includes(auth.currentUser.uid),
+          // );
           recipesArray.push({
             id: doc.id,
             recipe: doc.data(),
@@ -50,7 +35,7 @@ const Favorites = ({route, navigation}) => {
         }
       });
       setRecipeData(recipesArray);
-      console.log('recipesArray', recipesArray);
+      // console.log('recipesArray', recipesArray);
       setLoading(false);
       // filterRecipes();
     });
@@ -65,7 +50,7 @@ const Favorites = ({route, navigation}) => {
     <SafeAreaView contentContainerStyle={globalStyles.root}>
       <Image
         style={globalStyles.blob}
-        source={require('../../assets/images/wave.png')}
+        source={require('../assets/images/wave.png')}
       />
       <View style={[globalStyles.titleBar]}>
         <View>

@@ -1,14 +1,17 @@
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../pages/Home/Home';
-import Browse from '../pages/Browse/Browse';
-import Favorites from '../pages/Favorites/Favorites';
-import Recipe from '../pages/Recipe';
-import AddRecipe from '../pages/AddRecipe';
-import LoginChooser from '../pages/login/LoginChooser';
-import colors from '../theme/colors';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  Dimensions
+} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import AddRecipe from '../pages/AddRecipe';
+import Browse from '../pages/Browse';
+import Favorites from '../pages/Favorites';
+import Home from '../pages/Home';
+import LoginChooser from '../pages/login/LoginChooser';
+import Recipe from '../pages/Recipe';
+import colors from '../theme/colors';
 const Tab = createBottomTabNavigator();
+const height = Dimensions.get('window').height;
 const BottomNav = () => {
   return (
     <Tab.Navigator

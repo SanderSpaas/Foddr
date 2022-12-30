@@ -1,41 +1,17 @@
-import React, {useState, useEffect, useRef} from 'react';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
+  Animated, Dimensions, FlatList, ScrollView, StyleSheet,
   Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  FlatList,
+  View
 } from 'react-native';
-import PropTypes from 'prop-types';
-import Button from '../../components/Button/Button.js';
-import auth from '@react-native-firebase/auth';
-import SVGImg from '../../assets/images/current-location-icon.svg';
-import LocationButton from '../../components/LocationButton.js';
-import RandomButton from '../../components/RandomButton.js';
-import {Svg, Image as ImageSvg} from 'react-native-svg';
-import {WebView} from 'react-native-webview';
-import SeasonButton from '../../components/SeasonButton.js';
-import globalStyles from '../../theme/globalStyles.js';
-import Card from '../../components/Card.js';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import colors from '../../theme/colors.js';
-// const auth = firebase.auth();
+import Card from '../components/Card.js';
+import ImageHeaderTitle from '../components/ImageHeaderTitle.js';
+import Loader from '../components/Loader';
+import colors from '../theme/colors.js';
+import globalStyles from '../theme/globalStyles.js';
 const db = firebase.firestore();
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // backgroundColor: colors.lightGrayPurple,
-    backgroundColor: '#f7f7fb',
-  },
   title: {
     color: colors.maincolor,
     fontSize: 30,
@@ -47,14 +23,21 @@ const Home = ({navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [scrollY, setScrollY] = useState(new Animated.Value(0));
+  const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
+  const stickyHeaderHeight = 100;
+  const screenHeight = Dimensions.get('window').height;
 
-  function showRecipe(recipeSeasons, season) {
-    console.log('recipeSeasons[season]', Object.entries(recipeSeasons)[season]);
-    if (Object.entries(recipeSeasons)[season][1]) {
-      return true;
-    } else {
-      return false;
-    }
+  if (scrollY > stickyHeaderHeight) {
+    Animated.spring(scrollYSticky, {
+      toValue: scrollY - stickyHeaderHeight,
+      useNativeDriver: false,
+    }).start();
+  } else {
+    Animated.spring(scrollYSticky, {
+      toValue: 0,
+      useNativeDriver: false,
+    }).start();
   }
 
   useEffect(() => {
@@ -71,24 +54,38 @@ const Home = ({navigation}) => {
         });
       });
       setRecipeData(recipesArray);
-      console.log('recipesArray', recipesArray);
+      // console.log('recipesArray', recipesArray);
       setLoading(false);
-      // setRecipeDataRender(recipesArray);
-      // filterRecipes();
     });
     // Stop listening for updates when no longer required
     return () => subscriber();
   }, []);
+
   return (
-    <View style={styles.root}>
-      {/* <StatusBar barStyle="light-content" /> */}
+    <View style={{height: screenHeight, backgroundColor: 'white'}}>
+      <ImageHeaderTitle
+        title={'Discover Recipes'}
+        scrollY={scrollY}
+        scrollYSticky={scrollYSticky}
+        imgUrl={require('../assets/images/banner.jpg')}
+      />
+      <Loader loading={loading} />
       {!loading ? (
-        <ScrollView>
-          <View>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          onScroll={Animated.event(
+            [{nativeEvent: {contentOffset: {y: scrollY}}}],
+            {
+              useNativeDriver: false,
+            },
+          )}>
+          <View style={{marginTop: 260}}>
             <Text style={styles.title}>Winter Recipes</Text>
             <FlatList
-              data={recipeData.filter(recipeData =>
-                showRecipe(recipeData.recipe.seasons, 0),
+              data={recipeData.filter(
+                recipeData =>
+                  //this checks if the winter seasons is true
+                  Object.entries(recipeData.recipe.seasons)[0][1],
               )}
               keyExtractor={item => item.id}
               style={styles.list}
@@ -102,8 +99,9 @@ const Home = ({navigation}) => {
           <View>
             <Text style={styles.title}>Autumn Recipes</Text>
             <FlatList
-              data={recipeData.filter(recipeData =>
-                showRecipe(recipeData.recipe.seasons, 1),
+              data={recipeData.filter(
+                //this checks if the fall seasons is true
+                recipeData => Object.entries(recipeData.recipe.seasons)[1][1],
               )}
               keyExtractor={item => item.id}
               style={styles.list}
@@ -118,8 +116,10 @@ const Home = ({navigation}) => {
           <View>
             <Text style={styles.title}>Spring Recipes</Text>
             <FlatList
-              data={recipeData.filter(recipeData =>
-                showRecipe(recipeData.recipe.seasons, 3),
+              data={recipeData.filter(
+                recipeData =>
+                  //this checks if the spring seasons is true
+                  Object.entries(recipeData.recipe.seasons)[3][1],
               )}
               keyExtractor={item => item.id}
               style={styles.list}
@@ -130,22 +130,28 @@ const Home = ({navigation}) => {
               )}
             />
           </View>
-          <View>
+          <View style={{marginBottom: 80}}>
             <Text style={styles.title}>Summer Recipes</Text>
             <FlatList
-              data={recipeData.filter(recipeData =>
-                showRecipe(recipeData.recipe.seasons, 2),
+              data={recipeData.filter(
+                recipeData =>
+                  //this checks if the summer seasons is true
+                  Object.entries(recipeData.recipe.seasons)[2][1],
               )}
               keyExtractor={item => item.id}
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
               renderItem={({item}) => (
-                <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
+                <Card
+                  recipe={item.recipe}
+                  recipeId={item.id}
+                  vertical={true}
+                  style={{padding: 80, marginBottom: 100}}
+                />
               )}
             />
           </View>
-          
         </ScrollView>
       ) : (
         <Text style={[styles.motivator, globalStyles.shadow]}>

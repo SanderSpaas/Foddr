@@ -1,31 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Dimensions,
-  TextInput,
-  TouchableHighlight,
-  Image,
-  ScrollView,
-  FlatList,
-  Animated,
-  Button,
-} from 'react-native';
-import {SvgUri} from 'react-native-svg';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import {firebase} from '@react-native-firebase/auth';
+import { firebase } from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import {
+  Animated, Dimensions, ScrollView, StyleSheet,
+  Text, TouchableHighlight, View
+} from 'react-native';
 import colors from '../theme/colors.js';
-import {useFocusEffect} from '@react-navigation/native';
 
-import {SafeAreaView} from 'react-native-safe-area-context';
-import Rating from '../components/Rating.js';
-import ImageHeader from '../components/ImageHeader.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CountDown from 'react-native-countdown-component';
-// import NumericInput from 'react-native-numeric-input';
+import ImageHeader from '../components/ImageHeader.js';
+import Loader from '../components/Loader.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -102,6 +88,7 @@ const Recipe = ({route, navigation}) => {
   const screenHeight = Dimensions.get('window').height;
   return (
     <View style={{height: screenHeight, backgroundColor: 'white'}}>
+      <Loader loading={loading} />
       {recipeData !== null && recipeData !== undefined ? (
         <>
           <ImageHeader
@@ -112,8 +99,6 @@ const Recipe = ({route, navigation}) => {
             talkToParent={talkToParent}
           />
           <ScrollView
-            // contentContainerStyle={styles.root}
-
             contentContainerStyle={{flexGrow: 1}}
             onScroll={Animated.event(
               [{nativeEvent: {contentOffset: {y: scrollY}}}],
@@ -197,9 +182,9 @@ const Recipe = ({route, navigation}) => {
                     .collection('recipes')
                     .doc(recipeID)
                     .delete()
-                    .then(() => {
-                      console.log('Document successfully deleted!');
-                    })
+                    // .then(() => {
+                    //   console.log('Document successfully deleted!');
+                    // })
                     .catch(error => {
                       console.error('Error deleting document: ', error);
                     })

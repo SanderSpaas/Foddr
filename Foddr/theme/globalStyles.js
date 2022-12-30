@@ -1,4 +1,4 @@
-import {StyleSheet, Dimensions} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import colors from './colors';
 module.exports = StyleSheet.create({
   root: {
@@ -186,10 +186,6 @@ module.exports = StyleSheet.create({
     textAlign: 'center',
     borderRadius: 5,
   },
-  //   buttonText: {
-  //     textAlign: 'center',
-  //     color: '#fff',
-  //   },
   legendaContainter: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -200,11 +196,7 @@ module.exports = StyleSheet.create({
     fontWeight: 'bold',
     margin: 10,
   },
-  // title: {
-  //   fontSize: 20,
-  //   color: colors.textcolor,
-  //   textAlign: 'center',
-  // },
+
   titleSmall: {
     fontSize: 20,
     color: colors.textcolor,
@@ -261,10 +253,14 @@ module.exports = StyleSheet.create({
     // borderBottomWidth: 5,
     width: Dimensions.get('window').width * 0.9,
     backgroundColor: '#eef2f5',
-    padding: 10,
+    paddingLeft: 10,
     borderRadius: 7,
-    marginBottom: 10,
+    // marginBottom: 10,
     color: colors.textcolor,
+  },
+  textInputLong: {
+    height: Dimensions.get('window').height * 0.2,
+    textAlignVertical: 'top',
   },
   label: {
     color: colors.textcolor,
@@ -278,12 +274,7 @@ module.exports = StyleSheet.create({
     width: 50,
     borderRadius: 40,
   },
-  textInputLong: {
-    height: Dimensions.get('window').height * 0.2,
-    paddingLeft: 15,
-    paddingTop: 15,
-    textAlignVertical: 'top',
-  },
+
   instructions: {
     width: Dimensions.get('window').width * 0.8,
     // minHeight: Dimensions.get('window').height * 0.2,
@@ -424,24 +415,5 @@ module.exports = StyleSheet.create({
     // zIndex: 10,
     // position: 'absolute',
     // top: 200,
-  },
-  loader: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: 250,
-    width: 100,
-    height: 100,
-    borderRadius: 25,
-    zIndex: 3,
-    backgroundColor: '#fff',
-  },
-  loaderframe: {
-    position: 'absolute',
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width,
-    zIndex: 2,
-    backgroundColor: '#C0C0C0',
-    opacity: 0.4,
   },
 });

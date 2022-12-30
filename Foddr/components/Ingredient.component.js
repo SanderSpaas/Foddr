@@ -1,14 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   SafeAreaView,
+  StyleSheet,
   TextInput,
-  Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
+import globalStyles from '../theme/globalStyles';
 const Ingredient = props => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState(0);
@@ -46,7 +45,7 @@ const Ingredient = props => {
     <SafeAreaView style={styles.card}>
       {/* <Text style={styles.number}>{props.index + 1}</Text> */}
       <TextInput
-        style={[styles.text, styles.name]}
+        style={[styles.text, styles.name, globalStyles.textInput]}
         placeholder="Fill in the ingredient."
         placeholderTextColor={colors.textcolor}
         keyboardType="default"
@@ -55,7 +54,7 @@ const Ingredient = props => {
         onChangeText={value => updateName(value)}
       />
       <TextInput
-        style={[styles.text, styles.amount]}
+        style={[styles.text, styles.amount, globalStyles.textInput]}
         placeholder="Fill in the amount."
         placeholderTextColor={colors.textcolor}
         keyboardType="numeric"
@@ -63,7 +62,7 @@ const Ingredient = props => {
         onChangeText={value => updateAmount(value)}
       />
       <TextInput
-        style={[styles.text, styles.unitOfMeasure]}
+        style={[styles.text, styles.unitOfMeasure, globalStyles.textInput]}
         placeholder="Fill in the unit of measure."
         placeholderTextColor={colors.textcolor}
         keyboardType="default"
@@ -71,7 +70,7 @@ const Ingredient = props => {
         onChangeText={value => updateUnitOfMeasure(value)}
       />
       <TouchableOpacity
-        style={[styles.deleteButton, styles.text]}
+        style={[ styles.text, globalStyles.textInput,styles.deleteButton,]}
         onPress={() => props.deleteCallbackIng(props.index)}>
         <FontIcon name="trash" size={25} solid color={colors.textcolor} />
       </TouchableOpacity>
@@ -117,6 +116,8 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     borderRadius: 10,
+    width: 40,
+    height: 60,
     padding: 10,
     textAlign: 'center',
     textAlignVertical: 'center',
