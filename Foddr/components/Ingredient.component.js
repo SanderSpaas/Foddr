@@ -5,76 +5,103 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  FlatList,
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
+import AddItem from './AddItem';
 const Ingredient = props => {
-  const [name, setName] = useState('');
-  const [amount, setAmount] = useState(0);
-  const [unitOfMeasure, setUnitOfMeasure] = useState('');
-  useEffect(() => {
-    setName(props.name);
-    setAmount(props.amount);
-    setUnitOfMeasure(props.unitOfMeasure);
-  }, []);
-  const updateName = value => {
-    setName(value);
-    props.editCallbackIng(props.index, {
-      name: name,
-      amount: amount,
-      unitOfMeasure: unitOfMeasure,
-    });
+  const [reload, setReload] = useState(false);
+  const [ingredients, setIngredients] = useState([
+    {name: '', amount: 0, unitOfMeasure: ''},
+  ]);
+
+  function handleCallbackIng() {
+    let ingredientsArray = ingredients;
+    ingredientsArray.push({name: '', amount: '', unitOfMeasure: ''});
+    setIngredients(ingredientsArray);
+    setReload(!reload);
+    console.log('ingredienten: ' + JSON.stringify(ingredients));
+  }
+  const editCallbackIng = (index, value) => {
+    let ingredientsArray = ingredients;
+    ingredientsArray[index] = value;
+    setIngredients(ingredientsArray);
+    console.log(ingredients);
   };
-  const updateAmount = value => {
-    setAmount(value);
-    props.editCallbackIng(props.index, {
-      name: name,
-      amount: amount,
-      unitOfMeasure: unitOfMeasure,
-    });
-  };
-  const updateUnitOfMeasure = value => {
-    setUnitOfMeasure(value);
-    props.editCallbackIng(props.index, {
-      name: name,
-      amount: amount,
-      unitOfMeasure: unitOfMeasure,
-    });
+  deleteCallbackIng = index => {
+    console.log('removing item at index: ' + index);
+    let ingredientsArray = ingredients;
+    ingredientsArray.splice(index, 1);
+    setReload(!reload);
+    setIngredients(ingredientsArray);
+    console.log(ingredients);
   };
   return (
     <SafeAreaView style={styles.card}>
-      {/* <Text style={styles.number}>{props.index + 1}</Text> */}
-      <TextInput
-        style={[styles.name, globalStyles.textInput]}
-        // placeholder="Fill in the ingredient."
-        placeholderTextColor={colors.textcolor}
-        keyboardType="default"
-        value={name}
-        onChangeText={value => updateName(value)}
+      <FlatList
+        data={ingredients}
+        keyExtractor={(item, index) => index}
+        extraData={reload}
+        style={[globalStyles.colordBorder, styles.ingredients]}
+        renderItem={({item, index}) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            {/* <Text style={styles.number}>{props.index + 1}</Text> */}
+            <TextInput
+              style={[styles.name, globalStyles.textInput]}
+              // placeholder="Fill in the ingredient."
+              placeholderTextColor={colors.textcolor}
+              keyboardType="default"
+              onChangeText={value =>
+                editCallbackIng(index, {
+                  name: value,
+                  amount: ingredients[index].amount,
+                  unitOfMeasure: ingredients[index].unitOfMeasure,
+                })
+              }
+            />
+            <TextInput
+              style={[styles.amount, globalStyles.textInput]}
+              // placeholder="Fill in the amount."
+              placeholderTextColor={colors.textcolor}
+              keyboardType="numeric"
+              maxLength={4}
+              onChangeText={value =>
+                editCallbackIng(index, {
+                  name: ingredients[index].name,
+                  amount: value.replace(/[^0-9]/g, ''),
+                  unitOfMeasure: ingredients[index].unitOfMeasure,
+                })
+              }
+            />
+            <TextInput
+              style={[styles.unitOfMeasure, globalStyles.textInput]}
+              // placeholder="Fill in the unit of measure."
+              placeholderTextColor={colors.textcolor}
+              keyboardType="default"
+              onChangeText={value =>
+                editCallbackIng(index, {
+                  name: ingredients[index].name,
+                  amount: ingredients[index].amount,
+                  unitOfMeasure: value,
+                })
+              }
+            />
+            <TouchableOpacity
+              style={[globalStyles.textInput, globalStyles.deleteButton]}
+              onPress={() => deleteCallbackIng(index)}>
+              <FontIcon name="trash" size={25} solid color={colors.textcolor} />
+            </TouchableOpacity>
+          </View>
+        )}
       />
-      <TextInput
-        style={[ styles.amount,globalStyles.textInput]}
-        // placeholder="Fill in the amount."
-        placeholderTextColor={colors.textcolor}
-        keyboardType="numeric"
-        maxLength={4}
-        value={amount}
-        onChangeText={value => updateAmount(value.replace(/[^0-9]/g, ''))}
-      />
-      <TextInput
-        style={[styles.unitOfMeasure,globalStyles.textInput]}
-        // placeholder="Fill in the unit of measure."
-        placeholderTextColor={colors.textcolor}
-        keyboardType="default"
-        value={unitOfMeasure}
-        onChangeText={value => updateUnitOfMeasure(value)}
-      />
-      <TouchableOpacity
-        style={[globalStyles.textInput, globalStyles.deleteButton]}
-        onPress={() => props.deleteCallbackIng(props.index)}>
-        <FontIcon name="trash" size={25} solid color={colors.textcolor} />
-      </TouchableOpacity>
+      <AddItem parentCallback={handleCallbackIng} title={'ingredient'} />
     </SafeAreaView>
   );
 };
@@ -82,9 +109,7 @@ const styles = StyleSheet.create({
   card: {
     marginTop: 6,
     marginBottom: 6,
-    flexDirection: 'row',
     color: colors.textcolor,
-    // alignItems: 'baseline',
     backgroundColor: '#fff',
     padding: 5,
   },
@@ -113,6 +138,10 @@ const styles = StyleSheet.create({
   amount: {flex: 2},
   unitOfMeasure: {
     flex: 5,
+  },
+  ingredients: {
+    width: Dimensions.get('window').width * 0.9,
+    padding: 5,
   },
 });
 

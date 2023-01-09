@@ -41,6 +41,7 @@ const AddRecipe = ({route, navigation}) => {
   const [instructions, setInstructions] = useState([
     'This is a instruction, click me to edit it!',
   ]);
+  const [timers, setTimers] = useState([0]);
   const [ingredients, setIngredients] = useState([
     {name: '', amount: 0, unitOfMeasure: ''},
   ]);
@@ -56,7 +57,6 @@ const AddRecipe = ({route, navigation}) => {
     fileUri: '',
     base64: '',
   });
-  const [reload, setReload] = useState(false);
   const [fileUri, setFileUri] = useState('');
   const [page, setPage] = useState(0);
   const [postPage, setPostPage] = useState(false);
@@ -72,13 +72,6 @@ const AddRecipe = ({route, navigation}) => {
   });
   // const [isLoading, setLoading] = useState(false);
 
-  function talkToParent(data) {
-    setFormData({
-      ...formData,
-      [data]: !formData[data],
-    });
-  }
-
   const handleUri = (fileUri, base64) => {
     setFormData({
       ...formData,
@@ -86,54 +79,21 @@ const AddRecipe = ({route, navigation}) => {
       base64: base64,
     });
   };
-  function handleCallbackIng() {
-    let ingredientsArray = ingredients;
-    ingredientsArray.push({name: '', amount: '', unitOfMeasure: ''});
-    setIngredients(ingredientsArray);
-    setReload(!reload);
-    console.log('ingredienten: ' + JSON.stringify(ingredients));
+  function recipeCallBack(data) {
+    setInstructions(data);
+    console.log('instructions: ' + JSON.stringify(instructions));
   }
-  const editCallbackIng = (index, value) => {
-    console.log('changing item at index: ' + index);
-    let ingredientsArray = ingredients;
-    ingredientsArray[index] = value;
-    setIngredients(ingredientsArray);
-  };
-  deleteCallbackIng = index => {
-    console.log('removing item at index: ' + index);
-    let ingredientsArray = ingredients;
-    ingredientsArray.splice(index, 1);
-    setReload(!reload);
-    setIngredients(ingredientsArray);
-    console.log(ingredients);
-  };
-  function handleCallback() {
-    // setInstruction(current => [...current, value]);
-    let instructionArray = instructions;
-    console.log(instructions);
-    instructionArray.push('Click me to edit me');
-    setInstructions(instructionArray);
-    Keyboard.dismiss();
-    setReload(!reload);
-    console.log('instructies: ' + JSON.stringify(instructions));
+  function recipeCallBackIng(data) {
+    setIngredients(data);
+    console.log('ingredf: ' + JSON.stringify(ingredients));
   }
-  const editCallback = (index, value) => {
-    console.log('instructions changing item at index: ' + index);
-    let instructionArray = instructions;
-    instructionArray[index] = value;
-    // console.log(instruction);
-    setInstructions(instructionArray);
-
-    console.log('instructies edit: ' + JSON.stringify(instructions));
-  };
-  deleteCallback = index => {
-    console.log('removing item at index: ' + index);
-    let instructionArray = instructions;
-    instructionArray.splice(index, 1);
-    setReload(!reload);
-    setInstructions(instructionArray);
-    console.log('instructies delete: ' + JSON.stringify(instructions));
-  };
+  function talkToParent(data) {
+    //for the seasonbuttons
+    setFormData({
+      ...formData,
+      [data]: !formData[data],
+    });
+  }
 
   handleSubmit = async () => {
     //gaan nakijken of we op de laatste pagina zitten anders gewoon + doen
@@ -314,23 +274,8 @@ const AddRecipe = ({route, navigation}) => {
               }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
-                <FlatList
-                  data={instructions}
-                  // keyExtractor={item => item}
-                  extraData={reload}
-                  // keyExtractor={ (item, index) => index }
-                  renderItem={({item, index}) => (
-                    <Instruction
-                      instruction={item}
-                      index={index}
-                      key={index}
-                      deleteCallback={deleteCallback}
-                      editCallback={editCallback}
-                    />
-                  )}
-                />
+                <Instruction recipeCallBack={recipeCallBack} />
               </View>
-              <AddItem parentCallback={handleCallback} title={'instruction'} />
             </View>
           </>
         );
@@ -452,23 +397,17 @@ const AddRecipe = ({route, navigation}) => {
                 </Text>
               </View>
 
-              <FlatList
-                data={ingredients}
-                extraData={reload}
-                renderItem={({item, index}) => (
-                  <Ingredient
-                    name={item.name}
-                    amount={item.amount}
-                    unitOfMeasure={item.unitOfMeasure}
-                    index={index}
-                    key={index}
-                    deleteCallbackIng={deleteCallbackIng}
-                    editCallbackIng={editCallbackIng}
-                  />
-                )}
-              />
+              <View
+                style={{
+                  height: Dimensions.get('window').height - 450,
+                }}>
+                {/* <Text style={globalStyles.label}>Fill in the instuctions</Text> */}
+                <View style={[styles.colordBorder, styles.instructions]}>
+                  <Ingredient recipeCallBackIng={recipeCallBackIng} />
+                </View>
+              </View>
             </View>
-            <AddItem parentCallback={handleCallbackIng} title={'ingredient'} />
+            {/* <AddItem parentCallback={handleCallbackIng} title={'ingredient'} /> */}
           </>
         );
       case 10:
@@ -598,9 +537,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
   },
-  instructions: {
-    width: Dimensions.get('window').width * 0.9,
-  },
+
   container: {
     flex: 1,
     alignItems: 'center',

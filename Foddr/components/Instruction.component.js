@@ -1,50 +1,90 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Dimensions, SafeAreaView, StyleSheet,
-  Text, TextInput, TouchableOpacity
+  Dimensions,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  FlatList,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
+import AddItem from './AddItem';
 const Instruction = props => {
   const [text, setText] = useState('');
-  useEffect(() => {
-    setText(props.instruction);
-  }, []);
-  const updateText = value => {
-    props.editCallback(props.index, value);
-    setText(value);
+
+  const [reload, setReload] = useState(false);
+  const [instructions, setInstructions] = useState([
+    'This is a instruction, click me to edit it!',
+  ]);
+
+  function parentCallback() {
+    let instructionArray = instructions;
+    console.log(instructions);
+    instructionArray.push('Click me to edit me');
+    setInstructions(instructionArray);
+    setReload(!reload);
+    console.log('instructies here jong: ' + JSON.stringify(instructions));
+  }
+  const editCallback = (index, value) => {
+    console.log('instructions changing item at index: ' + index);
+    let instructionArray = instructions;
+    instructionArray[index] = value;
+    setInstructions(instructionArray);
+    console.log('instructies edit: ' + JSON.stringify(instructions));
+    props.recipeCallBack(instructionArray);
+  };
+  deleteCallback = index => {
+    console.log('removing item at index: ' + index);
+    let instructionArray = instructions;
+    instructionArray.splice(index, 1);
+    setReload(!reload);
+    setInstructions(instructionArray);
+    console.log('instructies delete: ' + JSON.stringify(instructions));
   };
   return (
-    <SafeAreaView style={styles.card}>
-      <Text style={globalStyles.instructionItemKey}>{props.index + 1}</Text>
-
-      <TextInput
-        style={[globalStyles.textInput,styles.text]}
-        placeholder="Fill in the instruction."
-        placeholderTextColor={colors.textcolor}
-        keyboardType="default"
-        value={text}
-        multiline={true}
-        onChangeText={value => updateText(value)}
+    <View style={styles.card}>
+      <FlatList
+        data={instructions}
+        keyExtractor={(item, index) => index}
+        extraData={reload}
+        style={[globalStyles.colordBorder, styles.instructions]}
+        renderItem={({item, index}) => (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Text style={globalStyles.instructionItemKey}>{index + 1}</Text>
+            <TextInput
+              style={[globalStyles.textInput, styles.text]}
+              placeholder="Fill in the instruction."
+              placeholderTextColor={colors.textcolor}
+              keyboardType="default"
+              multiline={true}
+              onChangeText={value => editCallback(index, value)}
+            />
+            <TouchableOpacity
+              style={[globalStyles.textInput, globalStyles.deleteButton]}
+              onPress={() => deleteCallback(index)}>
+              <FontIcon name="trash" size={25} solid color={colors.textcolor} />
+            </TouchableOpacity>
+          </View>
+        )}
       />
-      <TouchableOpacity
-        style={[globalStyles.textInput,globalStyles.deleteButton]}
-        onPress={() => props.deleteCallback(props.index)}>
-        <FontIcon name="trash" size={25} solid color={colors.textcolor} />
-      </TouchableOpacity>
-    </SafeAreaView>
+      <AddItem parentCallback={parentCallback} title={'instruction'} />
+    </View>
   );
 };
 const styles = StyleSheet.create({
   card: {
     marginTop: 6,
     marginBottom: 6,
-    flexDirection: 'row',
     color: colors.textcolor,
   },
   text: {
-    // color: colors.textcolor,
     width: Dimensions.get('window').width * 0.6,
   },
   number: {
@@ -60,6 +100,9 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     textAlignVertical: 'center',
+  },
+  instructions: {
+    width: Dimensions.get('window').width * 0.9,
   },
 });
 
