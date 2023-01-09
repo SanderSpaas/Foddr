@@ -5,7 +5,7 @@ import {
 } from '@react-navigation/native';
 import React from 'react';
 import {
-  Dimensions, Image, Text, TouchableOpacity, View
+  Dimensions, Image, Text, TouchableOpacity, View, Platform
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
@@ -56,7 +56,7 @@ const MapCard = ({
         <Text
           style={{
             // height: 150,
-            top: -50,
+            height: Platform.OS === 'ios' ? 0 : -50,
             // width: 270,
             height: 150,
             overflow: 'hidden',
