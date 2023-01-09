@@ -127,7 +127,13 @@ const Camera = ({saveOnline, uri, name, isLoading}) => {
         <FontIcon name="camera" color={colors.gray} size={30} solid />
       </TouchableOpacity>
 
-      <View style={{flexDirection: 'row', padding: 10, width: width * 0.5}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          padding: 10,
+          width: width * 0.5,
+          justifyContent: 'center',
+        }}>
         <Text style={globalStyles.text}>Hi </Text>
         <Text style={[globalStyles.text, {fontWeight: 'bold'}]}>{name}</Text>
         <Text style={globalStyles.text}>!</Text>

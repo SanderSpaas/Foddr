@@ -2,6 +2,7 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
+import globalStyles from '../theme/globalStyles';
 export default BackButton => {
   const navigation = useNavigation();
   return (
@@ -11,23 +12,20 @@ export default BackButton => {
         navigation.goBack();
       }}>
       <FontIcon style={styles.arrow} name="arrow-left" size={20} solid />
-      <View style={styles.arrowBackdrop}></View>
+      <View style={globalStyles.circleBackdrop}></View>
     </TouchableOpacity>
   );
 };
 styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
-    top: 10,
+    top: 14,
     zIndex: 4,
     margin: 20,
+    width: 30,
+    height: 30,
   },
-  arrowBackdrop: {
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    borderRadius: 50,
-  },
+
   arrow: {
     position: 'absolute',
     left: 10,

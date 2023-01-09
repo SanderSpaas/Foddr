@@ -1,20 +1,13 @@
 import React from 'react';
-import {
-  Dimensions,
-  TouchableOpacity
-} from 'react-native';
+import {Dimensions, TouchableOpacity} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 
-const RandomButton = ({ mapViewRef, recipeData }) => {
+const RandomButton = ({mapViewRef, recipeData}) => {
   function getRandomLocation() {
-    // console.log(recipeData);
     let recipeObj =
       recipeData[Math.floor(Math.random() * (recipeData.length - 0) + 0)];
-    // console.log(
-    //   recipeData[Math.floor(Math.random() * (recipeData.length - 0) + 0)]
-    //     .recipe,
-    // );
+
     let regionObj = {
       latitude: parseFloat(recipeObj.recipe.latitude),
       longitude: parseFloat(recipeObj.recipe.longitude),
@@ -24,19 +17,23 @@ const RandomButton = ({ mapViewRef, recipeData }) => {
     mapViewRef.current?.animateToRegion(regionObj, 2000);
   }
   return (
-    <TouchableOpacity
-      onPress={() => {
-        getRandomLocation();
-      }}
-      style={styles.button}>
-      <FontIcon
-        style={styles.location}
-        name="dice-two"
-        size={30}
-        solid
-        color={colors.textcolor}
-      />
-    </TouchableOpacity>
+    <>
+      {recipeData[0] !== undefined && (
+        <TouchableOpacity
+          onPress={() => {
+            getRandomLocation();
+          }}
+          style={styles.button}>
+          <FontIcon
+            style={styles.location}
+            name="dice-two"
+            size={30}
+            solid
+            color={colors.textcolor}
+          />
+        </TouchableOpacity>
+      )}
+    </>
   );
 };
 const styles = {

@@ -261,6 +261,7 @@ const styles = StyleSheet.create({
 
   likeContainer: {
     position: 'absolute',
+    top: 18,
     right: 0,
     margin: 10,
   },

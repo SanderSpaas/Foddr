@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
-
+import globalStyles from '../theme/globalStyles';
 const auth = firebase.auth();
 let likesArray;
 
@@ -68,7 +68,7 @@ const Like = ({likes, recipeId}) => {
               solid
               // color={'#e06c75'}
             />
-            <View style={styles.likeBackdrop}></View>
+            <View style={globalStyles.circleBackdrop}></View>
           </>
         </TouchableOpacity>
       ) : (
@@ -88,13 +88,14 @@ const Like = ({likes, recipeId}) => {
 };
 const styles = {
   touch: {
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 5,
     width: 50,
     height: 50,
-    top: 9,
-    right: 7,
+    // top: 20,
+    // right: 7,
     borderRadius: 50,
+    // backgroundColor: 'white',
   },
   likeBackdrop: {
     position: 'absolute',

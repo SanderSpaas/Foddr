@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 import colors from './colors';
 module.exports = StyleSheet.create({
   root: {
@@ -226,6 +226,18 @@ module.exports = StyleSheet.create({
   },
   label: {
     color: colors.textcolor,
+  },
+  circleBackdrop: {
+    padding: 20,
+    backgroundColor: '#000',
+    opacity: 0.4,
+    borderRadius: 50,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    padding: 20,
+    zIndex: 2,
+    margin: 5,
   },
   seasonsBox: {
     flexDirection: 'row',

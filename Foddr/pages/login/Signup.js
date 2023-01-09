@@ -8,11 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import BackButton from '../../components/BackButton.js';
 import Loader from '../../components/Loader.js';
 import globalStyles from '../../theme/globalStyles.js';
+import colors from '../../theme/colors.js';
 const Signup = ({route, navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,6 +59,8 @@ const Signup = ({route, navigation}) => {
           if (error.code === 'auth/weak-password') {
             console.log('Password too weak!');
             setError('Passsword is too weak');
+          } else {
+            setError(error.code);
           }
           console.log(error.code);
         });
@@ -65,6 +69,7 @@ const Signup = ({route, navigation}) => {
   return (
     <>
       <BackButton />
+      <StatusBar backgroundColor={colors.maincolor} />
       <ScrollView contentContainerStyle={globalStyles.root}>
         <Loader loading={loading} />
         <Image
@@ -73,7 +78,9 @@ const Signup = ({route, navigation}) => {
         />
 
         <View>
-          <Text style={globalStyles.title}>Hi!</Text>
+          <Text style={[globalStyles.title, {maxWidth:200}]} numberOfLines={1}>
+            Hey {name}
+          </Text>
           <Text style={globalStyles.subtitle}>Create new account</Text>
         </View>
         <View>
@@ -81,7 +88,7 @@ const Signup = ({route, navigation}) => {
           <TextInput
             id="name"
             style={globalStyles.textInput}
-            placeholder="Name"
+            // placeholder="Name"
             onChangeText={value => setName(value)}
             // value={email}
             // value="testUser"
@@ -92,19 +99,19 @@ const Signup = ({route, navigation}) => {
           <TextInput
             id="email"
             style={globalStyles.textInput}
-            placeholder="Email"
+            // placeholder="Email"
             onChangeText={value => setEmail(value)}
             // value={email}
             // value="test@gmail.com"
           />
         </View>
         <View>
-          <Text style={globalStyles.label}>Enter the password</Text>
+          <Text style={globalStyles.label}>Password</Text>
           <TextInput
             id="password"
             style={globalStyles.textInput}
             secureTextEntry
-            placeholder="Password"
+            // placeholder="Password"
             onChangeText={value => setPassword(value)}
             // value={password}
             // value="Azerty123"

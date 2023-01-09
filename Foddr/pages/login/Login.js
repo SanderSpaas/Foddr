@@ -7,9 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StatusBar,
 } from 'react-native';
 import BackButton from '../../components/BackButton.js';
 import Loader from '../../components/Loader.js';
+import colors from '../../theme/colors.js';
 import globalStyles from '../../theme/globalStyles.js';
 
 const Login = ({route, navigation}) => {
@@ -42,6 +44,9 @@ const Login = ({route, navigation}) => {
             console.log('That user wasnt found!');
             setError('Invalid user/email');
           }
+          else {
+            setError(error.code);
+          }
           console.log(error.code);
         });
     }
@@ -49,6 +54,7 @@ const Login = ({route, navigation}) => {
   return (
     <>
       <BackButton />
+      <StatusBar  backgroundColor={colors.maincolor} />
       <ScrollView contentContainerStyle={globalStyles.root}>
         <Loader loading={loading} />
 
