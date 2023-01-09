@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
+import globalStyles from '../theme/globalStyles';
 import Rating from './Rating';
 
 const auth = firebase.auth();
@@ -39,14 +40,13 @@ const MapCard = ({
             // Error saving data
             console.log(error);
           }
-          const jumpToAction = TabActions.jumpTo('Recipe', {id: recipeId});
+          const jumpToAction = TabActions.jumpTo('Recipe', { id: recipeId });
 
           navigation.dispatch(jumpToAction);
           //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
         }
       }}
-      style={styles.foodcard}
-      style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal]}>
+      style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal, globalStyles.shadow]}>
       <View
         style={{
           borderRadius: 10,
@@ -97,14 +97,6 @@ const styles = {
   foodcard: {
     width: 250,
     height: 150,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
     borderRadius: 10,
     backgroundColor: '#fff',
     marginLeft: 10,

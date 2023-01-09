@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import colors from './colors';
 module.exports = StyleSheet.create({
   root: {
@@ -56,7 +56,7 @@ module.exports = StyleSheet.create({
     borderRadius: 5,
     width: Dimensions.get('window').width * 0.4,
   },
-  textButtonModal: {color: '#fff', textAlign: 'center', fontSize: 18},
+  textButtonModal: { color: '#fff', textAlign: 'center', fontSize: 18 },
   container: {
     // flex: 1,
     backgroundColor: '#fff',
@@ -252,7 +252,7 @@ module.exports = StyleSheet.create({
     zIndex: 4,
     color: 'white',
   },
-  
+
   seasonsBox: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -299,6 +299,7 @@ module.exports = StyleSheet.create({
     // borderBottomColor: colors.secondarycolor,
     // borderBottomWidth: 5,
     width: Dimensions.get('window').width * 0.9,
+    height: 45,
     backgroundColor: '#eef2f5',
     paddingLeft: 10,
     borderRadius: 7,

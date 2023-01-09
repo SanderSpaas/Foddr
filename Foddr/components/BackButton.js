@@ -1,6 +1,6 @@
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import globalStyles from '../theme/globalStyles';
 export default BackButton => {
@@ -19,6 +19,7 @@ export default BackButton => {
             name="arrow-left"
             size={20}
             solid
+            color={'white'}
           />
         </>
       </TouchableOpacity>
