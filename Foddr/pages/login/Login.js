@@ -43,8 +43,7 @@ const Login = ({route, navigation}) => {
           if (error.code === 'auth/user-not-found') {
             console.log('That user wasnt found!');
             setError('Invalid user/email');
-          }
-          else {
+          } else {
             setError(error.code);
           }
           console.log(error.code);
@@ -53,8 +52,7 @@ const Login = ({route, navigation}) => {
   }
   return (
     <>
-      <BackButton />
-      <StatusBar  backgroundColor={colors.maincolor} />
+      <StatusBar backgroundColor={colors.maincolor} />
       <ScrollView contentContainerStyle={globalStyles.root}>
         <Loader loading={loading} />
 
@@ -62,7 +60,15 @@ const Login = ({route, navigation}) => {
           style={globalStyles.blob}
           source={require('../../assets/images/wave.png')}
         />
-
+        <View
+          style={{
+            position: 'absolute',
+            top: 18,
+            left: 0,
+            margin: 10,
+          }}>
+          <BackButton />
+        </View>
         <View>
           <Text style={globalStyles.title}>Welcome!</Text>
           <Text style={globalStyles.subtitle}>Sign in to continue</Text>

@@ -68,7 +68,6 @@ const Signup = ({route, navigation}) => {
   }
   return (
     <>
-      <BackButton />
       <StatusBar backgroundColor={colors.maincolor} />
       <ScrollView contentContainerStyle={globalStyles.root}>
         <Loader loading={loading} />
@@ -76,9 +75,17 @@ const Signup = ({route, navigation}) => {
           style={globalStyles.blob}
           source={require('../../assets/images/wave.png')}
         />
-
+        <View
+          style={{
+            position: 'absolute',
+            top: 18,
+            left: 0,
+            margin: 10,
+          }}>
+          <BackButton />
+        </View>
         <View>
-          <Text style={[globalStyles.title, {maxWidth:200}]} numberOfLines={1}>
+          <Text style={[globalStyles.title, {maxWidth: 200}]} numberOfLines={1}>
             Hey {name}
           </Text>
           <Text style={globalStyles.subtitle}>Create new account</Text>

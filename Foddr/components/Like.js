@@ -1,9 +1,7 @@
-import { firebase } from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import {
-  TouchableOpacity, View
-} from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
@@ -59,10 +57,10 @@ const Like = ({likes, recipeId}) => {
           onPress={() => {
             removeFromLiked(recipeId);
           }}
-          style={styles.touch}>
+          style={globalStyles.touch}>
           <>
             <FontIcon
-              style={[styles.like, styles.liked]}
+              style={[globalStyles.touchIcon, styles.liked]}
               name="heart"
               size={20}
               solid
@@ -73,13 +71,18 @@ const Like = ({likes, recipeId}) => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
+          style={globalStyles.touch}
           onPress={() => {
             addToLiked(recipeId);
-          }}
-          style={styles.touch}>
+          }}>
           <>
-            <FontIcon style={styles.like} name="heart" size={20} solid />
-            <View style={styles.likeBackdrop}></View>
+            <FontIcon
+              style={[globalStyles.touchIcon,{opacity: 0.5}]}
+              name="heart"
+              size={20}
+              solid
+            />
+            <View style={globalStyles.circleBackdrop}></View>
           </>
         </TouchableOpacity>
       )}
@@ -87,35 +90,6 @@ const Like = ({likes, recipeId}) => {
   );
 };
 const styles = {
-  touch: {
-    // position: 'absolute',
-    zIndex: 5,
-    width: 50,
-    height: 50,
-    // top: 20,
-    // right: 7,
-    borderRadius: 50,
-    // backgroundColor: 'white',
-  },
-  likeBackdrop: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    zIndex: 2,
-    borderRadius: 50,
-    margin: 5,
-  },
-  like: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-    zIndex: 3,
-    color: '#fff',
-    opacity: 0.4,
-  },
   liked: {
     color: colors.quatrarycolor,
     opacity: 1,

@@ -228,17 +228,31 @@ module.exports = StyleSheet.create({
     color: colors.textcolor,
   },
   circleBackdrop: {
-    padding: 20,
-    backgroundColor: '#000',
-    opacity: 0.4,
-    borderRadius: 50,
     position: 'absolute',
     right: 0,
     top: 0,
+    borderRadius: 50,
+    backgroundColor: '#000',
+    opacity: 0.4,
     padding: 20,
-    zIndex: 2,
+    zValue: 0, //Android
     margin: 5,
   },
+  touch: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    // backgroundColor: 'white',
+  },
+  touchIcon: {
+    position: 'absolute',
+    zIndex: 4,
+    color: 'white',
+  },
+  
   seasonsBox: {
     flexDirection: 'row',
     flexWrap: 'wrap',

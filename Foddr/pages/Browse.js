@@ -1,14 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
-import { TabActions } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Dimensions, StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import {TabActions} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { Callout, Marker } from 'react-native-maps';
+import {Callout, Marker} from 'react-native-maps';
 import Loader from '../components/Loader.js';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
@@ -27,6 +23,7 @@ const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState(false);
   const [region, setRegion] = useState({
     latitude: 51.186533128908827,
     longitude: 1.52344711124897,
@@ -81,6 +78,7 @@ const Browse = ({route, navigation}) => {
     console.log('recipeDataRender', ' has been set');
     setLoading(false);
   }
+
   function showRecipe(recipeSeasons) {
     let show = false;
     Object.entries(recipeSeasons).forEach(recipeSeason => {
@@ -116,7 +114,7 @@ const Browse = ({route, navigation}) => {
                 }}
                 useRef={markerRef}
                 identifier={marker.id}
-                tracksViewChanges={!recipeDataRender}
+                tracksViewChanges={!images}
                 icon={require('../assets/images/recipeIcon.png')}
                 onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
@@ -153,6 +151,7 @@ const Browse = ({route, navigation}) => {
                       marker.recipe.rating.rating,
                       marker.recipe.rating.amountOfRatings,
                     ]}
+                
                     time={marker.recipe.time}
                     likes={marker.recipe.likes}
                     recipeId={marker.id}
@@ -183,7 +182,7 @@ const Browse = ({route, navigation}) => {
             imgUrl={require(winterImg)}
             color={'#0084ce'}
             colorBackground={'#6595cb'}
-            talkToParent={ updateSeason}
+            talkToParent={updateSeason}
             enabled={seasons.winter}
             id={'winter'}
           />

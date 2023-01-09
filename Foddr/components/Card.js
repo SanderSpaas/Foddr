@@ -1,11 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  TabActions, useNavigation
-} from '@react-navigation/native';
+import {TabActions, useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {
-  Dimensions, Image, Text, TouchableOpacity, View
-} from 'react-native';
+import {Dimensions, Image, Text, TouchableOpacity, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import Like from './Like';
@@ -49,12 +45,18 @@ const Card = ({recipe, recipeId, vertical, sidebar}) => {
           ]}
           source={{uri: recipe.image}}
         />
-        <Like likes={recipe.likes} recipeId={recipeId} />
+        <View style={styles.likeContainer}>
+          <Like likes={recipe.likes} recipeId={recipeId} />
+        </View>
+
         <Rating
           rating={[recipe.rating.rating, recipe.rating.amountOfRatings]}
         />
         <View
-          style={[styles.bottemItems, vertical ? styles.bottemItems: styles.sidebarBottemItems ]}>
+          style={[
+            styles.bottemItems,
+            vertical ? styles.bottemItems : styles.sidebarBottemItems,
+          ]}>
           <Text numberOfLines={1} style={styles.titel}>
             {recipe.name}
           </Text>
@@ -144,6 +146,11 @@ const styles = {
     // zIndex: 10,
     // alignItems: 'center',
     // justifyContent: 'center',
+  },
+  likeContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
   textcolor: {
     color: colors.textcolor,

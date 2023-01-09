@@ -123,7 +123,6 @@ const SideBar = ({}) => {
             height: 100,
             position: 'absolute',
             bottom: -2,
-            left: -5,
             zIndex: 5,
             elevation: 5, //Android
             alignItems: 'center',
@@ -135,6 +134,9 @@ const SideBar = ({}) => {
           style={[
             globalStyles.buttonMedium,
             {
+              position: 'absolute',
+              bottom: 0,
+              alignSelf: 'center',
               zIndex: 0,
               elevation: 0, //Android
             },

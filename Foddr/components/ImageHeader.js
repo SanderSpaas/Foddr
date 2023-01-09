@@ -1,12 +1,11 @@
-
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import SVGImg from '../assets/images/gradient.svg';
@@ -67,7 +66,10 @@ const ImageHeader = ({
           height: height,
         },
       ]}>
-      <BackButton />
+      <View style={styles.backContainer}>
+        <BackButton />
+      </View>
+
       <View style={styles.likeContainer}>
         <Like likes={recipeData.likes} recipeId={route.params.id} />
       </View>
@@ -247,6 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 20,
     color: '#fff',
+    width: Dimensions.get('window').width * 0.8,
   },
   timeText: {
     position: 'absolute',
@@ -263,6 +266,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 18,
     right: 0,
+    margin: 10,
+  },
+  backContainer: {
+    position: 'absolute',
+    top: 18,
+    left: 0,
     margin: 10,
   },
   titleBar: {
