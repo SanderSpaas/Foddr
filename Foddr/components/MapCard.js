@@ -56,7 +56,7 @@ const MapCard = ({
         <Text
           style={{
             // height: 150,
-            height: Platform.OS === 'ios' ? 0 : -50,
+            top: Platform.OS === 'ios' ? 0 : -50,
             // width: 270,
             height: 150,
             overflow: 'hidden',

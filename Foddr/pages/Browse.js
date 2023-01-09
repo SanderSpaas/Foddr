@@ -23,7 +23,6 @@ const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState(false);
   const [region, setRegion] = useState({
     latitude: 51.186533128908827,
     longitude: 1.52344711124897,
@@ -93,7 +92,7 @@ const Browse = ({route, navigation}) => {
   const from = route?.params?.from;
   return (
     <View style={styles.root}>
-      <Loader loading={loading} />
+      <Loader loading={!loading} />
       <View style={styles.container}>
         <MapView
           showsUserLocation={true}
@@ -112,9 +111,10 @@ const Browse = ({route, navigation}) => {
                 style={{
                   resizeMode: 'contain',
                 }}
+                calloutOffset={{ x: 29, y: 0 }}
                 useRef={markerRef}
                 identifier={marker.id}
-                tracksViewChanges={!images}
+                tracksViewChanges={!loading}
                 icon={require('../assets/images/recipeIcon.png')}
                 onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
@@ -151,7 +151,6 @@ const Browse = ({route, navigation}) => {
                       marker.recipe.rating.rating,
                       marker.recipe.rating.amountOfRatings,
                     ]}
-                
                     time={marker.recipe.time}
                     likes={marker.recipe.likes}
                     recipeId={marker.id}
