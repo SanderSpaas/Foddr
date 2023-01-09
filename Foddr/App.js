@@ -1,33 +1,23 @@
-import 'react-native-gesture-handler';
-import React, {useState, useEffect, useRef} from 'react';
-import type {Node} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firebase } from '@react-native-firebase/auth';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import type { Node } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
   PermissionsAndroid,
-  StatusBar,
+  StatusBar, Text, View
 } from 'react-native';
-import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import LoginChooser from './pages/login/LoginChooser';
-import Login from './pages/login/Login';
-import Signup from './pages/login/Signup';
 import BottomNav from './Navigation/BottemNav';
 import SideBar from './Navigation/SideBar';
+import Login from './pages/login/Login';
+import LoginChooser from './pages/login/LoginChooser';
+import Signup from './pages/login/Signup';
 import colors from './theme/colors';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import globalStyles from './theme/globalStyles';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {GEOCODERAPI_KEY} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Camera from './components/CameraProfile';
 const auth = firebase.auth();
 const db = firebase.firestore();
 // let userName;
@@ -95,16 +85,16 @@ const App: () => Node = () => {
             initialRouteName="LoginChooser"
             screenOptions={{
               headerShown: false,
-              tabBarStyle: {display: 'none'},
+              tabBarStyle: { display: 'none' },
             }}>
             {/* //hidden tabs so we can navigate to them */}
             <Tab.Screen
               name="LoginChooser"
               component={LoginChooser}
               options={{
-                tabBarItemStyle: {display: 'none'},
+                tabBarItemStyle: { display: 'none' },
                 tabBarLabel: 'LoginChooser',
-                tabBarIcon: ({color, size}) => (
+                tabBarIcon: ({ color, size }) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -113,9 +103,9 @@ const App: () => Node = () => {
               name="Login"
               component={Login}
               options={{
-                tabBarItemStyle: {display: 'none'},
+                tabBarItemStyle: { display: 'none' },
                 tabBarLabel: 'Login',
-                tabBarIcon: ({color, size}) => (
+                tabBarIcon: ({ color, size }) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -124,9 +114,9 @@ const App: () => Node = () => {
               name="Signup"
               component={Signup}
               options={{
-                tabBarItemStyle: {display: 'none'},
+                tabBarItemStyle: { display: 'none' },
                 tabBarLabel: 'Signup',
-                tabBarIcon: ({color, size}) => (
+                tabBarIcon: ({ color, size }) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -152,7 +142,7 @@ const App: () => Node = () => {
           removeItemValue('name');
           console.log(
             'All current user data ' +
-              JSON.stringify(firebase.auth().currentUser?.toJSON()),
+            JSON.stringify(firebase.auth().currentUser?.toJSON()),
           );
         });
     }
