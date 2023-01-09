@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import colors from './colors';
 module.exports = StyleSheet.create({
   root: {
@@ -185,6 +185,27 @@ module.exports = StyleSheet.create({
     width: Dimensions.get('window').width * 0.5,
     textAlign: 'center',
     borderRadius: 5,
+  },
+  instructionItemKey: {
+    color: colors.textcolor,
+    padding: 10,
+    fontSize: 20,
+    width: Dimensions.get('window').width * 0.1,
+    backgroundColor: colors.maincolor,
+    margin: 5,
+    borderRadius: 10,
+    height: 50,
+    color: 'white',
+  },
+  deleteButton: {
+    // flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.quatrarycolor,
+    paddingRight: 6,
+    padding: 10,
+    width: 50,
+    height: 50,
   },
   legendaContainter: {
     flexDirection: 'row',

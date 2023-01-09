@@ -1,8 +1,12 @@
 // import 'react-native-gesture-handler';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-  Dimensions, Image, StyleSheet, Text,
-  TouchableOpacity, View
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
@@ -11,6 +15,7 @@ var ImagePicker = require('react-native-image-picker');
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 const Camera = ({saveOnline, uri, name, isLoading}) => {
   const [buttonVisible, setButtonVisible] = useState(false);
+  const width = Dimensions.get('window').width;
   let options = {
     saveToPhotos: true,
     includeBase64: true,
@@ -51,12 +56,45 @@ const Camera = ({saveOnline, uri, name, isLoading}) => {
   };
 
   function renderFileUri() {
+    if (isLoading) {
+      return (
+        <View
+          style={[
+            {
+              position: 'absolute',
+              width: 150,
+              height: 150,
+              backgroundColor: 'white',
+              borderRadius: 200,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          ]}>
+          <Image
+            source={require('../assets/images/loader.gif')}
+            style={[
+              globalStyles.loader,
+              {
+                width: 125,
+                height: 125,
+              },
+            ]}
+          />
+        </View>
+      );
+    }
     if (uri) {
-      return <Image source={{uri: uri}} style={styles.picture} />;
+      return <Image source={{uri: uri}} style={[styles.picture]} />;
     } else {
       return (
         <Image
-          style={styles.picture}
+          style={[
+            styles.picture,
+            {
+              zIndex: 0,
+              elevation: 0, // Android
+            },
+          ]}
           source={require('../assets/images/pfPicture.png')}
         />
       );
@@ -65,25 +103,6 @@ const Camera = ({saveOnline, uri, name, isLoading}) => {
 
   return (
     <>
-      {isLoading !== false && (
-        <>
-          <Image
-            source={require('../assets/images/loader.gif')}
-            style={[
-              globalStyles.loader,
-              {
-                position: 'absolute',
-                top: 55,
-                padding: 75,
-                backgroundColor: 'white',
-                borderRadius: 200,
-                zIndex: 4,
-                elevation: 4, // Android
-              },
-            ]}
-          />
-        </>
-      )}
       <View
         // onPress={launchImageLibrary}
         style={styles.border}>
@@ -108,10 +127,10 @@ const Camera = ({saveOnline, uri, name, isLoading}) => {
         <FontIcon name="camera" color={colors.gray} size={30} solid />
       </TouchableOpacity>
 
-      <View style={{flexDirection: 'row', padding: 10}}>
+      <View style={{flexDirection: 'row', padding: 10, width: width * 0.5}}>
         <Text style={globalStyles.text}>Hi </Text>
-        <Text style={[globalStyles.text, {fontWeight: 'bold'}]}>{name}!</Text>
-        <Text style={globalStyles.text}> Glad to see you back.</Text>
+        <Text style={[globalStyles.text, {fontWeight: 'bold'}]}>{name}</Text>
+        <Text style={globalStyles.text}>!</Text>
       </View>
 
       <View style={[buttonVisible ? styles.buttonBar : {display: 'none'}]}>

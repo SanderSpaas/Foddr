@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
+import globalStyles from '../theme/globalStyles';
 const Instruction = props => {
   const [text, setText] = useState('');
   useEffect(() => {
@@ -16,10 +17,10 @@ const Instruction = props => {
   };
   return (
     <SafeAreaView style={styles.card}>
-      <Text style={styles.number}>{props.index + 1}</Text>
+      <Text style={globalStyles.instructionItemKey}>{props.index + 1}</Text>
 
       <TextInput
-        style={[styles.text]}
+        style={[globalStyles.textInput,styles.text]}
         placeholder="Fill in the instruction."
         placeholderTextColor={colors.textcolor}
         keyboardType="default"
@@ -28,7 +29,7 @@ const Instruction = props => {
         onChangeText={value => updateText(value)}
       />
       <TouchableOpacity
-        style={styles.deleteButton}
+        style={[globalStyles.textInput,globalStyles.deleteButton]}
         onPress={() => props.deleteCallback(props.index)}>
         <FontIcon name="trash" size={25} solid color={colors.textcolor} />
       </TouchableOpacity>
@@ -43,8 +44,8 @@ const styles = StyleSheet.create({
     color: colors.textcolor,
   },
   text: {
-    color: colors.textcolor,
-    width: Dimensions.get('window').width * 0.5,
+    // color: colors.textcolor,
+    width: Dimensions.get('window').width * 0.6,
   },
   number: {
     color: colors.textcolor,

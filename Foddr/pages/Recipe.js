@@ -7,7 +7,7 @@ import {
   Text, TouchableHighlight, View
 } from 'react-native';
 import colors from '../theme/colors.js';
-
+import globalStyles from '../theme/globalStyles.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CountDown from 'react-native-countdown-component';
 import ImageHeader from '../components/ImageHeader.js';
@@ -208,7 +208,7 @@ const Recipe = ({route, navigation}) => {
                 <Text style={styles.title}>Instructions</Text>
                 {recipeData.instructions.map((item, index) => (
                   <View style={{flexDirection: 'row'}} key={index + 1}>
-                    <Text style={styles.instructionItemKey}>{index + 1}</Text>
+                    <Text style={globalStyles.instructionItemKey}>{index + 1}</Text>
                     <Text style={styles.instructionItem}>{item}</Text>
                   </View>
                 ))}
@@ -317,17 +317,7 @@ const styles = StyleSheet.create({
     padding: 10,
     // backgroundColor: 'green',
   },
-  instructionItemKey: {
-    color: colors.textcolor,
-    padding: 10,
-    fontSize: 20,
-    width: Dimensions.get('window').width * 0.1,
-    backgroundColor: colors.maincolor,
-    margin: 5,
-    borderRadius: 10,
-    height: 50,
-    color: 'white',
-  },
+
   instructionItem: {
     color: colors.textcolor,
     padding: 10,

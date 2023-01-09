@@ -1,16 +1,11 @@
 import React from 'react';
 import {
-  Dimensions,
-  StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 const AddItem = props => {
-  // const [text, setText] = useState('');
   return (
     <View
       style={{

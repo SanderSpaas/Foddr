@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
@@ -45,32 +46,32 @@ const Ingredient = props => {
     <SafeAreaView style={styles.card}>
       {/* <Text style={styles.number}>{props.index + 1}</Text> */}
       <TextInput
-        style={[styles.text, styles.name, globalStyles.textInput]}
-        placeholder="Fill in the ingredient."
+        style={[styles.name, globalStyles.textInput]}
+        // placeholder="Fill in the ingredient."
         placeholderTextColor={colors.textcolor}
         keyboardType="default"
         value={name}
-        multiline={true}
         onChangeText={value => updateName(value)}
       />
       <TextInput
-        style={[styles.text, styles.amount, globalStyles.textInput]}
-        placeholder="Fill in the amount."
+        style={[ styles.amount,globalStyles.textInput]}
+        // placeholder="Fill in the amount."
         placeholderTextColor={colors.textcolor}
         keyboardType="numeric"
+        maxLength={4}
         value={amount}
-        onChangeText={value => updateAmount(value)}
+        onChangeText={value => updateAmount(value.replace(/[^0-9]/g, ''))}
       />
       <TextInput
-        style={[styles.text, styles.unitOfMeasure, globalStyles.textInput]}
-        placeholder="Fill in the unit of measure."
+        style={[styles.unitOfMeasure,globalStyles.textInput]}
+        // placeholder="Fill in the unit of measure."
         placeholderTextColor={colors.textcolor}
         keyboardType="default"
         value={unitOfMeasure}
         onChangeText={value => updateUnitOfMeasure(value)}
       />
       <TouchableOpacity
-        style={[ styles.text, globalStyles.textInput,styles.deleteButton,]}
+        style={[globalStyles.textInput, globalStyles.deleteButton]}
         onPress={() => props.deleteCallbackIng(props.index)}>
         <FontIcon name="trash" size={25} solid color={colors.textcolor} />
       </TouchableOpacity>
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     color: colors.textcolor,
     backgroundColor: '#fff',
     borderRadius: 5,
-    // width: Dimensions.get('window').width * 0.5,
+    width: Dimensions.get('window').width * 0.5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -106,21 +107,12 @@ const styles = StyleSheet.create({
     // marginRight: 10,
   },
   name: {
-    flex: 3,
+    flex: 6,
     // backgroundColor: colors.pink,
   },
-  amount: {flex: 1},
+  amount: {flex: 2},
   unitOfMeasure: {
-    flex: 1,
-    // backgroundColor: colors.pink,
-  },
-  deleteButton: {
-    borderRadius: 10,
-    width: 40,
-    height: 60,
-    padding: 10,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+    flex: 5,
   },
 });
 

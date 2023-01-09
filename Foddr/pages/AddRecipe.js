@@ -39,7 +39,7 @@ const AddRecipe = ({route, navigation}) => {
   // const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
   const [instructions, setInstructions] = useState([
-    'This is a instruction, click me to edit me! Or add another instruction by clicking the + button',
+    'This is a instruction, click me to edit it!',
   ]);
   const [ingredients, setIngredients] = useState([
     {name: '', amount: 0, unitOfMeasure: ''},
@@ -310,8 +310,7 @@ const AddRecipe = ({route, navigation}) => {
             {/* <Text style={styles.title}>What are the instructions?</Text> */}
             <View
               style={{
-                height: Dimensions.get('window').height - 400,
-                backgroundColor: 'pink',
+                height: Dimensions.get('window').height - 450,
               }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
@@ -446,9 +445,11 @@ const AddRecipe = ({route, navigation}) => {
                 },
               ]}>
               <View style={styles.legendaContainter}>
-                <Text style={globalStyles.label}>Name</Text>
-                <Text style={globalStyles.label}>amount</Text>
-                <Text style={globalStyles.label}>unit of measurement</Text>
+                <Text style={[globalStyles.label, {flex: 3}]}>Name</Text>
+                <Text style={[globalStyles.label, {flex: 2}]}>Amount</Text>
+                <Text style={[globalStyles.label, {flex: 4}]}>
+                  Unit of measurement
+                </Text>
               </View>
 
               <FlatList
@@ -598,7 +599,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   instructions: {
-    width: Dimensions.get('window').width * 0.8,
+    width: Dimensions.get('window').width * 0.9,
   },
   container: {
     flex: 1,
