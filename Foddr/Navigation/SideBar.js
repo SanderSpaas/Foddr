@@ -1,11 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import {
-  Dimensions, Image, Text, TouchableOpacity, View
-} from 'react-native';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {Dimensions, Image, Text, TouchableOpacity, View} from 'react-native';
 import 'react-native-gesture-handler';
 import Camera from '../components/CameraProfile';
 import Card from '../components/Card';
@@ -123,19 +121,24 @@ const SideBar = ({}) => {
           style={{
             width: 75,
             height: 100,
-
             position: 'absolute',
             bottom: -2,
             left: -5,
-            zIndex: 2,
-            elevation: 2, //Android
+            zIndex: 5,
+            elevation: 5, //Android
             alignItems: 'center',
           }}
           source={require('../assets/images/spinner.png')}
           resizeMode="contain"
         />
         <TouchableOpacity
-          style={[globalStyles.buttonMedium]}
+          style={[
+            globalStyles.buttonMedium,
+            {
+              zIndex: 0,
+              elevation: 0, //Android
+            },
+          ]}
           onPress={() => {
             auth.signOut().then(() => console.log('User signed out!'));
           }}>
