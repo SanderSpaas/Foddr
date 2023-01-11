@@ -14,9 +14,11 @@ import globalStyles from '../theme/globalStyles';
 import AddItem from './AddItem';
 const Ingredient = props => {
   const [reload, setReload] = useState(false);
-  const [ingredients, setIngredients] = useState([
-    {name: '', amount: 0, unitOfMeasure: ''},
-  ]);
+  const [ingredients, setIngredients] = useState(props.ingredients);
+
+  useEffect(() => {
+    setIngredients(props.ingredients);
+  }, []);
 
   function handleCallbackIng() {
     let ingredientsArray = ingredients;
@@ -58,6 +60,7 @@ const Ingredient = props => {
               // placeholder="Fill in the ingredient."
               placeholderTextColor={colors.textcolor}
               keyboardType="default"
+              defaultValue={ingredients[index].name}
               onChangeText={value =>
                 editCallbackIng(index, {
                   name: value,
@@ -72,6 +75,7 @@ const Ingredient = props => {
               placeholderTextColor={colors.textcolor}
               keyboardType="numeric"
               maxLength={4}
+              defaultValue={ingredients[index].amount}
               onChangeText={value =>
                 editCallbackIng(index, {
                   name: ingredients[index].name,
@@ -85,6 +89,7 @@ const Ingredient = props => {
               // placeholder="Fill in the unit of measure."
               placeholderTextColor={colors.textcolor}
               keyboardType="default"
+              defaultValue={ingredients[index].unitOfMeasure}
               onChangeText={value =>
                 editCallbackIng(index, {
                   name: ingredients[index].name,

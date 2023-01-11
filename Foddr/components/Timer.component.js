@@ -12,44 +12,44 @@ import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 import AddItem from './AddItem';
-const Instruction = props => {
+const Timer = props => {
   const [text, setText] = useState('');
 
   const [reload, setReload] = useState(false);
-  const [instructions, setInstructions] = useState([
-    'This is a instruction, click me to edit it!',
-  ]);
+  const [timers, setTimers] = useState([0]);
+
   useEffect(() => {
-    setInstructions(props.instructions);
+    setTimers(props.timers);
   }, []);
+
   function parentCallback() {
-    let instructionArray = instructions;
-    console.log(instructions);
-    instructionArray.push('Click me to edit me');
-    setInstructions(instructionArray);
+    let timersArray = timers;
+    console.log(timers);
+    timersArray.push(0);
+    setTimers(timersArray);
     setReload(!reload);
-    console.log('instructies here jong: ' + JSON.stringify(instructions));
+    console.log('timers here jong: ' + JSON.stringify(timers));
   }
   const editCallback = (index, value) => {
-    console.log('instructions changing item at index: ' + index);
-    let instructionArray = instructions;
-    instructionArray[index] = value;
-    setInstructions(instructionArray);
-    console.log('instructies edit: ' + JSON.stringify(instructions));
-    props.recipeCallBack(instructionArray);
+    console.log('timers changing item at index: ' + index);
+    let timersArray = timers;
+    timersArray[index] = value.replace(/[^0-9]/g, '');
+    setTimers(timersArray);
+    console.log('instructies edit: ' + JSON.stringify(timers));
+    props.recipeCallBack(timersArray);
   };
   deleteCallback = index => {
     console.log('removing item at index: ' + index);
-    let instructionArray = instructions;
-    instructionArray.splice(index, 1);
+    let timersArray = timers;
+    timersArray.splice(index, 1);
     setReload(!reload);
-    setInstructions(instructionArray);
-    console.log('instructies delete: ' + JSON.stringify(instructions));
+    setTimers(timersArray);
+    console.log('instructies delete: ' + JSON.stringify(timers));
   };
   return (
     <View style={styles.card}>
       <FlatList
-        data={instructions}
+        data={timers}
         keyExtractor={(item, index) => index}
         extraData={reload}
         style={[globalStyles.colordBorder, styles.instructions]}
@@ -64,9 +64,10 @@ const Instruction = props => {
               style={[globalStyles.textInput, styles.text]}
               // placeholder="Fill in the instruction."
               placeholderTextColor={colors.textcolor}
-              keyboardType="default"
+              keyboardType="numeric"
+              defaultValue={timers[index]}
+              maxLength={3}
               multiline={true}
-              defaultValue={instructions[index]}
               onChangeText={value => editCallback(index, value)}
             />
             <TouchableOpacity
@@ -77,7 +78,7 @@ const Instruction = props => {
           </View>
         )}
       />
-      <AddItem parentCallback={parentCallback} title={'instruction'} />
+      <AddItem parentCallback={parentCallback} title={'timer'} />
     </View>
   );
 };
@@ -109,4 +110,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Instruction;
+export default Timer;

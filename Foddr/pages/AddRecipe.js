@@ -28,10 +28,11 @@ import Modal from '../components/Modal.js';
 import ToggableButton from '../components/ToggableButton.js';
 import colors from '../theme/colors.js';
 import globalStyles from '../theme/globalStyles.js';
+import Timer from '../components/Timer.component.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let amountofPages = 10;
+let amountofPages = 11;
 const AddRecipe = ({route, navigation}) => {
   // useEffect(() => {
   //   LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
@@ -87,6 +88,10 @@ const AddRecipe = ({route, navigation}) => {
     setIngredients(data);
     console.log('ingredf: ' + JSON.stringify(ingredients));
   }
+  function recipeCallBackTimer(data) {
+    setTimers(data);
+    console.log('ingredf: ' + JSON.stringify(timers));
+  }
   function talkToParent(data) {
     //for the seasonbuttons
     setFormData({
@@ -121,7 +126,7 @@ const AddRecipe = ({route, navigation}) => {
               amountOfPeople: formData.amountOfPeople,
               ingredients: ingredients,
               instructions: instructions,
-
+              timers: timers,
               rating: {
                 amountOfRatings: 0,
                 rating: 0,
@@ -274,7 +279,7 @@ const AddRecipe = ({route, navigation}) => {
               }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
-                <Instruction recipeCallBack={recipeCallBack} />
+                <Instruction recipeCallBack={recipeCallBack} instructions={ instructions} />
               </View>
             </View>
           </>
@@ -403,7 +408,10 @@ const AddRecipe = ({route, navigation}) => {
                 }}>
                 {/* <Text style={globalStyles.label}>Fill in the instuctions</Text> */}
                 <View style={[styles.colordBorder, styles.instructions]}>
-                  <Ingredient recipeCallBackIng={recipeCallBackIng} />
+                  <Ingredient
+                    recipeCallBackIng={recipeCallBackIng}
+                    ingredients={ingredients}
+                  />
                 </View>
               </View>
             </View>
@@ -411,6 +419,21 @@ const AddRecipe = ({route, navigation}) => {
           </>
         );
       case 10:
+        return (
+          <>
+            {/* <Text style={styles.title}>What are the instructions?</Text> */}
+            <View
+              style={{
+                height: Dimensions.get('window').height - 450,
+              }}>
+              <Text style={globalStyles.label}>Add some timers</Text>
+              <View style={[styles.colordBorder, styles.instructions]}>
+                <Timer recipeCallBack={recipeCallBackTimer} timers={timers} />
+              </View>
+            </View>
+          </>
+        );
+      case 11:
         return (
           <>
             <Image

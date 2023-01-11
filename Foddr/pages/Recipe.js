@@ -1,10 +1,17 @@
-import { firebase } from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useState } from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
 import {
-  Animated, Dimensions, ScrollView, StyleSheet,
-  Text, TouchableHighlight, View
+  Animated,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+  Linking,
 } from 'react-native';
 import colors from '../theme/colors.js';
 import globalStyles from '../theme/globalStyles.js';
@@ -12,6 +19,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CountDown from 'react-native-countdown-component';
 import ImageHeader from '../components/ImageHeader.js';
 import Loader from '../components/Loader.js';
+import Sound from 'react-native-sound';
+import ping from '../assets/sounds/ping.wav';
+import {FlatList} from 'react-native-gesture-handler';
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 
@@ -23,28 +34,64 @@ const Recipe = ({route, navigation}) => {
   const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
   const stickyHeaderHeight = 100;
   const [timers, setTimers] = useState([]);
-  const [amountOfPeople, setAmountOfPeople] = useState(0);
-  let recipeID;
 
+  const [reload, setReload] = useState(false);
+  const [amountOfPeople, setAmountOfPeople] = useState(1);
+  let recipeID;
+  Sound.setCategory('Playback');
+  var pings = new Sound(ping, error => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+  });
   const talkToParent = amount => {
     setAmountOfPeople(amount);
     console.log('amountOfPeople', amount);
     console.log('amountOfPeople', amountOfPeople);
   };
+  finishTimer = (title, id) => {
+    alert(title + ' finished');
+    let timerArray = timers;
+    timerArray[id].finished = true;
+    setTimers(timerArray);
+    pings.play(success => {
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+    });
+  };
   const addTimer = time => {
     const newTimer = {
       id: Date.now(), // unique ID for the timer
-      time: time, // time in milliseconds
+      time: Number.parseInt(time), // time in milliseconds
       running: false, // whether the timer is currently running
       title: 'Timer ' + (timers.length + 1), // title of the timer
+      finished: false,
     };
-    setTimers([...timers, newTimer]);
+    let timerArray = timers;
+    timerArray.push(newTimer);
+    setTimers(timerArray);
+    console.log('timers in func met ' + time, timerArray);
   };
   const updateTimer = id => {
     // find the timer with the matching ID and update if its running
     const updatedTimers = timers.map(timer => {
       if (timer.id === id) {
-        return {...timer, running: !timer.running};
+        // if (timer.finished) {
+        //   setLoading(true);
+        //   console.log('timer finished; restarting');
+        //   addTimer(timer.time);
+        //   setLoading(false);
+        //   setReload(!reload);
+        // } else {
+        return {
+          ...timer,
+          running: !timer.running,
+        };
+        // }
       }
       return timer;
     });
@@ -54,17 +101,26 @@ const Recipe = ({route, navigation}) => {
   async function getRecipe() {
     setLoading(true);
     try {
-      const recipeData = await AsyncStorage.getItem('recipe');
+      let recipeDataStorage = await AsyncStorage.getItem('recipe');
+      recipeDataStorage = JSON.parse(recipeDataStorage);
       recipeID = await AsyncStorage.getItem('id');
-      if (recipeData !== null) {
+      if (recipeDataStorage !== null) {
         // We have data!!
         console.log('recipeID', recipeID);
-        setRecipeData(JSON.parse(recipeData));
+        setRecipeData(recipeDataStorage);
+        setAmountOfPeople(recipeDataStorage.amountOfPeople);
+        // console.log('recipeData', recipeDataStorage);
+        // console.log('recipeData', recipeDataStorage.timers);
+        if (recipeDataStorage.timers !== undefined) {
+          recipeDataStorage.timers.map(timer => {
+            addTimer(timer);
+            console.log('timer', timer);
+          });
+        }
       }
     } catch (error) {
       // Error retrieving data
-      console.log('er gaat iets fout');
-      console.log(error);
+      console.log('er gaat iets fout ' + error);
     }
     setLoading(false);
   }
@@ -114,28 +170,77 @@ const Recipe = ({route, navigation}) => {
                 </>
               )}
 
-              {timers.length > 0 && (
+              {/* {!loading && (
                 <>
-                  <Text style={styles.title}>Timers</Text>
-                  <ScrollView
+                  <Text style={styles.title}>Timers</Text> */}
+              {/* <FlatList
+                    data={timers}
+                    horizontal
+                    extraData={reload}
+                    style={styles.timerRow}
+                    contentContainerStyle={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    renderItem={({item, index}) => (
+                      <View
+                        key={item.id}
+                        style={[
+                          item.finished ? {display: 'none'} : {},
+                        ]}>
+                        <Text style={styles.text}>Timer Index:{index}</Text>
+                        <Text style={styles.text}>Timer ID: {item.id}</Text>
+                        <Text style={styles.text}>
+                          Running: {item.running ? 'Yes' : 'No'}
+                        </Text>
+                        <CountDown
+                          style={styles.timer}
+                          size={20}
+                          until={item.time}
+                          onFinish={() => finishTimer(item.title, index)}
+                          digitStyle={{
+                            color: '#fff',
+                            marginLeft: -3,
+                            marginRight: -3,
+                            width: 40,
+                          }}
+                          digitTxtStyle={{color: '#fff'}}
+                          timeLabelStyle={{
+                            fontWeight: 'bold',
+                            color: '#fff',
+                            letterSpacing: -2,
+                            width: 2,
+                          }}
+                          separatorStyle={{
+                            color: '#fff',
+                            padding: 0,
+                            letterSpacing: -2,
+                            margin: 0,
+                          }}
+                          timeToShow={['M', 'S']}
+                          timeLabels={{m: null, s: null}}
+                          onPress={() => updateTimer(item.id)}
+                          running={item.running}
+                          showSeparator
+                        />
+                        <Text style={styles.timerTitle}>{item.title}</Text>
+                      </View>
+                    )}
+                  /> */}
+              {/* <ScrollView
                     style={styles.timerRow}
                     horizontal={true}
                     contentContainerStyle={{
-                      // justifyContent: 'space-between',
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    {timers.map(timer => (
+                    {timers.map((timer, index) => (
                       <View key={timer.id}>
-                        {/* <Text style={styles.text}>Timer ID: {timer.id}</Text>
-                    <Text style={styles.text}>
-                      Running: {timer.running ? 'Yes' : 'No'}
-                    </Text> */}
                         <CountDown
                           style={styles.timer}
                           size={20}
                           until={timer.time}
-                          onFinish={() => alert('Finished')}
+                          onFinish={() => finishTimer(timer.title, index)}
                           digitStyle={{
                             color: '#fff',
                             marginLeft: -3,
@@ -152,7 +257,6 @@ const Recipe = ({route, navigation}) => {
                           }}
                           separatorStyle={{
                             color: '#fff',
-                            // width: 6,
                             padding: 0,
                             letterSpacing: -2,
                             margin: 0,
@@ -168,31 +272,35 @@ const Recipe = ({route, navigation}) => {
                     ))}
                   </ScrollView>
                 </>
-              )}
+              )} */}
 
               <TouchableHighlight
-                onPress={() => addTimer(13)}
+                onPress={() => Linking.openURL('setalarm:')}
                 style={styles.timer}>
                 <Text>I AM HERE FOR TESTING</Text>
               </TouchableHighlight>
 
-
-              <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                <Text style={styles.title}>Ingredients</Text>
-                {recipeData.ingredients.map((item, index) => (
-                  <Text style={styles.listItem} key={index}>
-                    🍴{item.name}
-                    {(item.amount / recipeData.amountOfPeople) * amountOfPeople}
-                    {/* {item.amount}/{recipeData.amountOfPeople}*{amountOfPeople} */}
-                    {item.unitOfMeasure}
-                  </Text>
-                ))}
-              </View>
+              {!loading && (
+                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+                  <Text style={styles.title}>Ingredients</Text>
+                  {recipeData.ingredients.map((item, index) => (
+                    <Text style={styles.listItem} key={index}>
+                      🍴{item.name} -{' '}
+                      {(item.amount / recipeData.amountOfPeople) *
+                        amountOfPeople}
+                      {/* {item.amount}/{recipeData.amountOfPeople}*{recipeData.amountOfPeople} */}
+                      {item.unitOfMeasure}
+                    </Text>
+                  ))}
+                </View>
+              )}
               <View style={{padding: 10, marginBottom: 150}}>
                 <Text style={styles.title}>Instructions</Text>
                 {recipeData.instructions.map((item, index) => (
                   <View style={{flexDirection: 'row'}} key={index + 1}>
-                    <Text style={globalStyles.instructionItemKey}>{index + 1}</Text>
+                    <Text style={globalStyles.instructionItemKey}>
+                      {index + 1}
+                    </Text>
                     <Text style={styles.instructionItem}>{item}</Text>
                   </View>
                 ))}
