@@ -1,7 +1,7 @@
 import { firebase } from '@react-native-firebase/auth';
 import React, { useEffect, useState } from 'react';
 import {
-  Dimensions, FlatList, Image, SafeAreaView, StyleSheet,
+  Dimensions, FlatList, Image, StyleSheet,
   Text,
   View
 } from 'react-native';
@@ -10,7 +10,7 @@ import colors from '../theme/colors.js';
 import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
-const Favorites = ({route, navigation}) => {
+const Favorites = ({ route, navigation }) => {
   useEffect(() => {
     //only do the isloading thing once
     const ref = firebase.firestore().collection('recipes');
@@ -47,7 +47,7 @@ const Favorites = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const from = route?.params?.from;
   return (
-    <SafeAreaView contentContainerStyle={globalStyles.root}>
+    <View contentContainerStyle={globalStyles.root}>
       <Image
         style={globalStyles.blob}
         source={require('../assets/images/wave.png')}
@@ -63,7 +63,7 @@ const Favorites = ({route, navigation}) => {
           keyExtractor={item => item.id}
           style={styles.list}
           contentContainerStyle={styles.likedItems}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
           )}
         />
@@ -72,7 +72,7 @@ const Favorites = ({route, navigation}) => {
           Go like some recipes 😉
         </Text>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

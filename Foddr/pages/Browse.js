@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {firebase} from '@react-native-firebase/auth';
-import {TabActions} from '@react-navigation/native';
-import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { firebase } from '@react-native-firebase/auth';
+import { TabActions } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-map-clustering';
-import {Callout, Marker} from 'react-native-maps';
+import { Callout, Marker } from 'react-native-maps';
 import Loader from '../components/Loader.js';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
@@ -19,7 +19,7 @@ const winterImg = '../assets/images/winterIcon.png';
 const springImg = '../assets/images/springIcon.png';
 const summerImg = '../assets/images/summerIcon.png';
 
-const Browse = ({route, navigation}) => {
+const Browse = ({ route, navigation }) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -111,7 +111,7 @@ const Browse = ({route, navigation}) => {
                 style={{
                   resizeMode: 'contain',
                 }}
-                calloutOffset={{ x: 29, y: 0 }}
+                calloutOffset={{ x: -100, y: 65 }}
                 useRef={markerRef}
                 identifier={marker.id}
                 tracksViewChanges={!loading}
@@ -121,7 +121,7 @@ const Browse = ({route, navigation}) => {
                   latitude: parseFloat(marker.recipe.latitude),
                   longitude: parseFloat(marker.recipe.longitude),
                 }}>
-                <Text style={[styles.subtitle, {textAlign: 'center'}]}>
+                <Text style={[styles.subtitle, { textAlign: 'center' }]}>
                   {marker.recipe.name}
                 </Text>
                 <Callout
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   shareButton: {
     backgroundColor: colors.triarycolor,
   },
-  textcolor: {color: '#fff'},
+  textcolor: { color: '#fff' },
 
   buttons: {
     // position: 'absolute',
