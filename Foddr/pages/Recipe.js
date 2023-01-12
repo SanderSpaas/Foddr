@@ -153,7 +153,7 @@ const Recipe = ({ route, navigation }) => {
           />
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
-            scrollEventThrottle
+            scrollEventThrottle={20}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               {
