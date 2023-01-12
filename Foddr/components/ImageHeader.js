@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import SVGImg from '../assets/images/gradient.svg';
@@ -115,12 +115,11 @@ const ImageHeader = ({
       /> */}
       <View
         style={{
-          borderBottomWidth: 1,
-          borderBottomColor: '#9ea9b5',
+          // borderBottomWidth: 1,
+          // borderBottomColor: '#9ea9b5',
           position: 'absolute',
           bottom: -80,
-          left: 5,
-          right: 5,
+          width: '100%',
           paddingLeft: 10,
           paddingRight: 10,
           flexDirection: 'row',
@@ -169,10 +168,7 @@ const ImageHeader = ({
 
           {/* Recipe ❤️ {route.params.id} */}
           <Rating
-            rating={[
-              recipeData.rating.rating,
-              recipeData.rating.amountOfRatings,
-            ]}
+           rating={[recipeData.rating]}
           />
         </Text>
         <View

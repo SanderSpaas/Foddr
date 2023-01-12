@@ -1,27 +1,24 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
 import {useFocusEffect} from '@react-navigation/native';
-import React, {useState, useEffect} from 'react';
+
+import React, {useState} from 'react';
 import {
   Animated,
   Dimensions,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableHighlight,
-  TouchableOpacity,
   View,
-  Linking,
 } from 'react-native';
-import colors from '../theme/colors.js';
-import globalStyles from '../theme/globalStyles.js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import CountDown from 'react-native-countdown-component';
-import ImageHeader from '../components/ImageHeader.js';
-import Loader from '../components/Loader.js';
 import Sound from 'react-native-sound';
 import ping from '../assets/sounds/ping.wav';
-import {FlatList} from 'react-native-gesture-handler';
+import ImageHeader from '../components/ImageHeader.js';
+import Loader from '../components/Loader.js';
+import RatingBar from '../components/RatingBar.js';
+import colors from '../theme/colors.js';
+import globalStyles from '../theme/globalStyles.js';
 
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -34,10 +31,9 @@ const Recipe = ({route, navigation}) => {
   const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
   const stickyHeaderHeight = 100;
   const [timers, setTimers] = useState([]);
-
+  const [recipeId, setRecipeId] = useState();
   const [reload, setReload] = useState(false);
   const [amountOfPeople, setAmountOfPeople] = useState(1);
-  let recipeID;
   Sound.setCategory('Playback');
   var pings = new Sound(ping, error => {
     if (error) {
@@ -74,7 +70,7 @@ const Recipe = ({route, navigation}) => {
     let timerArray = timers;
     timerArray.push(newTimer);
     setTimers(timerArray);
-    console.log('timers in func met ' + time, timerArray);
+    // console.log('timers in func met ' + time, timerArray);
   };
   const updateTimer = id => {
     // find the timer with the matching ID and update if its running
@@ -104,6 +100,7 @@ const Recipe = ({route, navigation}) => {
       let recipeDataStorage = await AsyncStorage.getItem('recipe');
       recipeDataStorage = JSON.parse(recipeDataStorage);
       recipeID = await AsyncStorage.getItem('id');
+      setRecipeId(recipeID);
       if (recipeDataStorage !== null) {
         // We have data!!
         console.log('recipeID', recipeID);
@@ -166,7 +163,39 @@ const Recipe = ({route, navigation}) => {
               {recipeData.description && (
                 <>
                   <Text style={styles.title}>Description</Text>
-                  <Text style={styles.text}>{recipeData.description}</Text>
+
+                  <Image
+                    style={[
+                      {
+                        height: 70,
+                        width: Dimensions.get('window').width,
+                      },
+                    ]}
+                    source={require('../assets/images/topWave.png')}
+                  />
+                  <Text
+                    style={[
+                      styles.text,
+                      {
+                        color: '#fff',
+                        backgroundColor: colors.maincolor,
+                        width: '100%',
+                        paddingTop: 10,
+                        paddingBottom: 10,
+                      },
+                    ]}>
+                    {recipeData.description}
+                  </Text>
+                  <Image
+                    style={[
+                      {
+                        height: 70,
+
+                        width: Dimensions.get('window').width,
+                      },
+                    ]}
+                    source={require('../assets/images/bottemWave.png')}
+                  />
                 </>
               )}
 
@@ -273,41 +302,48 @@ const Recipe = ({route, navigation}) => {
                   </ScrollView>
                 </>
               )} */}
-
-              <TouchableHighlight
+              {/* <TouchableHighlight
                 onPress={() => Linking.openURL('setalarm:')}
                 style={styles.timer}>
                 <Text>I AM HERE FOR TESTING</Text>
-              </TouchableHighlight>
+              </TouchableHighlight> */}
 
-              {!loading && (
-                <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                  <Text style={styles.title}>Ingredients</Text>
-                  {recipeData.ingredients.map((item, index) => (
-                    <Text style={styles.listItem} key={index}>
-                      🍴{item.name} -{' '}
-                      {(item.amount / recipeData.amountOfPeople) *
-                        amountOfPeople}
-                      {/* {item.amount}/{recipeData.amountOfPeople}*{recipeData.amountOfPeople} */}
-                      {item.unitOfMeasure}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              <View style={{padding: 10, marginBottom: 150}}>
-                <Text style={styles.title}>Instructions</Text>
-                {recipeData.instructions.map((item, index) => (
-                  <View style={{flexDirection: 'row'}} key={index + 1}>
-                    <Text style={globalStyles.instructionItemKey}>
-                      {index + 1}
-                    </Text>
-                    <Text style={styles.instructionItem}>{item}</Text>
-                  </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                }}>
+                <Text style={styles.title}>Ingredients</Text>
+                {recipeData.ingredients.map((item, index) => (
+                  <Text style={styles.listItem} key={index}>
+                    🍴{item.name} -{' '}
+                    {(item.amount / recipeData.amountOfPeople) * amountOfPeople}
+                    {/* {item.amount}/{recipeData.amountOfPeople}*{recipeData.amountOfPeople} */}
+                    {item.unitOfMeasure}
+                  </Text>
                 ))}
               </View>
-            </View>
 
-            {/* </SafeAreaView> */}
+              {/* <View style={{padding: 10}}> */}
+              <Text style={styles.title}>Instructions</Text>
+              {recipeData.instructions.map((item, index) => (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                  }}
+                  key={index + 1}>
+                  <Text style={globalStyles.instructionItemKey}>
+                    {index + 1}
+                  </Text>
+                  <Text style={styles.instructionItem}>{item}</Text>
+                </View>
+              ))}
+              <RatingBar
+                rating={recipeData.rating}
+                recipeID={recipeID}
+                style={{}}
+              />
+            </View>
           </ScrollView>
         </>
       ) : (
@@ -319,6 +355,22 @@ const Recipe = ({route, navigation}) => {
 };
 
 const styles = StyleSheet.create({
+  titleBar: {
+    width: Dimensions.get('window').width * 0.85,
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    elevation: 5,
+    borderRadius: 5,
+    zIndex: 10,
+  },
+  barText: {
+    color: colors.textcolor,
+    fontWeight: 'bold',
+    alignItems: 'baseline',
+  },
   root: {
     // flex: 1,
     flexDirection: 'column',
@@ -395,6 +447,7 @@ const styles = StyleSheet.create({
     // position: 'absolute',
 
     marginTop: 360,
+    marginBottom: 60,
     zIndex: 19,
     color: colors.textcolor,
     // backgroundColor: colors.pink,
