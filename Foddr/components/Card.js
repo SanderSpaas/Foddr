@@ -49,7 +49,7 @@ const Card = ({ recipe, recipeId, vertical, sidebar }) => {
         </View>
 
         <Rating
-          rating={[recipe.rating]}
+          rating={recipe.rating}
         />
         <View
           style={[

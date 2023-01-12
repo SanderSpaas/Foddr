@@ -1,14 +1,14 @@
-import {firebase} from '@react-native-firebase/auth';
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
-import {TouchableOpacity, View} from 'react-native';
+import { firebase } from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 const auth = firebase.auth();
 let likesArray;
 
-const Like = ({likes, recipeId}) => {
+const Like = ({ likes, recipeId }) => {
   if (likes !== undefined) {
     likesArray = likes;
     // console.log(recipeId);
@@ -27,6 +27,8 @@ const Like = ({likes, recipeId}) => {
   }
   function addToLiked(recipeID) {
     //user id toevoegen aan recept dat geliked is
+
+    console.log('recipeID in addtoliekd', recipeID);
     firebase
       .firestore()
       .collection('recipes')
@@ -64,7 +66,7 @@ const Like = ({likes, recipeId}) => {
               name="heart"
               size={20}
               solid
-              // color={'#e06c75'}
+            // color={'#e06c75'}
             />
             <View style={globalStyles.circleBackdrop}></View>
           </>
@@ -77,7 +79,7 @@ const Like = ({likes, recipeId}) => {
           }}>
           <>
             <FontIcon
-              style={[globalStyles.touchIcon,{opacity: 0.5}]}
+              style={[globalStyles.touchIcon, { opacity: 0.5 }]}
               name="heart"
               size={20}
               solid

@@ -147,10 +147,7 @@ const Browse = ({ route, navigation }) => {
                   <MapCard
                     name={marker.recipe.name}
                     imgUrl={marker.recipe.image}
-                    rating={[
-                      marker.recipe.rating.rating,
-                      marker.recipe.rating.amountOfRatings,
-                    ]}
+                    rating={marker.recipe.rating}
                     time={marker.recipe.time}
                     likes={marker.recipe.likes}
                     recipeId={marker.id}

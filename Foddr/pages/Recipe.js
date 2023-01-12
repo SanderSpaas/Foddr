@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {firebase} from '@react-native-firebase/auth';
-import {useFocusEffect} from '@react-navigation/native';
+import { firebase } from '@react-native-firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -10,7 +10,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 import Sound from 'react-native-sound';
 import ping from '../assets/sounds/ping.wav';
@@ -23,7 +23,7 @@ import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const Recipe = ({route, navigation}) => {
+const Recipe = ({ route, navigation }) => {
   const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
@@ -140,7 +140,7 @@ const Recipe = ({route, navigation}) => {
   }
   const screenHeight = Dimensions.get('window').height;
   return (
-    <View style={{height: screenHeight, backgroundColor: 'white'}}>
+    <View style={{ height: screenHeight, backgroundColor: 'white' }}>
       <Loader loading={loading} />
       {recipeData !== null && recipeData !== undefined ? (
         <>
@@ -152,9 +152,10 @@ const Recipe = ({route, navigation}) => {
             talkToParent={talkToParent}
           />
           <ScrollView
-            contentContainerStyle={{flexGrow: 1}}
+            contentContainerStyle={{ flexGrow: 1 }}
+            scrollEventThrottle
             onScroll={Animated.event(
-              [{nativeEvent: {contentOffset: {y: scrollY}}}],
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               {
                 useNativeDriver: false,
               },

@@ -1,19 +1,19 @@
-import {firebase} from '@react-native-firebase/auth';
-import React, {useState} from 'react';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import globalStyles from '../theme/globalStyles';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
+import globalStyles from '../theme/globalStyles';
 import ModalInput from './ModalInput';
 const auth = firebase.auth();
-const RatingBar = ({rating, recipeID}) => {
+const RatingBar = ({ rating, recipeID }) => {
   // console.log('rating', rating);
   // console.log('recipeID', recipeID);
   let ratingArray;
@@ -44,14 +44,26 @@ const RatingBar = ({rating, recipeID}) => {
       .get()
       .then(function (doc) {
         if (doc.exists) {
-          var scores = doc.data().scores[0];
-          for (var i = 0; i < scores.length; i++) {
-            if (scores[i].uid === auth.currentUser.uid) {
-              scores[i].score = Number.parseInt(score);
+          // console.log(doc);
+          var rating = doc.data().rating;
+
+          console.log(rating, 'ik ben buiten de for loop')
+          for (var i = 0; i < rating.length; i++) {
+
+            if (rating[i].uid === auth.currentUser.uid) {
+              console.log(rating[i], 'ik ben in de for loop')
+              rating[i].score = score;
+              console.log(rating[i], 'ik ben after update')
               break;
             }
           }
-          docRef.set({scores}, {merge: true});
+          firebase
+            .firestore()
+            .collection('recipes')
+            .doc(recipeID).set({ rating }, { merge: true });
+          console.log('Updated rating');
+          setRated(score);
+          setClicked(false);
         } else {
           console.log('No such document!');
         }
@@ -59,9 +71,7 @@ const RatingBar = ({rating, recipeID}) => {
       .catch(function (error) {
         console.log('Error getting document:', error);
       });
-    console.log('Updated rating');
-    setRated(score);
-    setClicked(false);
+
   }
   // function removeFromRated(recipeID) {
   //   //removing user id from liked array in recipe

@@ -55,7 +55,7 @@ const ImageHeader = ({
   return (
     <Animated.View
       style={[
-        {height: height},
+        { height: height },
         styles.imagecontainer,
         {
           position: 'absolute',
@@ -78,8 +78,8 @@ const ImageHeader = ({
       </Text>
       <Text style={styles.timeText}>{recipeData.time}min</Text>
       <Animated.Image
-        style={[styles.image, {height: height}]}
-        source={{uri: recipeData.image}}
+        style={[styles.image, { height: height }]}
+        source={{ uri: recipeData.image }}
         resizeMode="cover"
       />
       <Animated.View
@@ -154,7 +154,7 @@ const ImageHeader = ({
             // style={styles.arrow}
             name="user-alt"
             size={20}
-            style={{padding: 5}}
+            style={{ padding: 5 }}
             color={colors.secondarycolor}
           />
           <Button
@@ -168,7 +168,7 @@ const ImageHeader = ({
 
           {/* Recipe ❤️ {route.params.id} */}
           <Rating
-           rating={[recipeData.rating]}
+            rating={recipeData.rating}
           />
         </Text>
         <View
@@ -205,7 +205,7 @@ const ImageHeader = ({
           )}
           {recipeData.seasons.summer && (
             <SeasonButton
-              style={{margin: -5}}
+              style={{ margin: -5 }}
               imgUrl={require(summerImg)}
               colorBackground={'#f5de7e'}
               interactable={false}
