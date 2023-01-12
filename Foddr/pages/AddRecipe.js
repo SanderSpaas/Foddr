@@ -127,10 +127,12 @@ const AddRecipe = ({route, navigation}) => {
               ingredients: ingredients,
               instructions: instructions,
               timers: timers,
-              rating: {
-                amountOfRatings: 0,
-                rating: 0,
-              },
+              rating: [
+                {
+                  score: 0,
+                  uid: '',
+                },
+              ],
               likes: [],
               time: formData.time,
               seasons: {
@@ -279,7 +281,10 @@ const AddRecipe = ({route, navigation}) => {
               }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
-                <Instruction recipeCallBack={recipeCallBack} instructions={ instructions} />
+                <Instruction
+                  recipeCallBack={recipeCallBack}
+                  instructions={instructions}
+                />
               </View>
             </View>
           </>

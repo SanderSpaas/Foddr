@@ -1,19 +1,19 @@
-import { firebase } from '@react-native-firebase/auth';
-import React, { useState } from 'react';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 import ModalInput from './ModalInput';
 const auth = firebase.auth();
-const RatingBar = ({ rating, recipeID }) => {
+const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
   // console.log('rating', rating);
   // console.log('recipeID', recipeID);
   let ratingArray;
@@ -24,16 +24,25 @@ const RatingBar = ({ rating, recipeID }) => {
     // console.log('rating', ratingArray);
   }
   function handleCheck() {
-    console.log('ratingArray in handlecheck', rating);
     if (rating == undefined) {
       return 0;
-    } else if (rating.lenght == 0) {
-      return 0;
     } else {
+      if (
+        rating.find(item => item.uid === auth.currentUser.uid)?.score ==
+        undefined
+      ) {
+        return 0;
+      }
       return rating.find(item => item.uid === auth.currentUser.uid)?.score;
     }
   }
   function submitRating(score) {
+    let alreadyRated = false;
+    if (score > 5) {
+      score = 5;
+    } else if (score < 0 || score == undefined) {
+      score = 0;
+    }
     //user id toevoegen aan recept dat geliked is
     console.log('recipeID in submit', recipeID);
     console.log('score', score);
@@ -47,23 +56,28 @@ const RatingBar = ({ rating, recipeID }) => {
           // console.log(doc);
           var rating = doc.data().rating;
 
-          console.log(rating, 'ik ben buiten de for loop')
+          // console.log(rating, 'ik ben buiten de for loop');
           for (var i = 0; i < rating.length; i++) {
-
             if (rating[i].uid === auth.currentUser.uid) {
-              console.log(rating[i], 'ik ben in de for loop')
+              // console.log(rating[i], 'ik ben in de for loop');
               rating[i].score = score;
-              console.log(rating[i], 'ik ben after update')
+              alreadyRated = true;
+              // console.log(rating[i], 'ik ben after update');
               break;
             }
+          }
+          if (!alreadyRated) {
+            rating.push({uid: auth.currentUser.uid, score: score});
           }
           firebase
             .firestore()
             .collection('recipes')
-            .doc(recipeID).set({ rating }, { merge: true });
+            .doc(recipeID)
+            .set({rating}, {merge: true});
           console.log('Updated rating');
           setRated(score);
           setClicked(false);
+          parentRatingCallback(rating);
         } else {
           console.log('No such document!');
         }
@@ -71,7 +85,6 @@ const RatingBar = ({ rating, recipeID }) => {
       .catch(function (error) {
         console.log('Error getting document:', error);
       });
-
   }
   // function removeFromRated(recipeID) {
   //   //removing user id from liked array in recipe
@@ -89,15 +102,17 @@ const RatingBar = ({ rating, recipeID }) => {
   return (
     <>
       {clicked && (
-        <View
+        <ModalInput
+          score={rated}
+          submitRating={submitRating}
           style={{
             position: 'absolute',
             top: 0,
-            width: '100%',
-            zIndex: 5,
-          }}>
-          <ModalInput score={rated} submitRating={submitRating} />
-        </View>
+            width: Dimensions.get('window').width,
+            zIndex: 100,
+            height: Dimensions.get('window').height,
+          }}
+        />
       )}
       <View
         style={{

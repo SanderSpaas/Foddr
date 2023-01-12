@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import SVGImg from '../assets/images/gradient.svg';
@@ -24,6 +24,7 @@ const ImageHeader = ({
   scrollY,
   scrollYSticky,
   talkToParent,
+  ratingUpdated,
 }) => {
   const [amountOfPeople, setAmountOfPeople] = useState(
     parseInt(recipeData.amountOfPeople),
@@ -55,7 +56,7 @@ const ImageHeader = ({
   return (
     <Animated.View
       style={[
-        { height: height },
+        {height: height},
         styles.imagecontainer,
         {
           position: 'absolute',
@@ -78,8 +79,8 @@ const ImageHeader = ({
       </Text>
       <Text style={styles.timeText}>{recipeData.time}min</Text>
       <Animated.Image
-        style={[styles.image, { height: height }]}
-        source={{ uri: recipeData.image }}
+        style={[styles.image, {height: height}]}
+        source={{uri: recipeData.image}}
         resizeMode="cover"
       />
       <Animated.View
@@ -154,7 +155,7 @@ const ImageHeader = ({
             // style={styles.arrow}
             name="user-alt"
             size={20}
-            style={{ padding: 5 }}
+            style={{padding: 5}}
             color={colors.secondarycolor}
           />
           <Button
@@ -164,13 +165,17 @@ const ImageHeader = ({
           />
         </View>
         <Text style={styles.barText}>
-          {/* {recipeData.amountOfPeople} */}
-
-          {/* Recipe ❤️ {route.params.id} */}
           <Rating
-            rating={recipeData.rating}
+            rating={
+              ratingUpdated !== null ? () => ratingUpdated : recipeData.rating
+            }
           />
         </Text>
+        {/* <Text style={styles.barText}>
+          {JSON.stringify(ratingUpdated)}
+          {JSON.stringify(recipeData.rating)}
+        
+        </Text> */}
         <View
           style={{
             flexDirection: 'row',
@@ -205,7 +210,7 @@ const ImageHeader = ({
           )}
           {recipeData.seasons.summer && (
             <SeasonButton
-              style={{ margin: -5 }}
+              style={{margin: -5}}
               imgUrl={require(summerImg)}
               colorBackground={'#f5de7e'}
               interactable={false}
