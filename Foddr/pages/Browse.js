@@ -74,7 +74,7 @@ const Browse = ({ route, navigation }) => {
     // filteredRecipes.forEach(item => console.log(item.recipe.name));
 
     setRecipeDataRender(filteredRecipes);
-    console.log('recipeDataRender', ' has been set');
+    // console.log('recipeDataRender', ' has been set');
     setLoading(false);
   }
 

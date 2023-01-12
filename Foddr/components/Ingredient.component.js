@@ -32,6 +32,7 @@ const Ingredient = props => {
     ingredientsArray[index] = value;
     setIngredients(ingredientsArray);
     console.log(ingredients);
+    props.recipeCallBackIng(ingredientsArray);
   };
   deleteCallbackIng = index => {
     console.log('removing item at index: ' + index);

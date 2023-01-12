@@ -4,18 +4,21 @@ import {Text, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 const auth = firebase.auth();
-
+// let checkedRating = [];
 let scoreValues = [];
 const Rating = ({rating}) => {
-  const [finalScore, setFinalScore] = useState();
-  useEffect(
-    React.useCallback(() => {
-      handleCheck();
-    }, []),
-  );
+  const [score, setScore] = useState(0);
+  useEffect(() => {
+    handleCheck();
+  }, [rating]);
   function handleCheck() {
-    console.log('rating.length', rating.length);
-    console.log('rating', rating);
+    // console.log('rating.length', rating.length);
+    // console.log('rating', rating);
+    // if (rating !== undefined && rating.length > 0) {
+    //   console.log('rating in ratingblokje zelf', rating);
+    //   checkedRating = rating;
+    // }
+
     if (rating !== undefined && rating.length > 0) {
       console.log('rating in ratingblokje zelf', rating);
       const filteredScores = rating.filter(item =>
@@ -27,12 +30,18 @@ const Rating = ({rating}) => {
         (acc, score) => Number.parseInt(acc) + Number.parseInt(score),
         0,
       );
+      // setFinalScore(score);
+      setScore(score);
       console.log('score', score);
-      setFinalScore(score);
-      console.log('finalScore', finalScore);
     } else {
       console.log('no rating');
-      setFinalScore(0);
+      console.log('rating', rating);
+
+      // return (
+      //   <Text style={styles.ratingText}>
+      //     {Number.parseInt(0).toFixed(2) / scoreValues.length}
+      //   </Text>
+      // );
     }
   }
 
@@ -40,9 +49,9 @@ const Rating = ({rating}) => {
     <View style={styles.rating}>
       <FontIcon name="star" size={20} solid color={colors.secondarycolor} />
       <Text style={styles.ratingText}>
-        {Number.parseInt(finalScore).toFixed(2) / scoreValues.length}
+        {Number.parseInt(score).toFixed(2) / scoreValues.length}
+        {/* {score} / {scoreValues.length} */}
       </Text>
-      <Text style={styles.ratingText}>{finalScore}</Text>
     </View>
   );
 };

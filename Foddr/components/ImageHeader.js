@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import SVGImg from '../assets/images/gradient.svg';
 import colors from '../theme/colors';
 import BackButton from './BackButton';
 import Like from './Like';
@@ -83,37 +83,10 @@ const ImageHeader = ({
         source={{uri: recipeData.image}}
         resizeMode="cover"
       />
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            top: scrollYSticky,
-            height: height,
-            overflow: 'hidden',
-          },
-        ]}>
-        <SVGImg
-          style={styles.overlay}
-          // style={[styles.overlay,{height: height}]}
-          width={Dimensions.get('window').width}
-          height={250}
-          resizeMode="stretch"
-        />
-      </Animated.View>
-
-      {/* <Animated.View style={{position: 'absolute'}}> */}
-      {/* <View style={styles.titleBar}> */}
-
-      {/* <NumericInput
-                minValue={1}
-                type="up-down"
-                onChange={value => console.log(value)}
-              /> */}
-      {/* </View> */}
-      {/* <Image
-        style={[styles.blob]}
-        source={require('../assets/images/wave.png')}
-      /> */}
+      <LinearGradient
+        locations={[0, 1.0]}
+        colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,0.80)']}
+        style={styles.linearGradient}></LinearGradient>
       <View
         style={{
           // borderBottomWidth: 1,
@@ -227,19 +200,12 @@ const ImageHeader = ({
 
 const styles = StyleSheet.create({
   imagecontainer: {
-    position: 'absolute',
-    // height: 200,
     zIndex: 2,
   },
-  overlay: {
-    zIndex: 3,
-  },
-  image: {
-    width: Dimensions.get('window').width,
-    flex: 1,
-    // minHeight: 100,
-    // maxHeight: 200,
+  linearGradient: {
     position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
   titleText: {
     position: 'absolute',
@@ -274,45 +240,6 @@ const styles = StyleSheet.create({
     top: 18,
     left: 0,
     margin: 10,
-  },
-  titleBar: {
-    width: Dimensions.get('window').width * 0.95,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    // margin: 25,
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 3,
-    // position: 'absolute',
-    height: 50,
-    zIndex: 2,
-    position: 'absolute',
-    bottom: -65,
-  },
-  barText: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    marginBottom: -15,
-    // zIndex: 10,
-    position: 'absolute',
-    bottom: -90,
-    // backgroundColor: colors.maincolor,
-    borderBottomWidth: 3,
-    borderBottomColor: colors.maincolor,
   },
 });
 export default ImageHeader;

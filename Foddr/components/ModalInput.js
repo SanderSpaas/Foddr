@@ -14,13 +14,23 @@ import globalStyles from '../theme/globalStyles';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 export default ModalInput = ({submitRating, score}) => {
   const [rating, setRating] = useState(score);
+
+  const [error, setError] = useState('');
+
+  function checkInput(rating) {
+    if (rating === '') {
+      setError('Please fill in a rating');
+    } else {
+      submitRating(rating);
+    }
+  }
   console.log('score volgens de modal ', score);
   return (
     <View
       style={{
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        // backgroundColor: 'rgba(0,0,0,0.5)',
         position: 'absolute',
         top: 0,
         width: Dimensions.get('window').width,
@@ -50,16 +60,38 @@ export default ModalInput = ({submitRating, score}) => {
           multiline={true}
           onChangeText={value => setRating(value.replace(/[^0-9]/g, ''))}
         />
-        <FontIcon name="star" size={20} solid color={colors.secondarycolor} style={{
-          position: 'absolute',
-          bottom: 120,
-          right: 100,
-        }} />
+        <FontIcon
+          name="star"
+          size={20}
+          solid
+          color={colors.secondarycolor}
+          style={{
+            position: 'absolute',
+            bottom: 140,
+            right: 100,
+          }}
+        />
         <TouchableOpacity
-          style={styles.buttonModal}
-          onPress={() => submitRating(rating)}>
+          style={[
+            globalStyles.buttonModal,
+            styles.text,
+            { marginBottom: 40},
+          ]}
+          onPress={() => checkInput(rating)}>
           <Text style={styles.textButtonModal}>Add rating</Text>
         </TouchableOpacity>
+        {error && (
+          <Text
+            style={[
+              globalStyles.error,
+              {
+                position: 'absolute',
+                bottom: 10,
+              },
+            ]}>
+            {error}
+          </Text>
+        )}
       </View>
     </View>
   );

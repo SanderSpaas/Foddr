@@ -16,16 +16,14 @@ const Instruction = props => {
   const [text, setText] = useState('');
 
   const [reload, setReload] = useState(false);
-  const [instructions, setInstructions] = useState([
-    'This is a instruction, click me to edit it!',
-  ]);
+  const [instructions, setInstructions] = useState(['']);
   useEffect(() => {
     setInstructions(props.instructions);
   }, []);
   function parentCallback() {
     let instructionArray = instructions;
     console.log(instructions);
-    instructionArray.push('Click me to edit me');
+    instructionArray.push('');
     setInstructions(instructionArray);
     setReload(!reload);
     console.log('instructies here jong: ' + JSON.stringify(instructions));
