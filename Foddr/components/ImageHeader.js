@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -77,6 +77,7 @@ const ImageHeader = ({
       <Text style={styles.titleText} numberOfLines={1}>
         {recipeData.name}
       </Text>
+
       <Text style={styles.timeText}>{recipeData.time}min</Text>
       <Animated.Image
         style={[styles.image, {height: height}]}
@@ -139,15 +140,27 @@ const ImageHeader = ({
         </View>
         <Text style={styles.barText}>
           <Rating
-            rating={
-              ratingUpdated !== null ? () => ratingUpdated : recipeData.rating
-            }
+            rating={ratingUpdated !== null ? ratingUpdated : recipeData.rating}
           />
         </Text>
-        {/* <Text style={styles.barText}>
-          {JSON.stringify(ratingUpdated)}
-          {JSON.stringify(recipeData.rating)}
-        
+        {/* <Text
+          style={{
+            backgroundColor: 'red',
+            color: '#fff',
+            padding: 10,
+            position: 'absolute',
+
+            top: 0,
+            zIndex: 1000,
+
+            fontSize: 20,
+            fontWeight: 'bold',
+            width: 200,
+          }}>
+         
+          {ratingUpdated !== null
+            ? JSON.stringify(ratingUpdated)
+            : JSON.stringify(recipeData.rating)}
         </Text> */}
         <View
           style={{

@@ -42,8 +42,6 @@ const Recipe = ({route, navigation}) => {
   const [rating, setRating] = useState(null);
   const screenHeight = Dimensions.get('window').height;
   Sound.setCategory('Playback');
-  // const navigation = useNavigation();
-  // const { recipeID } = navigation.state.params || {};
   const {recipeId} = route.params;
   // console.log('route information', route);
   // console.log('navigation check', navigation);

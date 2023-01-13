@@ -34,9 +34,6 @@ const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
     } else if (score < 0 || score == undefined) {
       score = 0;
     }
-    //user id toevoegen aan recept dat geliked is
-    // console.log('recipeID in submit', recipeID);
-    // console.log('score', score);
     firebase
       .firestore()
       .collection('recipes')
@@ -45,15 +42,22 @@ const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
       .then(function (doc) {
         if (doc.exists) {
           var rating = doc.data().rating;
-          for (var i = 0; i < rating.length; i++) {
-            if (rating[i].uid === auth.currentUser.uid) {
-              rating[i].score = score;
-              alreadyRated = true;
-              break;
+          if ('rating' in doc.data()) {
+            console.log('Rating field exists');
+            var rating = doc.data().rating;
+            for (var i = 0; i < rating.length; i++) {
+              if (rating[i].uid === auth.currentUser.uid) {
+                rating[i].score = score;
+                alreadyRated = true;
+                break;
+              }
             }
-          }
-          if (!alreadyRated) {
-            rating.push({uid: auth.currentUser.uid, score: score});
+            if (!alreadyRated) {
+              rating.push({uid: auth.currentUser.uid, score: score});
+            }
+          } else {
+            console.log('Rating field does not exist, it will be created now');
+            rating = [{uid: auth.currentUser.uid, score: score}];
           }
           firebase
             .firestore()
