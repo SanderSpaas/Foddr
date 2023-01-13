@@ -72,7 +72,7 @@ const ImageHeader = ({
       </View>
 
       <View style={styles.likeContainer}>
-        <Like likes={recipeData.likes} recipeId={route.params.id} />
+        <Like likes={recipeData.likes} recipeId={route.params.recipeId} />
       </View>
       <Text style={styles.titleText} numberOfLines={1}>
         {recipeData.name}

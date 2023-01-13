@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
-import { TabActions } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import {TabActions} from '@react-navigation/native';
+import React, {useEffect, useRef, useState} from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { Callout, Marker } from 'react-native-maps';
+import {Callout, Marker} from 'react-native-maps';
 import Loader from '../components/Loader.js';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
@@ -19,7 +19,7 @@ const winterImg = '../assets/images/winterIcon.png';
 const springImg = '../assets/images/springIcon.png';
 const summerImg = '../assets/images/summerIcon.png';
 
-const Browse = ({ route, navigation }) => {
+const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -63,7 +63,7 @@ const Browse = ({ route, navigation }) => {
     let ingredientsObj = seasons;
     ingredientsObj[season] = value;
     setSeasons(ingredientsObj);
-    console.log('seasons', seasons);
+    // console.log('seasons', seasons);
     filterRecipes();
   }
   function filterRecipes() {
@@ -111,46 +111,30 @@ const Browse = ({ route, navigation }) => {
                 style={{
                   resizeMode: 'contain',
                 }}
-                calloutOffset={{ x: -100, y: 65 }}
+                calloutOffset={{x: -100, y: 65}}
                 useRef={markerRef}
                 identifier={marker.id}
                 tracksViewChanges={!loading}
                 icon={require('../assets/images/recipeIcon.png')}
-                onPress={e => console.log(e.nativeEvent)}
+                // onPress={e => console.log(e.nativeEvent)}
                 coordinate={{
                   latitude: parseFloat(marker.recipe.latitude),
                   longitude: parseFloat(marker.recipe.longitude),
                 }}>
-                <Text style={[styles.subtitle, { textAlign: 'center' }]}>
+                <Text style={[styles.subtitle, {textAlign: 'center'}]}>
                   {marker.recipe.name}
                 </Text>
                 <Callout
                   tooltip={true}
                   onPress={() => {
-                    console.log(marker.id);
-                    try {
-                      AsyncStorage.setItem('id', marker.id);
-                      AsyncStorage.setItem(
-                        'recipe',
-                        JSON.stringify(marker.recipe),
-                      );
-                    } catch (error) {
-                      // Error saving data
-                      console.log(error);
-                    }
-                    const jumpToAction = TabActions.jumpTo('Recipe', {
-                      id: marker.id,
-                      recipe: marker.recipe,
-                    });
-                    navigation.dispatch(jumpToAction);
+                    console.log('recipeId should be this ', marker.id);
+                    navigation.navigate('Recipe', {recipeId: marker.id});
                   }}>
                   <MapCard
                     name={marker.recipe.name}
                     imgUrl={marker.recipe.image}
                     rating={marker.recipe.rating}
                     time={marker.recipe.time}
-                    likes={marker.recipe.likes}
-                    recipeId={marker.id}
                   />
                 </Callout>
               </Marker>
@@ -158,13 +142,9 @@ const Browse = ({ route, navigation }) => {
         </MapView>
       </View>
       <View style={styles.buttons}>
-        {recipeDataRender !== undefined &&
-          recipeDataRender !== null && ( //TODO dont render this if no recipes are available
-            <RandomButton
-              mapViewRef={mapViewRef}
-              recipeData={recipeDataRender}
-            />
-          )}
+        {recipeDataRender !== undefined && recipeDataRender !== null && (
+          <RandomButton mapViewRef={mapViewRef} recipeData={recipeDataRender} />
+        )}
         <View style={styles.seasonButtons}>
           <SeasonButton
             imgUrl={require(fallImg)}
@@ -260,7 +240,7 @@ const styles = StyleSheet.create({
   shareButton: {
     backgroundColor: colors.triarycolor,
   },
-  textcolor: { color: '#fff' },
+  textcolor: {color: '#fff'},
 
   buttons: {
     // position: 'absolute',

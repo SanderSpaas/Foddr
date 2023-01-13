@@ -1,11 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { firebase } from '@react-native-firebase/auth';
-import {
-  TabActions, useNavigation
-} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
-  Dimensions, Image, Text, TouchableOpacity, View, Platform
+  Dimensions,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
@@ -14,39 +16,16 @@ import Rating from './Rating';
 
 const auth = firebase.auth();
 
-const MapCard = ({
-  name,
-  imgUrl,
-  onPress,
-  rating,
-  time,
-  likes,
-  recipeId,
-  vertical,
-}) => {
-  if (likes !== undefined) {
-    likesArray = likes;
-  }
+const MapCard = ({name, imgUrl, rating, time, vertical}) => {
   const navigation = useNavigation();
-  // console.log('I am: ' + {name}.name + ' with id: ' + {recipeId}.recipeId);
+  // console.log('I am: ' + {name}.name);
   return (
     <TouchableOpacity
-      onPress={() => {
-        {
-          console.log(recipeId);
-          try {
-            AsyncStorage.setItem('id', recipeId);
-          } catch (error) {
-            // Error saving data
-            console.log(error);
-          }
-          const jumpToAction = TabActions.jumpTo('Recipe', { id: recipeId });
-
-          navigation.dispatch(jumpToAction);
-          //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
-        }
-      }}
-      style={[styles.foodcard, vertical ? styles.vertical : styles.horizontal, globalStyles.shadow]}>
+      style={[
+        styles.foodcard,
+        vertical ? styles.vertical : styles.horizontal,
+        globalStyles.shadow,
+      ]}>
       <View
         style={{
           borderRadius: 10,

@@ -14,26 +14,17 @@ import globalStyles from '../theme/globalStyles';
 import ModalInput from './ModalInput';
 const auth = firebase.auth();
 const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
-  // console.log('rating', rating);
-  // console.log('recipeID', recipeID);
-  let ratingArray;
   const [rated, setRated] = useState(handleCheck());
   const [clicked, setClicked] = useState(false);
-  if (rating !== undefined && rating.length > 0) {
-    ratingArray = rating;
-    // console.log('rating', ratingArray);
-  }
+
   function handleCheck() {
-    if (rating == undefined) {
-      return 0;
-    } else {
-      if (
-        rating.find(item => item.uid === auth.currentUser.uid)?.score ==
-        undefined
-      ) {
-        return 0;
-      }
+    if (typeof rating === 'array') {
+      // value has the .find method
       return rating.find(item => item.uid === auth.currentUser.uid)?.score;
+    } else {
+      // value does not have the .find method
+      //probly not an array because it hasnt been rated yet
+      return 0;
     }
   }
   function submitRating(score) {
@@ -44,8 +35,8 @@ const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
       score = 0;
     }
     //user id toevoegen aan recept dat geliked is
-    console.log('recipeID in submit', recipeID);
-    console.log('score', score);
+    // console.log('recipeID in submit', recipeID);
+    // console.log('score', score);
     firebase
       .firestore()
       .collection('recipes')
@@ -53,16 +44,11 @@ const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
       .get()
       .then(function (doc) {
         if (doc.exists) {
-          // console.log(doc);
           var rating = doc.data().rating;
-
-          // console.log(rating, 'ik ben buiten de for loop');
           for (var i = 0; i < rating.length; i++) {
             if (rating[i].uid === auth.currentUser.uid) {
-              // console.log(rating[i], 'ik ben in de for loop');
               rating[i].score = score;
               alreadyRated = true;
-              // console.log(rating[i], 'ik ben after update');
               break;
             }
           }

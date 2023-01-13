@@ -93,7 +93,9 @@ const BottomNav = () => {
         component={Recipe}
         options={({navigation, route}) => ({
           tabBarLabel: 'Recipe',
-          tabBarItemStyle: {display: 'none'},
+          tabBarItemStyle: { display: 'none' },
+          // headerTitle: route.params.recipeId,
+          // headerShown: true,
           tabBarIcon: ({focused, color, size}) => (
             <FontIcon
               name="edit"
