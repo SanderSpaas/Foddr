@@ -1,31 +1,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { TabActions, useNavigation } from '@react-navigation/native';
+import {TabActions, useNavigation} from '@react-navigation/native';
 import React from 'react';
-import { Dimensions, Image, Text, TouchableOpacity, View } from 'react-native';
+import {Dimensions, Image, Text, TouchableOpacity, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import Like from './Like';
 import Rating from './Rating';
 
-const Card = ({ recipe, recipeId, vertical, sidebar }) => {
+const Card = ({recipe, recipeId, vertical, sidebar}) => {
   const navigation = useNavigation();
-  // console.log('card with id: ' + JSON.stringify({recipeId}));
-  // console.log('recipe', recipe);
   return (
     <TouchableOpacity
       onPress={() => {
         {
-          try {
-            AsyncStorage.setItem('id', { recipeId }.recipeId);
-            AsyncStorage.setItem('recipe', JSON.stringify(recipe));
-          } catch (error) {
-            // Error saving data
-            console.log(error);
-          }
-          const jumpToAction = TabActions.jumpTo('Recipe', { id: recipeId });
-
-          navigation.dispatch(jumpToAction);
-          //passing parameters doesnt work due to a bug in the navigation library thats why we end up with this stupid solution
+          console.log('recipeId in card', recipeId);
+          navigation.navigate('Recipe', {recipeId: recipeId});
         }
       }}
       style={[
@@ -39,18 +28,16 @@ const Card = ({ recipe, recipeId, vertical, sidebar }) => {
             vertical
               ? styles.verticalImg
               : sidebar
-                ? styles.sidebarImg
-                : styles.image,
+              ? styles.sidebarImg
+              : styles.image,
           ]}
-          source={{ uri: recipe.image }}
+          source={{uri: recipe.image}}
         />
         <View style={styles.likeContainer}>
           <Like likes={recipe.likes} recipeId={recipeId} />
         </View>
 
-        <Rating
-          rating={recipe.rating}
-        />
+        <Rating rating={recipe.rating} />
         <View
           style={[
             styles.bottemItems,
@@ -72,7 +59,7 @@ const Card = ({ recipe, recipeId, vertical, sidebar }) => {
 Card.defaultProps = {
   recipeName: 'DEFAULT - Fried chicken',
   // imgUrl: require('../../assets/images/grill.png'),
-  onPress: () => { },
+  onPress: () => {},
   rating: '4.0',
   time: 20,
   liked: false,

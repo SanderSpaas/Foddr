@@ -2,7 +2,6 @@
 import React, {useState} from 'react';
 import {
   Dimensions,
-  FlatList,
   Image,
   KeyboardAvoidingView,
   StyleSheet,
@@ -15,36 +14,30 @@ import {
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {Keyboard} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import MapView from 'react-native-map-clustering';
 import {Marker} from 'react-native-maps';
 import ProgressBar from 'react-native-progress/Bar';
-import AddItem from '../components/AddItem.js';
 import Camera from '../components/Camera.js';
 import Ingredient from '../components/Ingredient.component.js';
 import Instruction from '../components/Instruction.component.js';
 import Modal from '../components/Modal.js';
+import Timer from '../components/Timer.component.js';
 import ToggableButton from '../components/ToggableButton.js';
 import colors from '../theme/colors.js';
 import globalStyles from '../theme/globalStyles.js';
-import Timer from '../components/Timer.component.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let amountofPages = 11;
 const AddRecipe = ({route, navigation}) => {
-  // useEffect(() => {
-  //   LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  // }, []);
-  // const [recipeData, setRecipeData] = useState();
   const [loading, setLoading] = useState(false);
-  const [instructions, setInstructions] = useState([
-    'This is a instruction, click me to edit it!',
-  ]);
+  const [valid, setValid] = useState(true);
+  const [error, setError] = useState('');
+  const [instructions, setInstructions] = useState(['']);
   const [timers, setTimers] = useState([0]);
   const [ingredients, setIngredients] = useState([
-    {name: '', amount: 0, unitOfMeasure: ''},
+    {name: '', amount: '', unitOfMeasure: ''},
   ]);
   const [formData, setFormData] = useState({
     name: '',
@@ -58,7 +51,6 @@ const AddRecipe = ({route, navigation}) => {
     fileUri: '',
     base64: '',
   });
-  const [fileUri, setFileUri] = useState('');
   const [page, setPage] = useState(0);
   const [postPage, setPostPage] = useState(false);
   const [marker, setMarker] = useState({
@@ -79,18 +71,44 @@ const AddRecipe = ({route, navigation}) => {
       fileUri: fileUri,
       base64: base64,
     });
+    setValid(true);
   };
   function recipeCallBack(data) {
+    //check if instructions is empty
     setInstructions(data);
     console.log('instructions: ' + JSON.stringify(instructions));
+    if (instructions.length === 0 || instructions[0] === '') {
+      setError('Please add at least one instruction');
+      setValid(false);
+    } else {
+      setError('');
+      setValid(true);
+    }
   }
   function recipeCallBackIng(data) {
+    //check if ingredients is empty
+    console.log('i think therefore i am: ' + JSON.stringify(data));
     setIngredients(data);
+    if (ingredients.length === 0 || ingredients[0] === '') {
+      setError('Please add at least one ingredient');
+      setValid(false);
+    } else {
+      setError('');
+      setValid(true);
+    }
     console.log('ingredf: ' + JSON.stringify(ingredients));
   }
   function recipeCallBackTimer(data) {
+    //check if timers is empty
     setTimers(data);
-    console.log('ingredf: ' + JSON.stringify(timers));
+    console.log('timers: ' + JSON.stringify(instructions));
+    if (timers.length === 0 || timers[0] === '') {
+      setError('Please add at least one timer');
+      setValid(false);
+    } else {
+      setError('');
+      setValid(true);
+    }
   }
   function talkToParent(data) {
     //for the seasonbuttons
@@ -98,6 +116,24 @@ const AddRecipe = ({route, navigation}) => {
       ...formData,
       [data]: !formData[data],
     });
+    console.log('formData', formData);
+    //check if all seasons are false
+    let allSeasonsFalse = Object.entries(formData).every(
+      ([key, value]) =>
+        (key === 'fall' ||
+          key === 'winter' ||
+          key === 'spring' ||
+          key === 'summer') &&
+        value === false,
+    );
+    console.log('allSeasonsFalse', allSeasonsFalse);
+    if (allSeasonsFalse) {
+      setError('Please select at least one season');
+      setValid(false);
+    } else {
+      setError('');
+      setValid(true);
+    }
   }
 
   handleSubmit = async () => {
@@ -127,10 +163,12 @@ const AddRecipe = ({route, navigation}) => {
               ingredients: ingredients,
               instructions: instructions,
               timers: timers,
-              rating: {
-                amountOfRatings: 0,
-                rating: 0,
-              },
+              // rating: [
+              //   {
+              //     score: 0,
+              //     uid: '',
+              //   },
+              // ],
               likes: [],
               time: formData.time,
               seasons: {
@@ -147,9 +185,30 @@ const AddRecipe = ({route, navigation}) => {
         setPostPage(true);
       });
     } else {
+      if (page === amountofPages - 1) {
+        setValid(true);
+      }
       setPage(page + 1);
     }
   };
+  function checkIfEmpty(value, option) {
+    if (value === '') {
+      // alert('Please fill in the ' + name);
+      setError('Please fill in the ' + option);
+      setValid(false);
+      setFormData({
+        ...formData,
+        [option]: value,
+      });
+    } else {
+      setValid(true);
+      setError('');
+      setFormData({
+        ...formData,
+        [option]: value,
+      });
+    }
+  }
   function cleanUp() {
     //alles gaan resetten in de states
     setFormData({});
@@ -180,29 +239,28 @@ const AddRecipe = ({route, navigation}) => {
         );
       case 1:
         return (
-          <>
-            <Image
-              style={styles.image}
-              source={require('../assets/images/name.png')}
-              resizeMode="contain"
-            />
-            {/* <Text style={styles.title}>What is the recipe called?</Text> */}
-            <View>
+          <KeyboardAvoidingView behavior="padding">
+            <ScrollView
+              contentContainerStyle={{
+                top: 80,
+              }}>
+              <Image
+                style={styles.image}
+                source={require('../assets/images/name.png')}
+                resizeMode="contain"
+              />
+              {/* <Text style={styles.title}>What is the recipe called?</Text> */}
+
               <Text style={globalStyles.label}>Fill in the recipe name</Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
                 // placeholder="Fill in the recipe name"
-                onChangeText={value =>
-                  setFormData({
-                    ...formData,
-                    name: value,
-                  })
-                }
+                onChangeText={value => checkIfEmpty(value, 'name')}
                 value={formData.name}
                 style={[styles.colordBorder, globalStyles.textInput]}
               />
-            </View>
-          </>
+            </ScrollView>
+          </KeyboardAvoidingView>
         );
       case 2:
         return (
@@ -223,12 +281,7 @@ const AddRecipe = ({route, navigation}) => {
                 <TextInput
                   placeholderTextColor={colors.textcolor}
                   multiline={true}
-                  onChangeText={value =>
-                    setFormData({
-                      ...formData,
-                      description: value,
-                    })
-                  }
+                  onChangeText={value => checkIfEmpty(value, 'description')}
                   value={formData.description}
                   style={[
                     styles.colordBorder,
@@ -257,10 +310,7 @@ const AddRecipe = ({route, navigation}) => {
                 placeholderTextColor={colors.textcolor}
                 keyboardType="numeric"
                 onChangeText={value =>
-                  setFormData({
-                    ...formData,
-                    amountOfPeople: value.replace(/[^0-9]/g, ''),
-                  })
+                  checkIfEmpty(value.replace(/[^0-9]/g, ''), 'amountOfPeople')
                 }
                 maxLength={2}
                 value={formData.amountOfPeople}
@@ -279,7 +329,10 @@ const AddRecipe = ({route, navigation}) => {
               }}>
               <Text style={globalStyles.label}>Fill in the instuctions</Text>
               <View style={[styles.colordBorder, styles.instructions]}>
-                <Instruction recipeCallBack={recipeCallBack} instructions={ instructions} />
+                <Instruction
+                  recipeCallBack={recipeCallBack}
+                  instructions={instructions}
+                />
               </View>
             </View>
           </>
@@ -340,7 +393,10 @@ const AddRecipe = ({route, navigation}) => {
                 clustering={true}
                 region={region}
                 onPress={
-                  e => setMarker(e.nativeEvent.coordinate)
+                  e => {
+                    setMarker(e.nativeEvent.coordinate);
+                    setValid(true);
+                  }
                   // console.log(e.nativeEvent.coordinate)
                 }>
                 <Marker coordinate={marker}></Marker>
@@ -363,7 +419,7 @@ const AddRecipe = ({route, navigation}) => {
                 placeholderTextColor={colors.textcolor}
                 placeholder="0"
                 onChangeText={value =>
-                  setFormData({...formData, time: value.replace(/[^0-9]/g, '')})
+                  checkIfEmpty(value.replace(/[^0-9]/g, ''), 'time')
                 }
                 keyboardType="numeric"
                 maxLength={5}
@@ -391,7 +447,6 @@ const AddRecipe = ({route, navigation}) => {
                 styles.instructions,
                 {
                   height: Dimensions.get('window').height - 400,
-                  // backgroundColor: 'pink',
                 },
               ]}>
               <View style={styles.legendaContainter}>
@@ -465,18 +520,43 @@ const AddRecipe = ({route, navigation}) => {
           <View style={styles.buttonContainer}>
             {page > 0 && (
               <TouchableOpacity
-                style={globalStyles.buttonSmall}
-                onPress={() => setPage(page - 1)}>
+                // disabled={!valid}
+                style={[globalStyles.buttonSmall]}
+                onPress={() => {
+                  setPage(page - 1);
+                  setValid(true);
+                  setError('');
+                }}>
                 <Text style={globalStyles.buttonText}>Back</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              style={globalStyles.buttonSmall}
-              onPress={handleSubmit}>
+              disabled={!valid}
+              style={[
+                globalStyles.buttonSmall,
+                !valid ? {backgroundColor: '#8a91a5'} : {},
+              ]}
+              onPress={() => {
+                setValid(false);
+                handleSubmit();
+              }}>
               <Text style={globalStyles.buttonText}>
                 {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
               </Text>
             </TouchableOpacity>
+            {error && (
+              <Text
+                style={[
+                  globalStyles.error,
+                  {
+                    position: 'absolute',
+                    bottom: 50,
+                    width: Dimensions.get('window').width * 0.55,
+                  },
+                ]}>
+                {error}
+              </Text>
+            )}
           </View>
           <View style={styles.layout}>
             <ProgressBar

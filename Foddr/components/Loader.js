@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import {Dimensions, Image, StyleSheet, View} from 'react-native';
 
 export default Loader = loading => {
   return (
@@ -30,14 +30,14 @@ styles = StyleSheet.create({
     elevation: 9,
     left: Dimensions.get('window').width / 2 - 87.5,
     top: Dimensions.get('window').height / 2 - 100,
-
+    zIndex: 101,
     backgroundColor: '#fff',
   },
   loaderframe: {
     position: 'absolute',
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
-    zIndex: 2,
+    zIndex: 100,
     backgroundColor: '#C0C0C0',
     opacity: 0.4,
   },

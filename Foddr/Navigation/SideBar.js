@@ -10,14 +10,17 @@ import Card from '../components/Card';
 import globalStyles from '../theme/globalStyles';
 const auth = firebase.auth();
 
-const SideBar = ({}) => {
+const SideBar = () => {
   const [fileUri, setFileUri] = useState();
   const [recipeData, setRecipeData] = useState();
-  const [recipeId, setRecipeId] = useState();
+  // const [recipeId, setRecipeId] = useState();
   const [isLoading, setLoading] = useState(false);
   const name = firebase.auth().currentUser.displayName;
   const navigation = useNavigation();
-
+  // const {recipeId} = route.params;
+  // console.log('route information', route);
+  // console.log('navigation check', navigation);
+  // console.log('recipeId from params', recipeId);
   async function saveOnline(base64) {
     const fileUploadTask = storage()
       .ref('profilePics/' + auth.currentUser.uid + '.jpeg')
@@ -45,18 +48,18 @@ const SideBar = ({}) => {
       });
     });
   }
-  async function getRecipe() {
-    try {
-      const recipeData = await AsyncStorage.getItem('recipe');
-      const recipeID = await AsyncStorage.getItem('id');
-      setRecipeId(recipeID);
-      setRecipeData(JSON.parse(recipeData));
-    } catch (error) {
-      // Error retrieving data
-      console.log('er gaat iets fout in de sidebar');
-      console.log(error);
-    }
-  }
+  // async function getRecipe() {
+  //   try {
+  //     const recipeData = await AsyncStorage.getItem('recipe');
+  //     const recipeID = await AsyncStorage.getItem('id');
+  //     setRecipeId(recipeID);
+  //     setRecipeData(JSON.parse(recipeData));
+  //   } catch (error) {
+  //     // Error retrieving data
+  //     console.log('er gaat iets fout in de sidebar');
+  //     console.log(error);
+  //   }
+  // }
 
   const height = Dimensions.get('window').height;
   return (
@@ -75,7 +78,7 @@ const SideBar = ({}) => {
         ]}
         onPress={() => {
           navigation.dispatch(DrawerActions.toggleDrawer());
-          getRecipe();
+          // getRecipe();
           setFileUri(firebase.auth().currentUser.photoURL);
         }}>
         <View
