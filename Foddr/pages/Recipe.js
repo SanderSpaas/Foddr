@@ -153,7 +153,7 @@ const Recipe = ({route, navigation}) => {
       useNativeDriver: false,
     }).start();
   }
- 
+
   return (
     <View style={{height: screenHeight, backgroundColor: 'white'}}>
       {!loading ? (
@@ -324,13 +324,12 @@ const Recipe = ({route, navigation}) => {
                 <Text>I AM HERE FOR TESTING</Text>
               </TouchableHighlight> */}
               </>
-
+              <Text style={styles.title}>Ingredients</Text>
               <View
                 style={{
                   flexDirection: 'row',
                   flexWrap: 'wrap',
                 }}>
-                <Text style={styles.title}>Ingredients</Text>
                 {recipeData.ingredients.map((item, index) => (
                   <Text style={styles.listItem} key={index}>
                     🍴{item.name} -{' '}
@@ -490,6 +489,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     padding: 10,
+    textAlign: 'center',
   },
 });
 export default Recipe;

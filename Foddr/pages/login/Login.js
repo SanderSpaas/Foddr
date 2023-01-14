@@ -1,13 +1,11 @@
 import auth from '@react-native-firebase/auth';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Image,
-  ScrollView,
-  Text,
+  ScrollView, StatusBar, Text,
   TextInput,
   TouchableOpacity,
-  View,
-  StatusBar,
+  View
 } from 'react-native';
 import BackButton from '../../components/BackButton.js';
 import Loader from '../../components/Loader.js';

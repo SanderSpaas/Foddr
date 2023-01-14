@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {Text, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
+
 const auth = firebase.auth();
 // let checkedRating = [];
 let scoreValues = [];
@@ -13,22 +14,22 @@ const Rating = ({rating}) => {
   }, [rating]);
   function handleCheck() {
     if (rating !== undefined && rating.length > 0) {
-      console.log('rating in ratingblokje zelf', rating);
+      // console.log('rating in ratingblokje zelf', rating);
       const filteredScores = rating.filter(item =>
         item.hasOwnProperty('score'),
       );
       scoreValues = filteredScores.map(item => item.score);
-      console.log('scoreValues', scoreValues);
+      // console.log('scoreValues', scoreValues);
       let score = scoreValues.reduce(
         (acc, score) => Number.parseInt(acc) + Number.parseInt(score),
         0,
       );
       score = score / scoreValues.length;
       setScore(score);
-      console.log('score', score);
+      // console.log('score', score);
     } else {
-      console.log('no rating: ' + rating);
-      console.log('rating', rating);
+      // console.log('no rating: ' + rating);
+      // console.log('rating', rating);
       // setScore(0);
     }
   }
