@@ -3,7 +3,17 @@
 <plist version="1.0">
 	<dict>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs to get your location...</string>
+		<string>This app needs to get your location for the map feature</string>
+		 <key>NSCameraUsageDescription</key>
+  <string>For taking pictures</string>
+
+
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>For the map feature</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>For adding pictures</string>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>For when you take pictures</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>en</string>
 		<key>CFBundleDisplayName</key>
