@@ -1,42 +1,39 @@
-import { firebase } from '@react-native-firebase/auth';
-import React, { useState } from 'react';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 import ModalInput from './ModalInput';
 const auth = firebase.auth();
-const RatingBar = ({ rating, recipeID }) => {
-  // console.log('rating', rating);
-  // console.log('recipeID', recipeID);
-  let ratingArray;
+const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
   const [rated, setRated] = useState(handleCheck());
   const [clicked, setClicked] = useState(false);
-  if (rating !== undefined && rating.length > 0) {
-    ratingArray = rating;
-    // console.log('rating', ratingArray);
-  }
+
   function handleCheck() {
-    console.log('ratingArray in handlecheck', rating);
-    if (rating == undefined) {
-      return 0;
-    } else if (rating.lenght == 0) {
-      return 0;
-    } else {
+    if (typeof rating === 'array') {
+      // value has the .find method
       return rating.find(item => item.uid === auth.currentUser.uid)?.score;
+    } else {
+      // value does not have the .find method
+      //probly not an array because it hasnt been rated yet
+      return 0;
     }
   }
   function submitRating(score) {
-    //user id toevoegen aan recept dat geliked is
-    console.log('recipeID in submit', recipeID);
-    console.log('score', score);
+    let alreadyRated = false;
+    if (score > 5) {
+      score = 5;
+    } else if (score < 0 || score == undefined) {
+      score = 0;
+    }
     firebase
       .firestore()
       .collection('recipes')
@@ -44,26 +41,33 @@ const RatingBar = ({ rating, recipeID }) => {
       .get()
       .then(function (doc) {
         if (doc.exists) {
-          // console.log(doc);
           var rating = doc.data().rating;
-
-          console.log(rating, 'ik ben buiten de for loop')
-          for (var i = 0; i < rating.length; i++) {
-
-            if (rating[i].uid === auth.currentUser.uid) {
-              console.log(rating[i], 'ik ben in de for loop')
-              rating[i].score = score;
-              console.log(rating[i], 'ik ben after update')
-              break;
+          if ('rating' in doc.data()) {
+            console.log('Rating field exists');
+            var rating = doc.data().rating;
+            for (var i = 0; i < rating.length; i++) {
+              if (rating[i].uid === auth.currentUser.uid) {
+                rating[i].score = score;
+                alreadyRated = true;
+                break;
+              }
             }
+            if (!alreadyRated) {
+              rating.push({uid: auth.currentUser.uid, score: score});
+            }
+          } else {
+            console.log('Rating field does not exist, it will be created now');
+            rating = [{uid: auth.currentUser.uid, score: score}];
           }
           firebase
             .firestore()
             .collection('recipes')
-            .doc(recipeID).set({ rating }, { merge: true });
+            .doc(recipeID)
+            .set({rating}, {merge: true});
           console.log('Updated rating');
           setRated(score);
           setClicked(false);
+          parentRatingCallback(rating);
         } else {
           console.log('No such document!');
         }
@@ -71,7 +75,6 @@ const RatingBar = ({ rating, recipeID }) => {
       .catch(function (error) {
         console.log('Error getting document:', error);
       });
-
   }
   // function removeFromRated(recipeID) {
   //   //removing user id from liked array in recipe
@@ -89,15 +92,17 @@ const RatingBar = ({ rating, recipeID }) => {
   return (
     <>
       {clicked && (
-        <View
+        <ModalInput
+          score={rated}
+          submitRating={submitRating}
           style={{
             position: 'absolute',
             top: 0,
-            width: '100%',
-            zIndex: 5,
-          }}>
-          <ModalInput score={rated} submitRating={submitRating} />
-        </View>
+            width: Dimensions.get('window').width,
+            zIndex: 100,
+            height: Dimensions.get('window').height,
+          }}
+        />
       )}
       <View
         style={{

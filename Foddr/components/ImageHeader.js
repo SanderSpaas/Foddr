@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import SVGImg from '../assets/images/gradient.svg';
 import colors from '../theme/colors';
 import BackButton from './BackButton';
 import Like from './Like';
@@ -24,6 +24,7 @@ const ImageHeader = ({
   scrollY,
   scrollYSticky,
   talkToParent,
+  ratingUpdated,
 }) => {
   const [amountOfPeople, setAmountOfPeople] = useState(
     parseInt(recipeData.amountOfPeople),
@@ -55,7 +56,7 @@ const ImageHeader = ({
   return (
     <Animated.View
       style={[
-        { height: height },
+        {height: height},
         styles.imagecontainer,
         {
           position: 'absolute',
@@ -71,48 +72,22 @@ const ImageHeader = ({
       </View>
 
       <View style={styles.likeContainer}>
-        <Like likes={recipeData.likes} recipeId={route.params.id} />
+        <Like likes={recipeData.likes} recipeId={route.params.recipeId} />
       </View>
       <Text style={styles.titleText} numberOfLines={1}>
         {recipeData.name}
       </Text>
+
       <Text style={styles.timeText}>{recipeData.time}min</Text>
       <Animated.Image
-        style={[styles.image, { height: height }]}
-        source={{ uri: recipeData.image }}
+        style={[styles.image, {height: height}]}
+        source={{uri: recipeData.image}}
         resizeMode="cover"
       />
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            top: scrollYSticky,
-            height: height,
-            overflow: 'hidden',
-          },
-        ]}>
-        <SVGImg
-          style={styles.overlay}
-          // style={[styles.overlay,{height: height}]}
-          width={Dimensions.get('window').width}
-          height={250}
-          resizeMode="stretch"
-        />
-      </Animated.View>
-
-      {/* <Animated.View style={{position: 'absolute'}}> */}
-      {/* <View style={styles.titleBar}> */}
-
-      {/* <NumericInput
-                minValue={1}
-                type="up-down"
-                onChange={value => console.log(value)}
-              /> */}
-      {/* </View> */}
-      {/* <Image
-        style={[styles.blob]}
-        source={require('../assets/images/wave.png')}
-      /> */}
+      <LinearGradient
+        locations={[0, 1.0]}
+        colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,0.80)']}
+        style={styles.linearGradient}></LinearGradient>
       <View
         style={{
           // borderBottomWidth: 1,
@@ -154,7 +129,7 @@ const ImageHeader = ({
             // style={styles.arrow}
             name="user-alt"
             size={20}
-            style={{ padding: 5 }}
+            style={{padding: 5}}
             color={colors.secondarycolor}
           />
           <Button
@@ -164,13 +139,29 @@ const ImageHeader = ({
           />
         </View>
         <Text style={styles.barText}>
-          {/* {recipeData.amountOfPeople} */}
-
-          {/* Recipe ❤️ {route.params.id} */}
           <Rating
-            rating={recipeData.rating}
+            rating={ratingUpdated !== null ? ratingUpdated : recipeData.rating}
           />
         </Text>
+        {/* <Text
+          style={{
+            backgroundColor: 'red',
+            color: '#fff',
+            padding: 10,
+            position: 'absolute',
+
+            top: 0,
+            zIndex: 1000,
+
+            fontSize: 20,
+            fontWeight: 'bold',
+            width: 200,
+          }}>
+         
+          {ratingUpdated !== null
+            ? JSON.stringify(ratingUpdated)
+            : JSON.stringify(recipeData.rating)}
+        </Text> */}
         <View
           style={{
             flexDirection: 'row',
@@ -205,7 +196,7 @@ const ImageHeader = ({
           )}
           {recipeData.seasons.summer && (
             <SeasonButton
-              style={{ margin: -5 }}
+              style={{margin: -5}}
               imgUrl={require(summerImg)}
               colorBackground={'#f5de7e'}
               interactable={false}
@@ -222,19 +213,12 @@ const ImageHeader = ({
 
 const styles = StyleSheet.create({
   imagecontainer: {
-    position: 'absolute',
-    // height: 200,
     zIndex: 2,
   },
-  overlay: {
-    zIndex: 3,
-  },
-  image: {
-    width: Dimensions.get('window').width,
-    flex: 1,
-    // minHeight: 100,
-    // maxHeight: 200,
+  linearGradient: {
     position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
   titleText: {
     position: 'absolute',
@@ -269,45 +253,6 @@ const styles = StyleSheet.create({
     top: 18,
     left: 0,
     margin: 10,
-  },
-  titleBar: {
-    width: Dimensions.get('window').width * 0.95,
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    // margin: 25,
-    padding: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 9,
-    borderRadius: 3,
-    // position: 'absolute',
-    height: 50,
-    zIndex: 2,
-    position: 'absolute',
-    bottom: -65,
-  },
-  barText: {
-    color: colors.textcolor,
-    fontWeight: 'bold',
-  },
-  blob: {
-    width: Dimensions.get('window').width,
-    height: 110,
-    marginBottom: -15,
-    // zIndex: 10,
-    position: 'absolute',
-    bottom: -90,
-    // backgroundColor: colors.maincolor,
-    borderBottomWidth: 3,
-    borderBottomColor: colors.maincolor,
   },
 });
 export default ImageHeader;
