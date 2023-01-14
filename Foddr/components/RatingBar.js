@@ -13,7 +13,7 @@ import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';
 import ModalInput from './ModalInput';
 const auth = firebase.auth();
-const RatingBar = ({ rating, recipeID, parentCallback }) => {
+const RatingBar = ({ rating, recipeID }) => {
   // console.log('rating', rating);
   // console.log('recipeID', recipeID);
   let ratingArray;
@@ -63,7 +63,6 @@ const RatingBar = ({ rating, recipeID, parentCallback }) => {
             .doc(recipeID).set({ rating }, { merge: true });
           console.log('Updated rating');
           setRated(score);
-          parentCallback(score);
           setClicked(false);
         } else {
           console.log('No such document!');

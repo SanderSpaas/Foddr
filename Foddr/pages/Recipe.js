@@ -7,7 +7,6 @@ import {
   Animated,
   Dimensions,
   Image,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -141,7 +140,7 @@ const Recipe = ({ route, navigation }) => {
   }
   const screenHeight = Dimensions.get('window').height;
   return (
-    <SafeAreaView style={{ height: screenHeight, backgroundColor: 'white' }}>
+    <View style={{ height: screenHeight, backgroundColor: 'white' }}>
       <Loader loading={loading} />
       {recipeData !== null && recipeData !== undefined ? (
         <>
@@ -154,7 +153,7 @@ const Recipe = ({ route, navigation }) => {
           />
           <ScrollView
             contentContainerStyle={{ flexGrow: 1 }}
-            scrollEventThrottle={16}
+            scrollEventThrottle={20}
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
               {
@@ -352,7 +351,7 @@ const Recipe = ({ route, navigation }) => {
         // <Text>{recipeData.name}</Text>
         <Text>Pick a country</Text>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

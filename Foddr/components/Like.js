@@ -53,7 +53,7 @@ const Like = ({ likes, recipeId }) => {
     setLiked(handleCheck(likesArray.pop()));
   }
   return (
-    <View style={{ flex: 1 }}>
+    <>
       {liked ? (
         <TouchableOpacity
           onPress={() => {
@@ -88,7 +88,7 @@ const Like = ({ likes, recipeId }) => {
           </>
         </TouchableOpacity>
       )}
-    </View>
+    </>
   );
 };
 const styles = {

@@ -263,14 +263,12 @@ const styles = StyleSheet.create({
     top: 18,
     right: 0,
     margin: 10,
-    zIndex: 50
   },
   backContainer: {
     position: 'absolute',
     top: 18,
     left: 0,
     margin: 10,
-    zIndex: 50
   },
   titleBar: {
     width: Dimensions.get('window').width * 0.95,
@@ -299,7 +297,6 @@ const styles = StyleSheet.create({
   barText: {
     color: colors.textcolor,
     fontWeight: 'bold',
-    zIndex: 50
   },
   blob: {
     width: Dimensions.get('window').width,
