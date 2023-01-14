@@ -1,16 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import type { Node } from 'react';
-import React, { useEffect, useState } from 'react';
-import {
-  PermissionsAndroid,
-  StatusBar, Text, View
-} from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import type {Node} from 'react';
+import React, {useEffect, useState} from 'react';
+import {PermissionsAndroid, StatusBar, Text, View} from 'react-native';
 import 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import BottomNav from './Navigation/BottemNav';
 import SideBar from './Navigation/SideBar';
@@ -18,6 +15,8 @@ import Login from './pages/login/Login';
 import LoginChooser from './pages/login/LoginChooser';
 import Signup from './pages/login/Signup';
 import colors from './theme/colors';
+import Permissions from 'react-native-permissions';
+
 const auth = firebase.auth();
 const db = firebase.firestore();
 // let userName;
@@ -28,13 +27,27 @@ const db = firebase.firestore();
 // Geocoder.init(GEOCODERAPI_KEY); // use a valid API key
 
 const permission = () => {
-  PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.CAMERA,
-    PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-    PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  );
+  //check if we are on android
+  // if (Platform.OS === 'android') {
+  //   PermissionsAndroid.request(
+  //     PermissionsAndroid.PERMISSIONS.CAMERA,
+  //     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+  //     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+  //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //   );
+  // } else {
+  //request IOS permissions
+  Permissions.request('camera').then(response => {
+    console.log(response);
+  });
+  Permissions.request('photo').then(response => {
+    console.log(response);
+  });
+  Permissions.request('location').then(response => {
+    console.log(response);
+  });
+  // }
 };
 
 //background color for our pages
@@ -85,16 +98,16 @@ const App: () => Node = () => {
             initialRouteName="LoginChooser"
             screenOptions={{
               headerShown: false,
-              tabBarStyle: { display: 'none' },
+              tabBarStyle: {display: 'none'},
             }}>
             {/* //hidden tabs so we can navigate to them */}
             <Tab.Screen
               name="LoginChooser"
               component={LoginChooser}
               options={{
-                tabBarItemStyle: { display: 'none' },
+                tabBarItemStyle: {display: 'none'},
                 tabBarLabel: 'LoginChooser',
-                tabBarIcon: ({ color, size }) => (
+                tabBarIcon: ({color, size}) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -103,9 +116,9 @@ const App: () => Node = () => {
               name="Login"
               component={Login}
               options={{
-                tabBarItemStyle: { display: 'none' },
+                tabBarItemStyle: {display: 'none'},
                 tabBarLabel: 'Login',
-                tabBarIcon: ({ color, size }) => (
+                tabBarIcon: ({color, size}) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -114,9 +127,9 @@ const App: () => Node = () => {
               name="Signup"
               component={Signup}
               options={{
-                tabBarItemStyle: { display: 'none' },
+                tabBarItemStyle: {display: 'none'},
                 tabBarLabel: 'Signup',
-                tabBarIcon: ({ color, size }) => (
+                tabBarIcon: ({color, size}) => (
                   <FontIcon name="edit" color={colors.gray} size={30} solid />
                 ),
               }}
@@ -142,7 +155,7 @@ const App: () => Node = () => {
           removeItemValue('name');
           console.log(
             'All current user data ' +
-            JSON.stringify(firebase.auth().currentUser?.toJSON()),
+              JSON.stringify(firebase.auth().currentUser?.toJSON()),
           );
         });
     }
