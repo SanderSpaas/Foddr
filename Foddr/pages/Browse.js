@@ -1,11 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {firebase} from '@react-native-firebase/auth';
-import {TabActions} from '@react-navigation/native';
-import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-map-clustering';
-import {Callout, Marker} from 'react-native-maps';
-import Loader from '../components/Loader.js';
+import { Callout, Marker } from 'react-native-maps';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
 import RandomButton from '../components/RandomButton.js';
@@ -22,7 +19,6 @@ const summerImg = '../assets/images/summerIcon.png';
 const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [region, setRegion] = useState({
     latitude: 51.186533128908827,
     longitude: 1.52344711124897,
@@ -37,23 +33,23 @@ const Browse = ({route, navigation}) => {
   });
 
   const mapViewRef = useRef(MapView);
-  const markerRef = useRef(Marker);
 
   useEffect(() => {
     const ref = firebase.firestore().collection('recipes');
     const subscriber = ref.onSnapshot(snapshot => {
-      setLoading(true);
       let recipesArray = [];
-      setRecipeData([]);
       snapshot.forEach(doc => {
-        // console.log('doc.id', doc.id + ': ' + doc.data().name);
         recipesArray.push({
           id: doc.id,
           recipe: doc.data(),
         });
       });
       setRecipeData(recipesArray);
-      filterRecipes();
+      //filter recipes based on seasons selected
+      recipesArray = recipesArray.filter(recipeData =>
+        showRecipe(recipeData.recipe.seasons),
+      );
+      setRecipeDataRender(recipesArray);
     });
     // Stop listening for updates when no longer required
     return () => subscriber();
@@ -64,21 +60,14 @@ const Browse = ({route, navigation}) => {
     ingredientsObj[season] = value;
     setSeasons(ingredientsObj);
     // console.log('seasons', seasons);
-    filterRecipes();
-  }
-  function filterRecipes() {
-    let filteredRecipes = recipeData.filter(recipeData =>
+    filteredRecipes = recipeData.filter(recipeData =>
       showRecipe(recipeData.recipe.seasons),
     );
-    // console.log('=====================');
-    // filteredRecipes.forEach(item => console.log(item.recipe.name));
-
     setRecipeDataRender(filteredRecipes);
-    // console.log('recipeDataRender', ' has been set');
-    setLoading(false);
   }
 
   function showRecipe(recipeSeasons) {
+    //checks if the recipe has any of the selected seasons and returns true if it does
     let show = false;
     Object.entries(recipeSeasons).forEach(recipeSeason => {
       const [key, value] = recipeSeason;
@@ -89,10 +78,8 @@ const Browse = ({route, navigation}) => {
     return show;
   }
 
-  const from = route?.params?.from;
   return (
     <View style={styles.root}>
-      <Loader loading={!loading} />
       <View style={styles.container}>
         <MapView
           showsUserLocation={true}
@@ -104,41 +91,36 @@ const Browse = ({route, navigation}) => {
           region={region}
           clustering={true}
           toolbarEnabled={false}>
-          {!loading &&
-            recipeDataRender.map((marker, index) => (
-              <Marker
-                key={index}
-                style={{
-                  resizeMode: 'contain',
-                }}
-                calloutOffset={{x: -100, y: 65}}
-                useRef={markerRef}
-                identifier={marker.id}
-                tracksViewChanges={!loading}
-                icon={require('../assets/images/recipeIcon.png')}
-                // onPress={e => console.log(e.nativeEvent)}
-                coordinate={{
-                  latitude: parseFloat(marker.recipe.latitude),
-                  longitude: parseFloat(marker.recipe.longitude),
+          {recipeDataRender.map((marker, index) => (
+            <Marker
+              key={index}
+              style={{
+                resizeMode: 'contain',
+              }}
+              calloutOffset={{x: -100, y: 65}}
+              tracksViewChanges={false}
+              icon={require('../assets/images/recipeIcon.png')}
+              coordinate={{
+                latitude: parseFloat(marker.recipe.latitude),
+                longitude: parseFloat(marker.recipe.longitude),
+              }}>
+              <Text style={[styles.subtitle, {textAlign: 'center'}]}>
+                {marker.recipe.name}
+              </Text>
+              <Callout
+                tooltip={true}
+                onPress={() => {
+                  navigation.navigate('Recipe', {recipeId: marker.id});
                 }}>
-                <Text style={[styles.subtitle, {textAlign: 'center'}]}>
-                  {marker.recipe.name}
-                </Text>
-                <Callout
-                  tooltip={true}
-                  onPress={() => {
-                    console.log('recipeId should be this ', marker.id);
-                    navigation.navigate('Recipe', {recipeId: marker.id});
-                  }}>
-                  <MapCard
-                    name={marker.recipe.name}
-                    imgUrl={marker.recipe.image}
-                    rating={marker.recipe.rating}
-                    time={marker.recipe.time}
-                  />
-                </Callout>
-              </Marker>
-            ))}
+                <MapCard
+                  name={marker.recipe.name}
+                  imgUrl={marker.recipe.image}
+                  rating={marker.recipe.rating}
+                  time={marker.recipe.time}
+                />
+              </Callout>
+            </Marker>
+          ))}
         </MapView>
       </View>
       <View style={styles.buttons}>
@@ -188,7 +170,6 @@ const Browse = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   root: {
-    // flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -204,14 +185,10 @@ const styles = StyleSheet.create({
     bottom: Dimensions.get('window').height * 0.5,
   },
   container: {
-    // flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    // borderRadius: 10,
     overflow: 'hidden',
-    // margin: 20,
-    // marginTop: 50,
   },
   seasonButtons: {
     position: 'absolute',
