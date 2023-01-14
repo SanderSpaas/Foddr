@@ -1,5 +1,5 @@
-import { firebase } from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native';
+import {firebase} from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   Dimensions,
@@ -7,7 +7,7 @@ import {
   Platform,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
@@ -57,12 +57,15 @@ const MapCard = ({name, imgUrl, rating, time, vertical}) => {
         </Text>
 
         <View style={styles.bottemItems}>
-          <Rating rating={rating} />
+          <View style={styles.ratingContainer}>
+            <Rating rating={rating} />
+          </View>
+
           <Text numberOfLines={1} style={styles.titel}>
             {name}
           </Text>
           <View style={styles.row}>
-            <Text style={styles.textcolor}>{time}min </Text>
+            <Text style={{color: colors.textcolor}}>{time}min </Text>
             <FontIcon name="clock" size={20} solid color={'#333333'} />
           </View>
         </View>
@@ -86,6 +89,7 @@ const styles = {
     bottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'baseline',
     padding: 5,
   },
   vertical: {
@@ -107,8 +111,13 @@ const styles = {
     backgroundColor: '#fff',
     // zIndex: 10,
   },
-  textcolor: {
-    color: colors.textcolor,
+  // textcolor: {
+  //   color: colors.textcolor,
+  // },
+  ratingContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: -5,
   },
 };
 export default MapCard;

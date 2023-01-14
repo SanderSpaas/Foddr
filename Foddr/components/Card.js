@@ -36,8 +36,10 @@ const Card = ({recipe, recipeId, vertical, sidebar}) => {
         <View style={styles.likeContainer}>
           <Like likes={recipe.likes} recipeId={recipeId} />
         </View>
+        <View style={styles.ratingContainer}>
+          <Rating rating={recipe.rating} />
+        </View>
 
-        <Rating rating={recipe.rating} />
         <View
           style={[
             styles.bottemItems,
@@ -137,6 +139,10 @@ const styles = {
     position: 'absolute',
     top: 10,
     right: 10,
+  },
+  ratingContainer: {
+    position: 'absolute',
+    bottom: 27,
   },
   textcolor: {
     color: colors.textcolor,

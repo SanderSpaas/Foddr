@@ -45,7 +45,6 @@ const Rating = ({rating}) => {
 };
 const styles = {
   rating: {
-    position: 'absolute',
     flexDirection: 'row',
     backgroundColor: '#fff',
     padding: 3,
@@ -53,9 +52,9 @@ const styles = {
     justifyContent: 'space-around',
     alignItems: 'center',
     width: 65,
+    height: 30,
     color: colors.secondarycolor,
     borderRadius: 5,
-    bottom: 40,
   },
   ratingText: {
     color: colors.textcolor,
