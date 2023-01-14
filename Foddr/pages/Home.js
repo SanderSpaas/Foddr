@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const Home = ({navigation}) => {
   }, []);
 
   return (
-    <View style={{height: screenHeight, backgroundColor: 'white'}}>
+    <View style={{ height: screenHeight, backgroundColor: 'white' }}>
       <ImageHeaderTitle
         title={'Discover Recipes'}
         scrollY={scrollY}
@@ -72,14 +72,15 @@ const Home = ({navigation}) => {
       <Loader loading={loading} />
       {!loading ? (
         <ScrollView
-          contentContainerStyle={{flexGrow: 1}}
+          scrollEventThrottle={20}
+          contentContainerStyle={{ flexGrow: 1 }}
           onScroll={Animated.event(
-            [{nativeEvent: {contentOffset: {y: scrollY}}}],
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
             {
               useNativeDriver: false,
             },
           )}>
-          <View style={{marginTop: 260}}>
+          <View style={{ marginTop: 260 }}>
             <Text style={styles.title}>Winter Recipes</Text>
             <FlatList
               data={recipeData.filter(
@@ -91,7 +92,7 @@ const Home = ({navigation}) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
@@ -107,7 +108,7 @@ const Home = ({navigation}) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
@@ -125,12 +126,12 @@ const Home = ({navigation}) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
           </View>
-          <View style={{marginBottom: 80}}>
+          <View style={{ marginBottom: 80 }}>
             <Text style={styles.title}>Summer Recipes</Text>
             <FlatList
               data={recipeData.filter(
@@ -142,12 +143,12 @@ const Home = ({navigation}) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <Card
                   recipe={item.recipe}
                   recipeId={item.id}
                   vertical={true}
-                  style={{padding: 80, marginBottom: 100}}
+                  style={{ padding: 80, marginBottom: 100 }}
                 />
               )}
             />
