@@ -1,8 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
-import { useFocusEffect } from '@react-navigation/native';
-
-import React, { useState } from 'react';
+import {firebase} from '@react-native-firebase/auth';
+import {
+  useFocusEffect,
+  StackActions,
+  useNavigation,
+  NavigationActions,
+} from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
 import {
   Animated,
   Dimensions,
@@ -10,8 +14,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
+import {set} from 'react-native-reanimated';
 import Sound from 'react-native-sound';
 import ping from '../assets/sounds/ping.wav';
 import ImageHeader from '../components/ImageHeader.js';
@@ -23,18 +28,24 @@ import globalStyles from '../theme/globalStyles.js';
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-const Recipe = ({ route, navigation }) => {
+const Recipe = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(new Animated.Value(0));
   const [running, setRunning] = useState(false);
   const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
   const stickyHeaderHeight = 100;
   const [timers, setTimers] = useState([]);
-  const [recipeId, setRecipeId] = useState();
+  // const [recipeId, setRecipeId] = useState();
   const [reload, setReload] = useState(false);
   const [amountOfPeople, setAmountOfPeople] = useState(1);
+  const [rating, setRating] = useState(null);
+  const screenHeight = Dimensions.get('window').height;
   Sound.setCategory('Playback');
+  const {recipeId} = route.params;
+  // console.log('route information', route);
+  // console.log('navigation check', navigation);
+  // console.log('recipeId from params', recipeId);
   var pings = new Sound(ping, error => {
     if (error) {
       console.log('failed to load the sound', error);
@@ -42,6 +53,10 @@ const Recipe = ({ route, navigation }) => {
     }
   });
   const talkToParent = amount => {
+    //make sure the amount isnt smaller then 1
+    if (amount <= 1) {
+      amount = 1;
+    }
     setAmountOfPeople(amount);
     console.log('amountOfPeople', amount);
     console.log('amountOfPeople', amountOfPeople);
@@ -93,39 +108,39 @@ const Recipe = ({ route, navigation }) => {
     });
     setTimers(updatedTimers);
   };
+  function parentRatingCallback(rating) {
+    setRating(rating);
+  }
+  useEffect(() => {
+    const getRecipe = async () => {
+      try {
+        setLoading(true);
+        setScrollY(new Animated.Value(0));
+        // console.log('recipeID', recipeId);
+        //fetch the recipe from the database with the id
+        const recipeDataStorage = await db
+          .collection('recipes')
+          .doc(recipeId)
+          .get();
+        // console.log('recipeDataStorage', recipeDataStorage.data());
 
-  async function getRecipe() {
-    setLoading(true);
-    try {
-      let recipeDataStorage = await AsyncStorage.getItem('recipe');
-      recipeDataStorage = JSON.parse(recipeDataStorage);
-      recipeID = await AsyncStorage.getItem('id');
-      setRecipeId(recipeID);
-      if (recipeDataStorage !== null) {
-        // We have data!!
-        console.log('recipeID', recipeID);
-        setRecipeData(recipeDataStorage);
-        setAmountOfPeople(recipeDataStorage.amountOfPeople);
-        // console.log('recipeData', recipeDataStorage);
-        // console.log('recipeData', recipeDataStorage.timers);
+        setRecipeData(recipeDataStorage.data());
+        setAmountOfPeople(recipeDataStorage.data().amountOfPeople);
         if (recipeDataStorage.timers !== undefined) {
           recipeDataStorage.timers.map(timer => {
             addTimer(timer);
             // console.log('timer', timer);
           });
         }
+        // }
+        setLoading(false);
+      } catch (error) {
+        // Error retrieving data
+        console.log('er gaat iets fout ' + error);
       }
-    } catch (error) {
-      // Error retrieving data
-      console.log('er gaat iets fout ' + error);
-    }
-    setLoading(false);
-  }
-  useFocusEffect(
-    React.useCallback(() => {
-      getRecipe();
-    }, []),
-  );
+    };
+    getRecipe();
+  }, [recipeId]);
 
   if (scrollY > stickyHeaderHeight) {
     Animated.spring(scrollYSticky, {
@@ -138,11 +153,10 @@ const Recipe = ({ route, navigation }) => {
       useNativeDriver: false,
     }).start();
   }
-  const screenHeight = Dimensions.get('window').height;
+ 
   return (
-    <View style={{ height: screenHeight, backgroundColor: 'white' }}>
-      <Loader loading={loading} />
-      {recipeData !== null && recipeData !== undefined ? (
+    <View style={{height: screenHeight, backgroundColor: 'white'}}>
+      {!loading ? (
         <>
           <ImageHeader
             recipeData={recipeData}
@@ -150,12 +164,13 @@ const Recipe = ({ route, navigation }) => {
             scrollY={scrollY}
             scrollYSticky={scrollYSticky}
             talkToParent={talkToParent}
+            ratingUpdated={rating}
           />
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{flexGrow: 1}}
             scrollEventThrottle={20}
             onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              [{nativeEvent: {contentOffset: {y: scrollY}}}],
               {
                 useNativeDriver: false,
               },
@@ -199,11 +214,11 @@ const Recipe = ({ route, navigation }) => {
                   />
                 </>
               )}
-
-              {/* {!loading && (
+              <>
+                {/* {!loading && (
                 <>
                   <Text style={styles.title}>Timers</Text> */}
-              {/* <FlatList
+                {/* <FlatList
                     data={timers}
                     horizontal
                     extraData={reload}
@@ -257,7 +272,7 @@ const Recipe = ({ route, navigation }) => {
                       </View>
                     )}
                   /> */}
-              {/* <ScrollView
+                {/* <ScrollView
                     style={styles.timerRow}
                     horizontal={true}
                     contentContainerStyle={{
@@ -303,11 +318,12 @@ const Recipe = ({ route, navigation }) => {
                   </ScrollView>
                 </>
               )} */}
-              {/* <TouchableHighlight
+                {/* <TouchableHighlight
                 onPress={() => Linking.openURL('setalarm:')}
                 style={styles.timer}>
                 <Text>I AM HERE FOR TESTING</Text>
               </TouchableHighlight> */}
+              </>
 
               <View
                 style={{
@@ -318,8 +334,7 @@ const Recipe = ({ route, navigation }) => {
                 {recipeData.ingredients.map((item, index) => (
                   <Text style={styles.listItem} key={index}>
                     🍴{item.name} -{' '}
-                    {(item.amount / recipeData.amountOfPeople) * amountOfPeople}
-                    {/* {item.amount}/{recipeData.amountOfPeople}*{recipeData.amountOfPeople} */}
+                    {(item.amount / recipeData.amountOfPeople) * amountOfPeople}{' '}
                     {item.unitOfMeasure}
                   </Text>
                 ))}
@@ -341,15 +356,15 @@ const Recipe = ({ route, navigation }) => {
               ))}
               <RatingBar
                 rating={recipeData.rating}
-                recipeID={recipeID}
+                recipeID={recipeId}
                 style={{}}
+                parentRatingCallback={parentRatingCallback}
               />
             </View>
           </ScrollView>
         </>
       ) : (
-        // <Text>{recipeData.name}</Text>
-        <Text>Pick a country</Text>
+        <Loader loading={true} />
       )}
     </View>
   );
