@@ -13,7 +13,7 @@ const Card = ({recipe, recipeId, vertical, sidebar}) => {
     <TouchableOpacity
       onPress={() => {
         {
-          console.log('recipeId in card', recipeId);
+          // console.log('recipeId in card', recipeId);
           navigation.navigate('Recipe', {recipeId: recipeId});
         }
       }}

@@ -111,7 +111,7 @@ const Recipe = ({ route, navigation }) => {
         if (recipeDataStorage.timers !== undefined) {
           recipeDataStorage.timers.map(timer => {
             addTimer(timer);
-            console.log('timer', timer);
+            // console.log('timer', timer);
           });
         }
       }

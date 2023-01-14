@@ -41,8 +41,9 @@ const RatingBar = ({rating, recipeID, parentRatingCallback}) => {
       .get()
       .then(function (doc) {
         if (doc.exists) {
-          var rating = doc.data().rating;
+          var rating;
           if ('rating' in doc.data()) {
+            rating = doc.data().rating;
             console.log('Rating field exists');
             var rating = doc.data().rating;
             for (var i = 0; i < rating.length; i++) {

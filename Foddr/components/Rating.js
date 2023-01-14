@@ -1,13 +1,13 @@
-import { firebase } from '@react-native-firebase/auth';
-import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useEffect, useState} from 'react';
+import {Text, View} from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 const auth = firebase.auth();
 // let checkedRating = [];
 let scoreValues = [];
 const Rating = ({rating}) => {
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0.0);
   useEffect(() => {
     handleCheck();
   }, [rating]);
@@ -27,9 +27,9 @@ const Rating = ({rating}) => {
       setScore(score);
       console.log('score', score);
     } else {
-      console.log('no rating');
+      console.log('no rating: ' + rating);
       console.log('rating', rating);
-      setScore(0);
+      // setScore(0);
     }
   }
 

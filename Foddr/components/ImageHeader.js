@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
@@ -56,7 +56,7 @@ const ImageHeader = ({
   return (
     <Animated.View
       style={[
-        { height: height },
+        {height: height},
         styles.imagecontainer,
         {
           position: 'absolute',
@@ -80,8 +80,8 @@ const ImageHeader = ({
 
       <Text style={styles.timeText}>{recipeData.time}min</Text>
       <Animated.Image
-        style={[styles.image, { height: height }]}
-        source={{ uri: recipeData.image }}
+        style={[styles.image, {height: height}]}
+        source={{uri: recipeData.image}}
         resizeMode="cover"
       />
       <LinearGradient
@@ -129,7 +129,7 @@ const ImageHeader = ({
             // style={styles.arrow}
             name="user-alt"
             size={20}
-            style={{ padding: 5 }}
+            style={{padding: 5}}
             color={colors.secondarycolor}
           />
           <Button
@@ -196,7 +196,7 @@ const ImageHeader = ({
           )}
           {recipeData.seasons.summer && (
             <SeasonButton
-              style={{ margin: -5 }}
+              style={{margin: -5}}
               imgUrl={require(summerImg)}
               colorBackground={'#f5de7e'}
               interactable={false}
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  barText: { zIndex: 50 },
+  barText: {zIndex: 50},
   titleText: {
     position: 'absolute',
     bottom: 0,
@@ -248,15 +248,14 @@ const styles = StyleSheet.create({
     top: 18,
     right: 0,
     margin: 10,
-    zIndex: 50
+    zIndex: 50,
   },
   backContainer: {
     position: 'absolute',
     top: 18,
     left: 0,
     margin: 10,
-    zIndex: 50
-
+    zIndex: 50,
   },
 });
 export default ImageHeader;
