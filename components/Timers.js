@@ -29,7 +29,7 @@ const Timers = ({timer, name}) => {
     if (timer !== undefined) {
       let timerArray = [];
       timer.map((item, index) => {
-        let timer = addTimer(item, index);
+        let timer = addTimer(item*60, index);
         timerArray.push(timer);
       });
       return timerArray;
@@ -50,7 +50,7 @@ const Timers = ({timer, name}) => {
 
     // Create a new timer with the same time as the old one
     let timerArray = [...timers];
-    timerArray.push(addTimer(timerToReplace.time, timers.length));
+    timerArray.push(addTimer(timerToReplace.time*60, timers.length));
 
     //Remove the old timer
     setTimers(timerArray.filter(timer => timer.id !== id));
@@ -68,9 +68,9 @@ const Timers = ({timer, name}) => {
   function addTimer(time, index) {
     return {
       id: Date.now() + index, // unique ID for the timer
-      time: Number.parseInt(time)*60, // time in milliseconds
+      time: Number.parseInt(time), // time in milliseconds
       running: false, // whether the timer is currently running
-      title: 'Timer ' + (index + 1), // title of the timer
+      title: 'Timer ', // title of the timer
       recipeName: name,
       timeLeft: Number.parseInt(time), // time left in milliseconds
     };

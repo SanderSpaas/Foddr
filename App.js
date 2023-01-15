@@ -1,14 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { firebase } from '@react-native-firebase/auth';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import type { Node } from 'react';
-import React, { useEffect, useState } from 'react';
-import { StatusBar, Text, View } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
+import {firebase} from '@react-native-firebase/auth';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
+import type {Node} from 'react';
+import React, {useEffect, useState} from 'react';
+import {StatusBar, Text, View} from 'react-native';
 import 'react-native-gesture-handler';
 import Permissions from 'react-native-permissions';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import FlashMessage from 'react-native-flash-message';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import BottomNav from './Navigation/BottemNav';
 import SideBar from './Navigation/SideBar';
@@ -50,6 +53,22 @@ const App: () => Node = () => {
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  useEffect(() => {
+    NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        showMessage({
+          message: 'No internet connection',
+          description: 'Not all features will work without internet',
+          type: 'success',
+          hideStatusBar: true,
+          duration: 5000,
+          style: {
+            backgroundColor: '#ce4b41',
+          },
+        });
+      }
+    });
+  }, []);
   // Handle user state changes
   function onAuthStateChanged(user) {
     // console.log('user is currently logged in: ' + user);
@@ -61,7 +80,7 @@ const App: () => Node = () => {
   if (initializing)
     return (
       <View>
-        <Text>IK ben aan het opstarten</Text>
+        <Text>Ik ben aan het opstarten</Text>
       </View>
     ); //make it return the splashscreen with our cute logo
 
@@ -118,6 +137,7 @@ const App: () => Node = () => {
             />
           </Tab.Navigator>
         </NavigationContainer>
+        <FlashMessage position="top" />
       </SafeAreaProvider>
     );
   }
@@ -150,7 +170,6 @@ const App: () => Node = () => {
         // hidden={true}
         translucent={true}
       />
-
       <NavigationContainer theme={navTheme}>
         <Drawer.Navigator
           drawerContent={props => <SideBar />}
@@ -160,6 +179,7 @@ const App: () => Node = () => {
           <Drawer.Screen name="Profile" component={BottomNav} />
         </Drawer.Navigator>
       </NavigationContainer>
+      <FlashMessage position="top" />
     </SafeAreaProvider>
   );
 };
