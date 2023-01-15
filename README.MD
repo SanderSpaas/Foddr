@@ -1,6 +1,7 @@
 # Foddr
 
 Foddr is a mobile application that I developed for Mobile Application Development in my thirth year.
+It allows the user to discover new recipes on a map. These can then be liked and be viewed in detail. Timers and readjusting the ingredients according to the amount of people included.
 
 ## Installation
 Firstly, make sure that you have setup the correct development environment. The steps to do this can be found [here](https://reactnative.dev/docs/environment-setup).
