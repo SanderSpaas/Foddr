@@ -1,6 +1,6 @@
-import {firebase} from '@react-native-firebase/auth';
-import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 
@@ -30,7 +30,7 @@ const Rating = ({rating}) => {
     } else {
       // console.log('no rating: ' + rating);
       // console.log('rating', rating);
-      // setScore(0);
+      setScore(0);
     }
   }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, TouchableOpacity} from 'react-native';
+import { Dimensions, TouchableOpacity } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
 

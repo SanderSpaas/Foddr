@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  SafeAreaView,
+  Dimensions,
+  FlatList, SafeAreaView,
   StyleSheet,
   TextInput,
-  TouchableOpacity,
-  Dimensions,
-  FlatList,
-  View,
+  TouchableOpacity, View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';

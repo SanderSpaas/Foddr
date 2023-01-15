@@ -1,8 +1,7 @@
 import React from 'react';
-import HeartSolid from '../assets/images/heart-solid.svg';
+import { CustomElasticButton } from 'react-native-micro-animations';
 import HeartNormal from '../assets/images/heart-regular.svg';
-import {CustomElasticButton} from 'react-native-micro-animations';
-import colors from '../theme/colors';
+import HeartSolid from '../assets/images/heart-solid.svg';
 
 interface LikeElasticButtonProps {
   initialColor?: string;

@@ -1,5 +1,5 @@
 // import PropTypes from 'prop-types';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -9,14 +9,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
-import {firebase} from '@react-native-firebase/auth';
+import { firebase } from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import MapView from 'react-native-map-clustering';
-import {Marker} from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import ProgressBar from 'react-native-progress/Bar';
 import Camera from '../components/Camera.js';
 import Ingredient from '../components/Ingredient.component.js';

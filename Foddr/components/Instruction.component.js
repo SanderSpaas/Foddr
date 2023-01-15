@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
-  StyleSheet,
+  Dimensions, FlatList, StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
-  FlatList,
+  View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';

@@ -1,8 +1,8 @@
-import {firebase} from '@react-native-firebase/auth';
-import React, {useEffect, useRef, useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-map-clustering';
-import {Callout, Marker} from 'react-native-maps';
+import { Callout, Marker } from 'react-native-maps';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
 import RandomButton from '../components/RandomButton.js';
@@ -15,7 +15,6 @@ const fallImg = '../assets/images/fallIcon.png';
 const winterImg = '../assets/images/winterIcon.png';
 const springImg = '../assets/images/springIcon.png';
 const summerImg = '../assets/images/summerIcon.png';
-import { observer, inject } from 'mobx-react';
 
 // @inject('store')
 // @observer

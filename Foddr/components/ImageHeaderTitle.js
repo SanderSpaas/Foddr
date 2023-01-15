@@ -1,5 +1,5 @@
 import React from 'react';
-import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
 const ImageHeaderTitle = ({title, scrollY, scrollYSticky, imgUrl}) => {

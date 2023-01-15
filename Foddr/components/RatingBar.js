@@ -1,12 +1,12 @@
-import {firebase} from '@react-native-firebase/auth';
-import React, {useState} from 'react';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';

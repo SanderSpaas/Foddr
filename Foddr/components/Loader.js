@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, Image, StyleSheet, View} from 'react-native';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
 
 export default Loader = loading => {
   return (

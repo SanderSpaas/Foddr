@@ -1,5 +1,5 @@
-import {firebase} from '@react-native-firebase/auth';
-import React, {useEffect, useState} from 'react';
+import { firebase } from '@react-native-firebase/auth';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -7,7 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 import ImageHeader from '../components/ImageHeader.js';
 import Loader from '../components/Loader.js';

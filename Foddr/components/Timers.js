@@ -1,11 +1,11 @@
-import {default as React, useState} from 'react';
+import { default as React, useState } from 'react';
 import {
   Dimensions,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 import CountDownTimer from 'react-native-countdown-timer-hooks';
@@ -68,7 +68,7 @@ const Timers = ({timer, name}) => {
   function addTimer(time, index) {
     return {
       id: Date.now() + index, // unique ID for the timer
-      time: Number.parseInt(time), // time in milliseconds
+      time: Number.parseInt(time)*60, // time in milliseconds
       running: false, // whether the timer is currently running
       title: 'Timer ' + (index + 1), // title of the timer
       recipeName: name,
@@ -131,7 +131,7 @@ const Timers = ({timer, name}) => {
               style={styles.timer}
               onPress={() => handleStart(item.id)}>
               <Text style={globalStyles.buttonText}>
-                Start: {item.timeLeft}
+                Start: {item.timeLeft/60}
               </Text>
             </TouchableOpacity>
           )}

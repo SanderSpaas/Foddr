@@ -1,12 +1,12 @@
 // import 'react-native-gesture-handler';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import colors from '../theme/colors';
 import globalStyles from '../theme/globalStyles';

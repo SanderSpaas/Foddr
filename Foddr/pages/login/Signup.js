@@ -1,20 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import auth from '@react-native-firebase/auth';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Image,
-  ScrollView,
-  Text,
+  ScrollView, StatusBar, Text,
   TextInput,
   TouchableOpacity,
-  View,
-  StatusBar,
+  View
 } from 'react-native';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import BackButton from '../../components/BackButton.js';
 import Loader from '../../components/Loader.js';
-import globalStyles from '../../theme/globalStyles.js';
 import colors from '../../theme/colors.js';
+import globalStyles from '../../theme/globalStyles.js';
 const Signup = ({route, navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

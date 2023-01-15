@@ -6,23 +6,21 @@ import globalStyles from '../theme/globalStyles';
 export default BackButton => {
   const navigation = useNavigation();
   return (
-    <>
-      <TouchableOpacity
-        style={globalStyles.touch}
-        onPress={() => {
-          navigation.goBack();
-        }}>
-        <>
-          <View style={globalStyles.circleBackdrop}></View>
-          <FontIcon
-            style={globalStyles.toucIcon}
-            name="arrow-left"
-            size={20}
-            solid
-            color={'white'}
-          />
-        </>
-      </TouchableOpacity>
-    </>
+    <TouchableOpacity
+      style={globalStyles.touch}
+      onPress={() => {
+        navigation.goBack();
+      }}>
+      <>
+        <View style={globalStyles.circleBackdrop}></View>
+        <FontIcon
+          style={globalStyles.toucIcon}
+          name="arrow-left"
+          size={20}
+          solid
+          color={'white'}
+        />
+      </>
+    </TouchableOpacity>
   );
 };

@@ -1,5 +1,5 @@
-import {firebase} from '@react-native-firebase/auth';
-import {useNavigation} from '@react-navigation/native';
+import { firebase } from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   Dimensions,
@@ -7,7 +7,7 @@ import {
   Platform,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import colors from '../theme/colors';
