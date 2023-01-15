@@ -1,8 +1,8 @@
-import { firebase } from '@react-native-firebase/auth';
-import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useEffect, useRef, useState} from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import MapView from 'react-native-map-clustering';
-import { Callout, Marker } from 'react-native-maps';
+import {Callout, Marker} from 'react-native-maps';
 import LocationButton from '../components/LocationButton.js';
 import MapCard from '../components/MapCard.js';
 import RandomButton from '../components/RandomButton.js';
@@ -16,8 +16,6 @@ const winterImg = '../assets/images/winterIcon.png';
 const springImg = '../assets/images/springIcon.png';
 const summerImg = '../assets/images/summerIcon.png';
 
-// @inject('store')
-// @observer
 const Browse = ({route, navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
@@ -33,8 +31,7 @@ const Browse = ({route, navigation}) => {
     summer: true,
     winter: true,
   });
-    // const { store } = this.props;
-    
+
   const mapViewRef = useRef(MapView);
   useEffect(() => {
     const ref = firebase.firestore().collection('recipes');
@@ -222,13 +219,9 @@ const styles = StyleSheet.create({
   textcolor: {color: '#fff'},
 
   buttons: {
-    // position: 'absolute',
-    // bottom: 55,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: Dimensions.get('window').width * 0.85,
-    // overflow:'hidden',
-    // marginBottom: 10,
   },
   Icon: {
     marginRight: 10,
@@ -238,7 +231,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
     margin: 25,
     padding: 5,
     shadowColor: '#000',

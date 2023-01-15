@@ -158,17 +158,10 @@ const AddRecipe = ({route, navigation}) => {
               image: downloadURL,
               longitude: marker.longitude,
               latitude: marker.latitude,
-              // tags: []
               amountOfPeople: formData.amountOfPeople,
               ingredients: ingredients,
               instructions: instructions,
               timers: timers,
-              // rating: [
-              //   {
-              //     score: 0,
-              //     uid: '',
-              //   },
-              // ],
               likes: [],
               time: formData.time,
               seasons: {
@@ -220,9 +213,6 @@ const AddRecipe = ({route, navigation}) => {
     navigation.navigate('Browse');
   }
   const pageSwitcher = () => {
-    // console.log(JSON.stringify(formData));
-    // console.log(JSON.stringify(instructions));
-    // console.log(JSON.stringify(ingredients));
     switch (page) {
       case 0:
         return (
@@ -249,12 +239,10 @@ const AddRecipe = ({route, navigation}) => {
                 source={require('../assets/images/name.png')}
                 resizeMode="contain"
               />
-              {/* <Text style={styles.title}>What is the recipe called?</Text> */}
 
               <Text style={globalStyles.label}>Fill in the recipe name</Text>
               <TextInput
                 placeholderTextColor={colors.textcolor}
-                // placeholder="Fill in the recipe name"
                 onChangeText={value => checkIfEmpty(value, 'name')}
                 value={formData.name}
                 style={[styles.colordBorder, globalStyles.textInput]}
@@ -270,9 +258,7 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/name.png')}
               resizeMode="contain"
             />
-            {/* <Text style={styles.title}>
-              What is the description of the recipe?
-            </Text> */}
+
             <View>
               <Text style={globalStyles.label}>
                 Tell me something about the recipe
@@ -292,7 +278,6 @@ const AddRecipe = ({route, navigation}) => {
                     height: height,
                     maxHeight: 150,
                   },
-                  // globalStyles.textInputLong,
                 ]}
               />
             </View>
@@ -306,7 +291,7 @@ const AddRecipe = ({route, navigation}) => {
               source={require('../assets/images/name.png')}
               resizeMode="contain"
             />
-            {/* <Text style={styles.title}>For how many people is the recipe?</Text> */}
+
             <View>
               <Text style={globalStyles.label}>
                 Fill in the amount of people
@@ -327,7 +312,6 @@ const AddRecipe = ({route, navigation}) => {
       case 4:
         return (
           <>
-            {/* <Text style={styles.title}>What are the instructions?</Text> */}
             <View
               style={{
                 height: Dimensions.get('window').height - 450,
@@ -345,9 +329,6 @@ const AddRecipe = ({route, navigation}) => {
       case 5:
         return (
           <>
-            {/* <Text style={styles.title}>
-              In which seasons does this recipe belong?
-            </Text> */}
             <View>
               <Text style={globalStyles.label}>
                 In which seasons does this recipe belong?
@@ -397,13 +378,10 @@ const AddRecipe = ({route, navigation}) => {
                 style={globalStyles.map}
                 clustering={true}
                 region={region}
-                onPress={
-                  e => {
-                    setMarker(e.nativeEvent.coordinate);
-                    setValid(true);
-                  }
-                  // console.log(e.nativeEvent.coordinate)
-                }>
+                onPress={e => {
+                  setMarker(e.nativeEvent.coordinate);
+                  setValid(true);
+                }}>
                 <Marker coordinate={marker}></Marker>
               </MapView>
             </View>
@@ -438,7 +416,7 @@ const AddRecipe = ({route, navigation}) => {
         return (
           <>
             <Text style={styles.title}>Add a picture</Text>
-            {/* <Text style={globalStyles.label}>Add a picture</Text> */}
+
             <Camera handleUri={handleUri} uri={formData.fileUri} />
           </>
         );
@@ -466,7 +444,6 @@ const AddRecipe = ({route, navigation}) => {
                 style={{
                   height: Dimensions.get('window').height - 450,
                 }}>
-                {/* <Text style={globalStyles.label}>Fill in the instuctions</Text> */}
                 <View style={[styles.colordBorder, styles.instructions]}>
                   <Ingredient
                     recipeCallBackIng={recipeCallBackIng}
@@ -475,13 +452,11 @@ const AddRecipe = ({route, navigation}) => {
                 </View>
               </View>
             </View>
-            {/* <AddItem parentCallback={handleCallbackIng} title={'ingredient'} /> */}
           </>
         );
       case 10:
         return (
           <>
-            {/* <Text style={styles.title}>What are the instructions?</Text> */}
             <View
               style={{
                 height: Dimensions.get('window').height - 450,
@@ -521,7 +496,6 @@ const AddRecipe = ({route, navigation}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        // style={{ flex: 1 }}
         keyboardDismissMode="on-drag"
         keyboardVerticalOffset={200}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -536,7 +510,6 @@ const AddRecipe = ({route, navigation}) => {
             <View style={styles.buttonContainer}>
               {page > 0 && (
                 <TouchableOpacity
-                  // disabled={!valid}
                   style={[globalStyles.buttonSmall]}
                   onPress={() => {
                     setPage(page - 1);

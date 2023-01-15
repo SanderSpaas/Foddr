@@ -1,11 +1,13 @@
 import auth from '@react-native-firebase/auth';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Image,
-  ScrollView, StatusBar, Text,
+  ScrollView,
+  StatusBar,
+  Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import BackButton from '../../components/BackButton.js';
 import Loader from '../../components/Loader.js';
@@ -76,10 +78,7 @@ const Login = ({route, navigation}) => {
           <TextInput
             id="email"
             style={globalStyles.textInput}
-            // placeholder="Email"
             onChangeText={value => setEmail(value)}
-            // value={email}
-            // value="test@gmail.com"
           />
         </View>
         <View>
@@ -88,10 +87,7 @@ const Login = ({route, navigation}) => {
             id="password"
             style={globalStyles.textInput}
             secureTextEntry
-            // placeholder="Password"
             onChangeText={value => setPassword(value)}
-            // value={password}
-            // value="Azerty123"
           />
         </View>
         <TouchableOpacity

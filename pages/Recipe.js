@@ -28,11 +28,7 @@ const Recipe = ({route, navigation}) => {
   const [timers, setTimers] = useState([]);
   const stickyHeaderHeight = 100;
   const screenHeight = Dimensions.get('window').height;
-
   const {recipeId} = route.params;
-  // console.log('route information', route);
-  // console.log('navigation check', navigation);
-  // console.log('recipeId from params', recipeId);
 
   const talkToParent = amount => {
     //make sure the amount isnt smaller then 1

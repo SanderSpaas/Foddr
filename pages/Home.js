@@ -1,9 +1,13 @@
-import { firebase } from '@react-native-firebase/auth';
-import React, { useEffect, useState } from 'react';
+import {firebase} from '@react-native-firebase/auth';
+import React, {useEffect, useState} from 'react';
 import {
-  Animated, Dimensions, FlatList, ScrollView, StyleSheet,
+  Animated,
+  Dimensions,
+  FlatList,
+  ScrollView,
+  StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import Card from '../components/Card.js';
 import ImageHeaderTitle from '../components/ImageHeaderTitle.js';
@@ -19,7 +23,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-const Home = ({ navigation }) => {
+const Home = ({navigation}) => {
   const [recipeData, setRecipeData] = useState([]);
   const [recipeDataRender, setRecipeDataRender] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -27,18 +31,12 @@ const Home = ({ navigation }) => {
   const [scrollYSticky, setScrollYSticky] = useState(new Animated.Value(0));
   const stickyHeaderHeight = 100;
   const screenHeight = Dimensions.get('window').height;
-
-  if (scrollY > stickyHeaderHeight) {
-    Animated.spring(scrollYSticky, {
-      toValue: scrollY - stickyHeaderHeight,
-      useNativeDriver: false,
-    }).start();
-  } else {
-    Animated.spring(scrollYSticky, {
-      toValue: 0,
-      useNativeDriver: false,
-    }).start();
-  }
+  const toValue =
+    scrollY > stickyHeaderHeight ? scrollY - stickyHeaderHeight : 0;
+  Animated.spring(scrollYSticky, {
+    toValue: toValue,
+    useNativeDriver: false,
+  }).start();
 
   useEffect(() => {
     const ref = firebase.firestore().collection('recipes');
@@ -62,7 +60,7 @@ const Home = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={{ height: screenHeight, backgroundColor: 'white' }}>
+    <View style={{height: screenHeight, backgroundColor: 'white'}}>
       <ImageHeaderTitle
         title={'Discover Recipes'}
         scrollY={scrollY}
@@ -73,14 +71,14 @@ const Home = ({ navigation }) => {
       {!loading ? (
         <ScrollView
           scrollEventThrottle={20}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{flexGrow: 1}}
           onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            [{nativeEvent: {contentOffset: {y: scrollY}}}],
             {
               useNativeDriver: false,
             },
           )}>
-          <View style={{ marginTop: 260 }}>
+          <View style={{marginTop: 260}}>
             <Text style={styles.title}>Winter Recipes</Text>
             <FlatList
               data={recipeData.filter(
@@ -92,7 +90,7 @@ const Home = ({ navigation }) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
@@ -108,7 +106,7 @@ const Home = ({ navigation }) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
@@ -126,12 +124,12 @@ const Home = ({ navigation }) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <Card recipe={item.recipe} recipeId={item.id} vertical={true} />
               )}
             />
           </View>
-          <View style={{ marginBottom: 80 }}>
+          <View style={{marginBottom: 80}}>
             <Text style={styles.title}>Summer Recipes</Text>
             <FlatList
               data={recipeData.filter(
@@ -143,12 +141,12 @@ const Home = ({ navigation }) => {
               style={styles.list}
               horizontal={true}
               contentContainerStyle={styles.likedItems}
-              renderItem={({ item }) => (
+              renderItem={({item}) => (
                 <Card
                   recipe={item.recipe}
                   recipeId={item.id}
                   vertical={true}
-                  style={{ padding: 80, marginBottom: 100 }}
+                  style={{padding: 80, marginBottom: 100}}
                 />
               )}
             />

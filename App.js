@@ -20,9 +20,11 @@ import LoginChooser from './pages/login/LoginChooser';
 import Signup from './pages/login/Signup';
 import colors from './theme/colors';
 
+// Initialize Firebase auth and firestore
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Function to request permissions for camera, photos, and location
 const permission = () => {
   Permissions.request('camera').then(response => {
     console.log(response);
@@ -35,11 +37,11 @@ const permission = () => {
   });
 };
 
-//background color for our pages
+/// Set background color for our pages
 const navTheme = DefaultTheme;
-// navTheme.colors.background = colors.backgroundcolor;
-navTheme.colors.background = '#fff';
+navTheme.colors.background = '#fff'; // white background
 
+// Create bottom tab navigator and drawer navigator
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -48,7 +50,7 @@ const App: () => Node = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    permission();
+    permission(); // request permissions
     const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
@@ -59,24 +61,22 @@ const App: () => Node = () => {
         showMessage({
           message: 'No internet connection',
           description: 'Not all features will work without internet',
-          type: 'success',
+          type: 'warning',
           hideStatusBar: true,
           duration: 5000,
-          style: {
-            backgroundColor: '#ce4b41',
-          },
         });
       }
     });
   }, []);
+
   // Handle user state changes
   function onAuthStateChanged(user) {
-    // console.log('user is currently logged in: ' + user);
     setUser(user);
     if (initializing) {
       setInitializing(false);
     }
   }
+
   if (initializing)
     return (
       <View>
@@ -153,16 +153,18 @@ const App: () => Node = () => {
           displayName: name,
         })
         .then(() => {
-          console.log('updated profile');
-          removeItemValue('name');
+          console.log('Profile updated successfully');
+          removeItemValue('name'); // remove name from async storage
           console.log(
             'All current user data ' +
               JSON.stringify(firebase.auth().currentUser?.toJSON()),
           );
+        })
+        .catch(error => {
+          console.log('Error updating profile: ', error);
         });
     }
   });
-
   return (
     <SafeAreaProvider>
       <StatusBar
@@ -203,8 +205,10 @@ async function removeItemValue(key) {
   try {
     await AsyncStorage.removeItem(key);
     return true;
-  } catch (exception) {
+  } catch (error) {
+    console.log(`Error removing item with key ${key} : ${error}`);
     return false;
   }
 }
+
 export default App;
