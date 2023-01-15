@@ -1,11 +1,11 @@
-import { default as React, useState } from 'react';
+import {default as React, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import CountDownTimer from 'react-native-countdown-timer-hooks';
@@ -29,7 +29,7 @@ const Timers = ({timer, name}) => {
     if (timer !== undefined) {
       let timerArray = [];
       timer.map((item, index) => {
-        let timer = addTimer(item*60, index);
+        let timer = addTimer(item * 60, index);
         timerArray.push(timer);
       });
       return timerArray;
@@ -50,7 +50,7 @@ const Timers = ({timer, name}) => {
 
     // Create a new timer with the same time as the old one
     let timerArray = [...timers];
-    timerArray.push(addTimer(timerToReplace.time*60, timers.length));
+    timerArray.push(addTimer(timerToReplace.time * 60, timers.length));
 
     //Remove the old timer
     setTimers(timerArray.filter(timer => timer.id !== id));
@@ -131,7 +131,9 @@ const Timers = ({timer, name}) => {
               style={styles.timer}
               onPress={() => handleStart(item.id)}>
               <Text style={globalStyles.buttonText}>
-                Start: {item.timeLeft/60}
+                Start: {Math.floor(item.timeLeft / 60) + ' : '}
+                {(item.timeLeft % 60).toFixed(0) < 10 ? '0' : ''}
+                {(item.timeLeft % 60).toFixed(0)}
               </Text>
             </TouchableOpacity>
           )}
