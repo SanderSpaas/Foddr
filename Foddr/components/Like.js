@@ -1,11 +1,9 @@
-import {firebase} from '@react-native-firebase/auth';
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
-import {TouchableOpacity, View, Text} from 'react-native';
-import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import LikeElasticButton from './LikeElasticButtonExtended';
+import { firebase } from '@react-native-firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import colors from '../theme/colors';
-import globalStyles from '../theme/globalStyles';
+import LikeElasticButton from './LikeElasticButtonExtended';
 const auth = firebase.auth();
 let likesArray;
 

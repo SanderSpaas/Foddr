@@ -73,8 +73,17 @@ const SideBar = () => {
           {
             position: 'absolute',
             top: height / 2 - 40,
-            left: 250,
+            left: 276,
+            padding: 0,
+            height: 80,
+            backgroundColor: 'white',
+            borderBottomRightRadius: 50,
+            borderTopRightRadius: 50,
+            width: 55,
+            justifyContent: 'center',
+            alignItems: 'center',
           },
+          globalStyles.shadow,
         ]}
         onPress={() => {
           navigation.dispatch(DrawerActions.toggleDrawer());
@@ -84,13 +93,8 @@ const SideBar = () => {
         <View
           style={[
             {
-              backgroundColor: 'white',
-              borderBottomRightRadius: 50,
-              borderTopRightRadius: 50,
-              padding: 20,
-              paddingLeft: 35,
+             
             },
-            globalStyles.shadow,
           ]}>
           <Text
             style={[

@@ -19,25 +19,8 @@ import Permissions from 'react-native-permissions';
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-// let userName;
-// const perf = firebase.performance();
-//function to request permission for android
-//TODO add IOS suppport for permission requests
-// Geocoder.init('AIzaSyBUoxEdl1gqBMAEgjGZpOMG7i3PQw9DKzo'); // use a valid API key
-// Geocoder.init(GEOCODERAPI_KEY); // use a valid API key
 
 const permission = () => {
-  //check if we are on android
-  // if (Platform.OS === 'android') {
-  //   PermissionsAndroid.request(
-  //     PermissionsAndroid.PERMISSIONS.CAMERA,
-  //     PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-  //     PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-  //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //   );
-  // } else {
-  //request IOS permissions
   Permissions.request('camera').then(response => {
     console.log(response);
   });
@@ -47,7 +30,6 @@ const permission = () => {
   Permissions.request('location').then(response => {
     console.log(response);
   });
-  // }
 };
 
 //background color for our pages

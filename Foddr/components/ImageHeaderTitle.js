@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  Animated, Dimensions, StyleSheet,
-  Text
-} from 'react-native';
-import SVGImg from '../assets/images/gradient.svg';
+import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
+
+import LinearGradient from 'react-native-linear-gradient';
 const ImageHeaderTitle = ({title, scrollY, scrollYSticky, imgUrl}) => {
   const height = scrollY.interpolate({
     inputRange: [0, 250],
@@ -40,23 +38,10 @@ const ImageHeaderTitle = ({title, scrollY, scrollYSticky, imgUrl}) => {
         source={imgUrl}
         resizeMode="cover"
       />
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            top: scrollYSticky,
-            height: height,
-            overflow: 'hidden',
-          },
-        ]}>
-        <SVGImg
-          style={styles.overlay}
-          // style={[styles.overlay,{height: height}]}
-          width={Dimensions.get('window').width}
-          height={250}
-          resizeMode="stretch"
-        />
-      </Animated.View>
+      <LinearGradient
+        locations={[0, 1.0]}
+        colors={['rgba(0,0,0,0.00)', 'rgba(0,0,0,0.80)']}
+        style={styles.linearGradient}></LinearGradient>
     </Animated.View>
   );
 };
@@ -82,6 +67,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
     padding: 20,
     color: '#fff',
+  },
+  linearGradient: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 3,
   },
 });
 export default ImageHeaderTitle;

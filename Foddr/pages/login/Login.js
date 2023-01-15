@@ -76,10 +76,10 @@ const Login = ({route, navigation}) => {
           <TextInput
             id="email"
             style={globalStyles.textInput}
-            placeholder="Email"
+            // placeholder="Email"
             onChangeText={value => setEmail(value)}
             // value={email}
-            value="test@gmail.com"
+            // value="test@gmail.com"
           />
         </View>
         <View>
@@ -88,10 +88,10 @@ const Login = ({route, navigation}) => {
             id="password"
             style={globalStyles.textInput}
             secureTextEntry
-            placeholder="Password"
+            // placeholder="Password"
             onChangeText={value => setPassword(value)}
             // value={password}
-            value="Azerty123"
+            // value="Azerty123"
           />
         </View>
         <TouchableOpacity

@@ -4,6 +4,7 @@ import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -14,7 +15,6 @@ import {
 import {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {ScrollView} from 'react-native-gesture-handler';
 import MapView from 'react-native-map-clustering';
 import {Marker} from 'react-native-maps';
 import ProgressBar from 'react-native-progress/Bar';
@@ -36,6 +36,7 @@ const AddRecipe = ({route, navigation}) => {
   const [error, setError] = useState('');
   const [instructions, setInstructions] = useState(['']);
   const [timers, setTimers] = useState([0]);
+  const [height, setHeight] = useState(35);
   const [ingredients, setIngredients] = useState([
     {name: '', amount: '', unitOfMeasure: ''},
   ]);
@@ -63,7 +64,6 @@ const AddRecipe = ({route, navigation}) => {
     latitudeDelta: 50.59454374963337,
     longitudeDelta: 4.682658165693283,
   });
-  // const [isLoading, setLoading] = useState(false);
 
   const handleUri = (fileUri, base64) => {
     setFormData({
@@ -264,34 +264,39 @@ const AddRecipe = ({route, navigation}) => {
         );
       case 2:
         return (
-          <KeyboardAvoidingView behavior="padding">
-            <ScrollView>
-              <Image
-                style={styles.image}
-                source={require('../assets/images/name.png')}
-                resizeMode="contain"
-              />
-              {/* <Text style={styles.title}>
+          <ScrollView>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/name.png')}
+              resizeMode="contain"
+            />
+            {/* <Text style={styles.title}>
               What is the description of the recipe?
             </Text> */}
-              <View>
-                <Text style={globalStyles.label}>
-                  Tell me something about the recipe
-                </Text>
-                <TextInput
-                  placeholderTextColor={colors.textcolor}
-                  multiline={true}
-                  onChangeText={value => checkIfEmpty(value, 'description')}
-                  value={formData.description}
-                  style={[
-                    styles.colordBorder,
-                    globalStyles.textInput,
-                    globalStyles.textInputLong,
-                  ]}
-                />
-              </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
+            <View>
+              <Text style={globalStyles.label}>
+                Tell me something about the recipe
+              </Text>
+              <TextInput
+                placeholderTextColor={colors.textcolor}
+                multiline={true}
+                onContentSizeChange={event => {
+                  setHeight(Math.max(35, event.nativeEvent.contentSize.height));
+                }}
+                onChangeText={value => checkIfEmpty(value, 'description')}
+                value={formData.description}
+                style={[
+                  styles.colordBorder,
+                  globalStyles.textInput,
+                  {
+                    height: height,
+                    maxHeight: 150,
+                  },
+                  // globalStyles.textInputLong,
+                ]}
+              />
+            </View>
+          </ScrollView>
         );
       case 3:
         return (
@@ -510,68 +515,80 @@ const AddRecipe = ({route, navigation}) => {
   };
   return (
     <View style={styles.layout}>
-      <Image
-        style={globalStyles.blob}
-        source={require('../assets/images/wave.png')}
-      />
-      <View style={styles.center}>{pageSwitcher()}</View>
-      {!postPage && (
-        <View style={styles.bottemNav}>
-          <View style={styles.buttonContainer}>
-            {page > 0 && (
+      <KeyboardAvoidingView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        // style={{ flex: 1 }}
+        keyboardDismissMode="on-drag"
+        keyboardVerticalOffset={200}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <Image
+          style={globalStyles.blob}
+          source={require('../assets/images/wave.png')}
+        />
+        <View style={styles.center}>{pageSwitcher()}</View>
+
+        {!postPage && (
+          <View style={styles.bottemNav}>
+            <View style={styles.buttonContainer}>
+              {page > 0 && (
+                <TouchableOpacity
+                  // disabled={!valid}
+                  style={[globalStyles.buttonSmall]}
+                  onPress={() => {
+                    setPage(page - 1);
+                    setValid(true);
+                    setError('');
+                  }}>
+                  <Text style={globalStyles.buttonText}>Back</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
-                // disabled={!valid}
-                style={[globalStyles.buttonSmall]}
-                onPress={() => {
-                  setPage(page - 1);
-                  setValid(true);
-                  setError('');
-                }}>
-                <Text style={globalStyles.buttonText}>Back</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              disabled={!valid}
-              style={[
-                globalStyles.buttonSmall,
-                !valid ? {backgroundColor: '#8a91a5'} : {},
-              ]}
-              onPress={() => {
-                setValid(false);
-                handleSubmit();
-              }}>
-              <Text style={globalStyles.buttonText}>
-                {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
-              </Text>
-            </TouchableOpacity>
-            {error && (
-              <Text
+                disabled={!valid}
                 style={[
-                  globalStyles.error,
-                  {
-                    position: 'absolute',
-                    bottom: 50,
-                    width: Dimensions.get('window').width * 0.55,
-                  },
-                ]}>
-                {error}
+                  globalStyles.buttonSmall,
+                  !valid ? {backgroundColor: '#8a91a5'} : {},
+                ]}
+                onPress={() => {
+                  setValid(false);
+                  handleSubmit();
+                }}>
+                <Text style={globalStyles.buttonText}>
+                  {page === 0 || page < amountofPages ? 'Next' : 'Submit'}
+                </Text>
+              </TouchableOpacity>
+              {error && (
+                <Text
+                  style={[
+                    globalStyles.error,
+                    {
+                      position: 'absolute',
+                      bottom: 50,
+                      width: Dimensions.get('window').width * 0.55,
+                    },
+                  ]}>
+                  {error}
+                </Text>
+              )}
+            </View>
+            <View style={styles.layout}>
+              <ProgressBar
+                progress={page / amountofPages}
+                width={200}
+                color={colors.maincolor}
+                borderRadius={5}
+                height={10}
+              />
+              <Text style={styles.progressText}>
+                Step {page} out of {amountofPages}
               </Text>
-            )}
+            </View>
           </View>
-          <View style={styles.layout}>
-            <ProgressBar
-              progress={page / amountofPages}
-              width={200}
-              color={colors.maincolor}
-              borderRadius={5}
-              height={10}
-            />
-            <Text style={styles.progressText}>
-              Step {page} out of {amountofPages}
-            </Text>
-          </View>
-        </View>
-      )}
+        )}
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -594,6 +611,7 @@ const styles = StyleSheet.create({
 
   layout: {
     alignItems: 'center',
+    justifyContent: 'center',
   },
   center: {
     alignItems: 'center',
@@ -605,12 +623,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundcolor,
     backgroundColor: 'white',
     borderRadius: 5,
+    alignSelf: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: Dimensions.get('window').width * 0.7,
     marginTop: 15,
+    // backgroundColor: 'red',
     marginBottom: 15,
   },
 
